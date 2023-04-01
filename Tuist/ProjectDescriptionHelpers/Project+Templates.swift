@@ -11,7 +11,7 @@ extension Project {
     public static func app(name: String,
                            platform: Platform,
                            iOSTargetVersion: String,
-                           infoPlist: String,
+                           infoPlist: [String: InfoPlist.Value],
                            dependencies: [TargetDependency] = []) -> Project {
         let targets = makeAppTargets(name: name,
                                      platform: platform,
@@ -62,7 +62,7 @@ private extension Project {
         let sources = Target(name: name,
                              platform: platform,
                              product: .framework,
-                             bundleId: "team.io.\(name)",
+                             bundleId: "\(organizationName).\(name)",
                              deploymentTarget: .iOS(targetVersion: iOSTargetVersion, devices: [.iphone]),
                              infoPlist: .default,
                              sources: ["Sources/**"],
@@ -71,7 +71,7 @@ private extension Project {
         let tests = Target(name: "\(name)Tests",
                            platform: platform,
                            product: .unitTests,
-                           bundleId: "team.io.\(name)Tests",
+                           bundleId: "\(organizationName).\(name)Tests",
                            infoPlist: .default,
                            sources: ["Tests/**"],
                            resources: [],
@@ -88,7 +88,7 @@ private extension Project {
             name: name,
             platform: platform,
             product: .app,
-            bundleId: "team.io.\(name)",
+            bundleId: "\(organizationName).\(name)",
             deploymentTarget: .iOS(targetVersion: iOSTargetVersion, devices: [.iphone]),
             infoPlist: .extendingDefault(with: infoPlist),
             sources: ["Sources/**"],
@@ -100,35 +100,7 @@ private extension Project {
             name: "\(name)Tests",
             platform: platform,
             product: .unitTests,
-            bundleId: "team.io.Tests",
-            infoPlist: .default,
-            sources: ["Tests/**"],
-            dependencies: [
-                .target(name: "\(name)")
-            ])
-        return [mainTarget, testTarget]
-    }
-
-    static func makeAppTargets(name: String, platform: Platform, iOSTargetVersion: String, infoPlist: String, dependencies: [TargetDependency] = []) -> [Target] {
-        let platform: Platform = platform
-
-        let mainTarget = Target(
-            name: name,
-            platform: platform,
-            product: .app,
-            bundleId: "team.io.\(name)",
-            deploymentTarget: .iOS(targetVersion: iOSTargetVersion, devices: [.iphone]),
-            infoPlist: InfoPlist(stringLiteral: infoPlist),
-            sources: ["Sources/**"],
-            resources: ["Resources/**"],
-            dependencies: dependencies
-        )
-
-        let testTarget = Target(
-            name: "\(name)Tests",
-            platform: platform,
-            product: .unitTests,
-            bundleId: "team.io.Tests",
+            bundleId: "\(organizationName).Tests",
             infoPlist: .default,
             sources: ["Tests/**"],
             dependencies: [

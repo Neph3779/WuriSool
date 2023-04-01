@@ -11,12 +11,8 @@ import ProjectDescriptionHelpers
 private let projectName = "Network"
 private let iOSTargetVersion = "14.0"
 
-let project = Project.frameworkWithDemoApp(
+let project = Project.framework(
     name: projectName,
     platform: .iOS,
-    iOSTargetVersion: iOSTargetVersion,
-    infoPlist: [:],
-    dependencies: [
-        .external(name: "Alamofire")
-    ]
+    iOSTargetVersion: iOSTargetVersion
 )
