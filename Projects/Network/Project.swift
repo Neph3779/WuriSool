@@ -14,5 +14,9 @@ private let iOSTargetVersion = "14.0"
 let project = Project.framework(
     name: projectName,
     platform: .iOS,
-    iOSTargetVersion: iOSTargetVersion
+    iOSTargetVersion: iOSTargetVersion,
+    dependencies: [
+        .external(name: "FirebaseFirestore"),
+        .external(name: "Alamofire")
+    ]
 )

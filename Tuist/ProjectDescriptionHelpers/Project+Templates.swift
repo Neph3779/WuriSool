@@ -23,20 +23,58 @@ extension Project {
                        targets: targets)
     }
 
-    public static func frameworkWithDemoApp(name: String,
-                                            platform: Platform,
-                                            iOSTargetVersion: String,
-                                            infoPlist: [String: InfoPlist.Value] = [:],
-                                            dependencies: [TargetDependency] = []) -> Project {
-        var targets = makeFrameworkTargets(name: name,
-                                           platform: platform,
-                                           iOSTargetVersion: iOSTargetVersion,
-                                           dependencies: dependencies)
-        targets.append(contentsOf: makeAppTargets(name: "\(name)DemoApp",
-                                                  platform: platform,
-                                                  iOSTargetVersion: iOSTargetVersion,
-                                                  infoPlist: infoPlist,
-                                                  dependencies: [.target(name: name)]))
+    public static func cleanArchitectureModule(name: String,
+                                               platform: Platform = .iOS,
+                                               iOSTargetVersion: String,
+                                               infoPlist: [String: InfoPlist.Value] = [:],
+                                               dependencies: [TargetDependency] = []) -> Project {
+
+        let domainTargets = makeFrameworkTargets(name: "\(name)Domain", iOSTargetVersion: iOSTargetVersion)
+
+        let presentationTargets = makeFrameworkTargets(
+            name: "\(name)Presentation", iOSTargetVersion: iOSTargetVersion,
+            dependencies: [
+                .target(name: "\(name)Domain"),
+                .external(name: "SnapKit")
+            ]
+        )
+
+        let dataTargets = makeFrameworkTargets(
+            name: "\(name)Data",
+            iOSTargetVersion: iOSTargetVersion,
+            dependencies: [
+                .target(name: "\(name)Domain"),
+                .project(target: "Network", path: .relativeToManifest("../Network"))
+            ]
+        )
+
+        let moduleTargets = makeFrameworkTargets(
+            name: name,
+            iOSTargetVersion: iOSTargetVersion,
+            dependencies: [
+                .target(name: "\(name)Domain"),
+                .target(name: "\(name)Data"),
+                .target(name: "\(name)Presentation")
+            ]
+        )
+
+        let demoAppTargets = makeAppTargets(
+            name: "\(name)DemoApp",
+            platform: platform,
+            iOSTargetVersion: iOSTargetVersion,
+            infoPlist: infoPlist,
+            dependencies: [
+                .target(name: name)
+            ]
+        )
+
+        let targets = [
+            domainTargets,
+            presentationTargets,
+            dataTargets,
+            moduleTargets,
+            demoAppTargets
+        ].reduce(into: []) { $0 += $1 }
 
         return Project(name: name,
                        organizationName: organizationName,
@@ -58,7 +96,7 @@ extension Project {
 
 private extension Project {
 
-    static func makeFrameworkTargets(name: String, platform: Platform, iOSTargetVersion: String, dependencies: [TargetDependency] = []) -> [Target] {
+    static func makeFrameworkTargets(name: String, platform: Platform = .iOS, iOSTargetVersion: String, dependencies: [TargetDependency] = []) -> [Target] {
         let sources = Target(name: name,
                              platform: platform,
                              product: .framework,
