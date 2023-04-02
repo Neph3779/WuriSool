@@ -16,11 +16,13 @@ let project = Project.app(
     platform: .iOS,
     iOSTargetVersion: iOSTargetVersion,
     infoPlist: [
-        "CFBundleShortVersionString": "1.0",
+        "CFBundleShortVersionString": "1.0.0", // 앱의 출시 버전
         "CFBundleVersion": "1",
-        "UIMainStoryboardFile": "",
-        "UILaunchStoryboardName": "LaunchScreen"
-        ],
+        "CFBundleDisplayName": "우리술",
+        "UILaunchStoryboardName": "LaunchScreen",
+        "UIInterfaceOrientation": ["UIInterfaceOrientationPortrait"],
+        "UIUserInterfaceStyle": "Light"
+    ],
     dependencies: [
         .project(target: "Home", path: .relativeToCurrentFile("../Home")),
         .project(target: "Brewery", path: .relativeToCurrentFile("../Brewery")),

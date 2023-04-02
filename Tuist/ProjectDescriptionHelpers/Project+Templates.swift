@@ -62,7 +62,9 @@ extension Project {
             name: "\(name)DemoApp",
             platform: platform,
             iOSTargetVersion: iOSTargetVersion,
-            infoPlist: infoPlist,
+            infoPlist: [
+                "UILaunchStoryboardName": "LaunchScreen"
+            ],
             dependencies: [
                 .target(name: name)
             ]
