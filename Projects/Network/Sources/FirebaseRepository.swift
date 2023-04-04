@@ -14,11 +14,12 @@ import OSLog
 // MARK: - Interface
 public protocol FirebaseRepositoryInterface {
     func fetchLiquors(filters: [FirebaseRepository.LiquorFilterKey: Any], order: FirebaseRepository.LiquorOrderKey, page: Int, pageCapacity: Int) async throws -> [[String: Any]]
-    func fetchBrewery(by querys: [FirebaseRepository.BrewerySortingKey: Any], page: Int, pageCapacity: Int) async throws -> [[String: Any]]
+    func fetchBrewery(filters: [FirebaseRepository.BreweryFilterKey: Any], page: Int, pageCapacity: Int) async throws -> [[String: Any]]
 }
 
 // MARK: - Main
 public final class FirebaseRepository: FirebaseRepositoryInterface {
+    private let logId = UUID()
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "",
                                 category: "FirebaseRepository")
     private let database: Firestore
@@ -51,20 +52,45 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
         return try await withCheckedThrowingContinuation { continuation in
             finalQuery.getDocuments { [weak self] snapshot, error in
                 if let error = error {
+                    self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: \(error.localizedDescription)")
                     continuation.resume(throwing: error)
-                    self?.logger.debug("🚨 file: \(#file), function: \(#function) errorMessage: \(error.localizedDescription)")
                 }
                 if let snapshot = snapshot {
+                    self?.logger.debug("✅ Liquors fetching completed. LogId: \(self?.logId.uuidString ?? "unknown")")
                     continuation.resume(returning: snapshot.documents.map { $0.data() })
                 } else {
-                    self?.logger.debug("🚨 file: \(#file), function: \(#function) errorMessage: There is no data in snapshot")
+                    self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: There is no data in snapshot")
+                    continuation.resume(throwing: FirebaseError.noData)
                 }
             }
         }
     }
 
-    public func fetchBrewery(by querys: [BrewerySortingKey: Any], page: Int = 0, pageCapacity: Int = 10) async throws -> [[String: Any]] {
-        return []
+    public func fetchBrewery(filters: [BreweryFilterKey: Any], page: Int = 0, pageCapacity: Int = 10) async throws -> [[String: Any]] {
+        var filters = filters
+        var finalQuery: Query = breweryReference.order(by: "id")
+            .start(at: [page * pageCapacity])
+            .limit(to: pageCapacity)
+
+        while let filter = filters.popFirst() {
+            finalQuery = finalQuery.whereField(filter.key.name, isEqualTo: filter.value)
+        }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            finalQuery.getDocuments { [weak self] snapshot, error in
+                if let error = error {
+                    self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                }
+                if let snapshot = snapshot {
+                    self?.logger.debug("✅ Breweries fetching completed. LogId: \(self?.logId.uuidString ?? "unknown")")
+                    continuation.resume(returning: snapshot.documents.map { $0.data() })
+                } else {
+                    self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: There is no data in snapshot")
+                    continuation.resume(throwing: FirebaseError.noData)
+                }
+            }
+        }
     }
 }
 
@@ -107,7 +133,7 @@ extension FirebaseRepository {
         }
     }
 
-    public enum BrewerySortingKey {
+    public enum BreweryFilterKey {
         case byRegion
         case byName
 
@@ -119,5 +145,11 @@ extension FirebaseRepository {
                 return "name"
             }
         }
+    }
+}
+
+public extension FirebaseRepository {
+    enum FirebaseError: Error {
+        case noData
     }
 }
