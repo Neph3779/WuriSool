@@ -15,7 +15,7 @@ public struct Liquor {
     let name: String
     let imagePath: String
 
-    init(data: [String: Any]) {
+    public init(data: [String: Any]) {
         id = data["id"] as? Int ?? -1
         alcoholPercentage = data["alcoholPercentage"] as? String ?? ""
         dosage = data["dosage"] as? String ?? ""
