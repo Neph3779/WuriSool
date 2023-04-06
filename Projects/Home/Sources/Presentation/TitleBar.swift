@@ -40,7 +40,7 @@ final class TitleBar: UIView {
         }
 
         subTitleLabel.snp.makeConstraints {
-            $0.leading.bottom.equalToSuperview().inset(5)
+            $0.leading.trailing.bottom.equalToSuperview().inset(5)
             $0.top.equalTo(titleLabel.snp.bottom).offset(5)
         }
     }

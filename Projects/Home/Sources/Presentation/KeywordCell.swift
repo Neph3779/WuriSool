@@ -17,6 +17,9 @@ final class KeywordCell: UICollectionViewCell {
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 25
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.lightGray.cgColor
         return imageView
     }()
 
@@ -27,7 +30,6 @@ final class KeywordCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setUpLayer()
         layout()
     }
 
@@ -38,12 +40,6 @@ final class KeywordCell: UICollectionViewCell {
     func setUpContents(keyword: Keyword, imagePath: String) {
         titleLabel.text = keyword.name
         imageView.kf.setImage(with: URL(string: imagePath))
-    }
-
-    private func setUpLayer() {
-        layer.cornerRadius = 10
-        layer.borderWidth = 1
-        layer.borderColor = UIColor.lightGray.cgColor
     }
 
     private func layout() {

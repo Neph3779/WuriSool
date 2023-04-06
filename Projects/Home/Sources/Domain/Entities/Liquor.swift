@@ -8,12 +8,12 @@
 
 import Foundation
 
-public struct Liquor {
-    let id: Int
-    let alcoholPercentage: String
-    let dosage: String
-    let name: String
-    let imagePath: String
+public struct Liquor: Hashable {
+    public let id: Int
+    public let alcoholPercentage: String
+    public let dosage: String
+    public let name: String
+    public let imagePath: String
 
     public init(data: [String: Any]) {
         id = data["id"] as? Int ?? -1
