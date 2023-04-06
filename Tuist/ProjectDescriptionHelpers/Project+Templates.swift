@@ -29,18 +29,26 @@ extension Project {
                                                infoPlist: [String: InfoPlist.Value] = [:],
                                                dependencies: [TargetDependency] = []) -> Project {
 
-        let domainTargets = makeFrameworkTargets(name: "\(name)Domain", iOSTargetVersion: iOSTargetVersion)
+        let domainTargets = makeFrameworkTargets(
+            name: "\(name)Domain",
+            layer: .domain,
+            iOSTargetVersion: iOSTargetVersion
+        )
 
         let presentationTargets = makeFrameworkTargets(
-            name: "\(name)Presentation", iOSTargetVersion: iOSTargetVersion,
+            name: "\(name)Presentation",
+            layer: .presentation,
+            iOSTargetVersion: iOSTargetVersion,
             dependencies: [
                 .target(name: "\(name)Domain"),
-                .external(name: "SnapKit")
+                .external(name: "SnapKit"),
+                .external(name: "Kingfisher")
             ]
         )
 
         let dataTargets = makeFrameworkTargets(
             name: "\(name)Data",
+            layer: .data,
             iOSTargetVersion: iOSTargetVersion,
             dependencies: [
                 .target(name: "\(name)Domain"),
@@ -97,6 +105,14 @@ extension Project {
 }
 
 private extension Project {
+    enum Layer: String {
+        case domain = "Domain"
+        case presentation = "Presentation"
+        case data = "Data"
+    }
+}
+
+private extension Project {
 
     static func makeFrameworkTargets(name: String, platform: Platform = .iOS, iOSTargetVersion: String, dependencies: [TargetDependency] = []) -> [Target] {
         let sources = Target(name: name,
@@ -114,6 +130,29 @@ private extension Project {
                            bundleId: "\(organizationName).\(name)Tests",
                            infoPlist: .default,
                            sources: ["Tests/**"],
+                           resources: [],
+                           dependencies: [
+                            .target(name: name)
+                           ])
+        return [sources, tests]
+    }
+
+    static func makeFrameworkTargets(name: String, layer: Layer, platform: Platform = .iOS, iOSTargetVersion: String, dependencies: [TargetDependency] = []) -> [Target] {
+        let sources = Target(name: name,
+                             platform: platform,
+                             product: .framework,
+                             bundleId: "\(organizationName).\(name)",
+                             deploymentTarget: .iOS(targetVersion: iOSTargetVersion, devices: [.iphone]),
+                             infoPlist: .default,
+                             sources: ["Sources/\(layer.rawValue)/**"],
+                             resources: ["Resources/**"],
+                             dependencies: dependencies)
+        let tests = Target(name: "\(name)\(layer.rawValue)Tests",
+                           platform: platform,
+                           product: .unitTests,
+                           bundleId: "\(organizationName).\(name)Tests",
+                           infoPlist: .default,
+                           sources: ["Tests/\(layer.rawValue)/**"],
                            resources: [],
                            dependencies: [
                             .target(name: name)
