@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Keyword: Int {
+public enum Keyword: Int {
     case costEffective = 1
     case fall
     case winter
@@ -39,7 +39,7 @@ enum Keyword: Int {
     case solo
     case home
 
-    var name: String {
+    public var name: String {
         switch self {
         case .costEffective:
             return "가성비"

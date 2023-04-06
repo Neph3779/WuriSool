@@ -7,7 +7,54 @@
 //
 
 import UIKit
+import Kingfisher
+import HomeDomain
 
 final class KeywordCell: UICollectionViewCell {
+
     static let reuseIdentifier = String(describing: KeywordCell.self)
+
+    private let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        return label
+    }()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setUpLayer()
+        layout()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func setUpContents(keyword: Keyword, imagePath: String) {
+        titleLabel.text = keyword.name
+        imageView.kf.setImage(with: URL(string: imagePath))
+    }
+
+    private func setUpLayer() {
+        layer.cornerRadius = 10
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.lightGray.cgColor
+    }
+
+    private func layout() {
+        [imageView, titleLabel].forEach { contentView.addSubview($0) }
+        imageView.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.height.equalTo(imageView.snp.width)
+        }
+        titleLabel.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.top.equalTo(imageView.snp.bottom)
+        }
+    }
 }
