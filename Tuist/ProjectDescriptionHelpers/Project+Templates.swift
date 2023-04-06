@@ -41,6 +41,7 @@ extension Project {
             iOSTargetVersion: iOSTargetVersion,
             dependencies: [
                 .target(name: "\(name)Domain"),
+                .project(target: "Design", path: .relativeToRoot("Projects/Design")),
                 .external(name: "SnapKit"),
                 .external(name: "Kingfisher")
             ]
