@@ -17,10 +17,11 @@ final class LiquorCell: UICollectionViewCell {
 
     private let liquorImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 10
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = DesignAsset.gray1.color.cgColor
+        imageView.clipsToBounds = true
         return imageView
     }()
 
@@ -48,11 +49,8 @@ final class LiquorCell: UICollectionViewCell {
 
     func setUpContents(liquor: Liquor) {
         liquorImageView.kf.setImage(with: URL(string: liquor.imagePath))
-//        titleLabel.text = liquor.name
-//        subTitleLabel.text = "\(liquor.dosage) | \(liquor.alcoholPercentage)"
-
-        titleLabel.text = "dummyTitle"
-        subTitleLabel.text = "dummysubTitle"
+        titleLabel.text = liquor.name
+        subTitleLabel.text = "\(liquor.dosage) | \(liquor.alcoholPercentage)"
     }
 
     private func layout() {
@@ -66,12 +64,12 @@ final class LiquorCell: UICollectionViewCell {
         }
 
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(liquorImageView.snp.bottom)
+            $0.top.equalTo(liquorImageView.snp.bottom).offset(5)
             $0.leading.trailing.equalToSuperview()
         }
 
         subTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(5)
             $0.leading.trailing.bottom.equalToSuperview()
         }
     }

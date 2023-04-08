@@ -54,7 +54,19 @@ public final class HomeViewController: UIViewController {
         view.backgroundColor = .white
         setUpCollectionViews()
         layout()
-        applyDataSource()
+        HomeSection.allCases.forEach {
+            applyDataSource(section: $0)
+        }
+        bind()
+        viewModel.viewDidLoad()
+    }
+
+    private func bind() {
+        viewModel.applyDataSource = { [weak self] section in
+            DispatchQueue.main.async {
+                self?.applyDataSource(section: section)
+            }
+        }
     }
 
     private func setUpCollectionViews() {
@@ -85,13 +97,13 @@ public final class HomeViewController: UIViewController {
             $0.height.equalTo(200)
         }
         viewTop10LiquorCollectionView.snp.makeConstraints {
-            $0.height.equalTo(270)
+            $0.height.equalTo(280)
         }
         keywordCollectionView.snp.makeConstraints {
             $0.height.equalTo(168)
         }
         buyTop10LiquorCollectionView.snp.makeConstraints {
-            $0.height.equalTo(270)
+            $0.height.equalTo(280)
         }
 
         [cardNewsCollectionView, viewTop10LiquorTitleBar, viewTop10LiquorCollectionView, keywordListTitleBar, keywordCollectionView, buyTop10LiquorTitleBar, buyTop10LiquorCollectionView].forEach {
@@ -99,26 +111,38 @@ public final class HomeViewController: UIViewController {
         }
     }
 
-    private func applyDataSource() {
-        var cardNewsSnapShot = NSDiffableDataSourceSnapshot<CardNewsSection, String>()
-        cardNewsSnapShot.appendSections([.main])
-        cardNewsSnapShot.appendItems(["https://thesool.com/common/imageView.do?targetId=PR00000508&targetNm=PRODUCT", "2"], toSection: .main)
-        cardNewsDataSource.apply(cardNewsSnapShot)
+    private func applyDataSource(section: HomeSection) {
+        switch section {
+        case .cardNews:
+            var cardNewsSnapShot = NSDiffableDataSourceSnapshot<CardNewsSection, String>()
+            cardNewsSnapShot.appendSections([.main])
+            cardNewsSnapShot.appendItems(["https://thesool.com/common/imageView.do?targetId=D000010000", "https://thesool.com/common/imageView.do?targetId=D000009959"])
+            cardNewsDataSource.apply(cardNewsSnapShot)
+        case .viewTop10(let liquors):
+            var viewTop10SnapShot = NSDiffableDataSourceSnapshot<ViewTop10Section, Liquor>()
+            viewTop10SnapShot.appendSections([.main])
+            viewTop10SnapShot.appendItems(liquors)
+            self.viewTop10LiquorDataSource.apply(viewTop10SnapShot)
+        case .keyword(let keywords):
+            var keywordSnapShot = NSDiffableDataSourceSnapshot<KeywordSection, String>()
+            keywordSnapShot.appendSections([.main])
+            keywordSnapShot.appendItems(keywords.map { $0.name })
+            keywordListDataSource.apply(keywordSnapShot)
+        case .buyTop10(let liquors):
+            var buyTop10SnapShot = NSDiffableDataSourceSnapshot<BuyTop10Section, Liquor>()
+            buyTop10SnapShot.appendSections([.main])
+            buyTop10SnapShot.appendItems(liquors)
+            buyTop10DataSource.apply(buyTop10SnapShot)
+        }
+    }
 
-        var viewTop10SnapShot = NSDiffableDataSourceSnapshot<ViewTop10Section, Liquor>()
-        viewTop10SnapShot.appendSections([.main])
-        viewTop10SnapShot.appendItems([.init(data: [:])])
-        self.viewTop10LiquorDataSource.apply(viewTop10SnapShot)
+    enum HomeSection: CaseIterable {
+        static var allCases: [HomeViewController.HomeSection] = [.cardNews, .viewTop10([]), .keyword([]), .buyTop10([])]
 
-        var keywordSnapShot = NSDiffableDataSourceSnapshot<KeywordSection, String>()
-        keywordSnapShot.appendSections([.main])
-        keywordSnapShot.appendItems(["dummy", ""], toSection: .main)
-        keywordListDataSource.apply(keywordSnapShot)
-
-        var buyTop10SnapShot = NSDiffableDataSourceSnapshot<BuyTop10Section, Liquor>()
-        buyTop10SnapShot.appendSections([.main])
-        buyTop10SnapShot.appendItems([Liquor(data: [:])], toSection: .main)
-        buyTop10DataSource.apply(buyTop10SnapShot)
+        case cardNews
+        case viewTop10([Liquor])
+        case keyword([Keyword])
+        case buyTop10([Liquor])
     }
 }
 
@@ -184,12 +208,14 @@ extension HomeViewController {
     }
 
     private func liquorCollectionViewLayout() -> UICollectionViewCompositionalLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1/3), heightDimension: .fractionalHeight(1))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1/3), heightDimension: .fractionalHeight(1))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        group.edgeSpacing = .init(leading: .fixed(10), top: .fixed(0), trailing: .fixed(10), bottom: .fixed(0))
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 16)
+        section.contentInsets = .init(top: 0, leading: 6, bottom: 0, trailing: 16)
+        section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         return UICollectionViewCompositionalLayout(section: section)
     }
 

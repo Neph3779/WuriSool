@@ -17,7 +17,7 @@ final class HomeDIContainer {
     }
 
     func makeHomeViewModel() -> HomeViewModel {
-        return HomeViewModel(repository: MockHomeRepository())
+        return HomeViewModel(repository: HomeRepository())
     }
 }
 
@@ -25,5 +25,11 @@ final class HomeDIContainer {
 // MARK: - MockRepositories
 
 final class MockHomeRepository: HomeRepositoryInterface {
+    func fetchViewTop10Liquors() async throws -> [Liquor] {
+        return []
+    }
 
+    func fetchBuyTop10Liquors() async throws -> [Liquor] {
+        return []
+    }
 }

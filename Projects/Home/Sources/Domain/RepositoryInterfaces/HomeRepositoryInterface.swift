@@ -9,5 +9,6 @@
 import Foundation
 
 public protocol HomeRepositoryInterface {
-    
+    func fetchViewTop10Liquors() async throws -> [Liquor]
+    func fetchBuyTop10Liquors() async throws -> [Liquor]
 }
