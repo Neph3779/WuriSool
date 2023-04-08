@@ -9,6 +9,7 @@
 import UIKit
 import Kingfisher
 import HomeDomain
+import Design
 
 final class LiquorCell: UICollectionViewCell {
 
@@ -19,17 +20,20 @@ final class LiquorCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10
         imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.lightGray.cgColor
+        imageView.layer.borderColor = DesignAsset.gray1.color.cgColor
         return imageView
     }()
 
     private let titleLabel: UILabel = {
         let label = UILabel()
+        label.applyFont(font: .titleSmall)
         return label
     }()
 
     private let subTitleLabel: UILabel = {
         let label = UILabel()
+        label.applyFont(font: .bodySmall)
+        label.textColor = DesignAsset.gray4.color
         return label
     }()
 
@@ -44,8 +48,11 @@ final class LiquorCell: UICollectionViewCell {
 
     func setUpContents(liquor: Liquor) {
         liquorImageView.kf.setImage(with: URL(string: liquor.imagePath))
-        titleLabel.text = liquor.name
-        subTitleLabel.text = "\(liquor.dosage) | \(liquor.alcoholPercentage)"
+//        titleLabel.text = liquor.name
+//        subTitleLabel.text = "\(liquor.dosage) | \(liquor.alcoholPercentage)"
+
+        titleLabel.text = "dummyTitle"
+        subTitleLabel.text = "dummysubTitle"
     }
 
     private func layout() {

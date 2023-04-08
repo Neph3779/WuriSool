@@ -7,15 +7,19 @@
 //
 
 import UIKit
+import Design
 
 final class TitleBar: UIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
+        label.applyFont(font: .titleMedium)
         return label
     }()
 
     private let subTitleLabel: UILabel = {
         let label = UILabel()
+        label.applyFont(font: .captionMedium)
+        label.textColor = DesignAsset.gray4.color
         return label
     }()
 
@@ -36,12 +40,14 @@ final class TitleBar: UIView {
         }
 
         titleLabel.snp.makeConstraints {
-            $0.leading.top.trailing.equalToSuperview().inset(5)
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(16)
         }
 
         subTitleLabel.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview().inset(5)
+            $0.leading.trailing.equalToSuperview().inset(16)
             $0.top.equalTo(titleLabel.snp.bottom).offset(5)
+            $0.bottom.equalToSuperview()
         }
     }
 }

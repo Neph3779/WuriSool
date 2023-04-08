@@ -9,6 +9,7 @@
 import UIKit
 import Kingfisher
 import HomeDomain
+import Design
 
 final class KeywordCell: UICollectionViewCell {
 
@@ -25,6 +26,9 @@ final class KeywordCell: UICollectionViewCell {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
+        label.applyFont(font: .buttonSmall)
+        label.textColor = DesignAsset.gray5.color
+        label.textAlignment = .center
         return label
     }()
 
@@ -38,7 +42,7 @@ final class KeywordCell: UICollectionViewCell {
     }
 
     func setUpContents(keyword: Keyword, imagePath: String) {
-        titleLabel.text = keyword.name
+        titleLabel.text = "#\(keyword.name)"
         imageView.kf.setImage(with: URL(string: imagePath))
     }
 

@@ -85,13 +85,13 @@ public final class HomeViewController: UIViewController {
             $0.height.equalTo(200)
         }
         viewTop10LiquorCollectionView.snp.makeConstraints {
-            $0.height.equalTo(300)
+            $0.height.equalTo(270)
         }
         keywordCollectionView.snp.makeConstraints {
             $0.height.equalTo(168)
         }
         buyTop10LiquorCollectionView.snp.makeConstraints {
-            $0.height.equalTo(300)
+            $0.height.equalTo(270)
         }
 
         [cardNewsCollectionView, viewTop10LiquorTitleBar, viewTop10LiquorCollectionView, keywordListTitleBar, keywordCollectionView, buyTop10LiquorTitleBar, buyTop10LiquorCollectionView].forEach {
@@ -186,11 +186,10 @@ extension HomeViewController {
     private func liquorCollectionViewLayout() -> UICollectionViewCompositionalLayout {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1/3), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-//        item.edgeSpacing = .init(leading: .fixed(5), top: .flexible(0), trailing: .fixed(5), bottom: .flexible(0))
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 0, leading: 10, bottom: 0, trailing: 0)
+        section.contentInsets = .init(top: 0, leading: 16, bottom: 0, trailing: 16)
         return UICollectionViewCompositionalLayout(section: section)
     }
 
@@ -201,6 +200,7 @@ extension HomeViewController {
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 0, leading: 11, bottom: 0, trailing: 11)
         return UICollectionViewCompositionalLayout(section: section)
     }
 }
