@@ -29,13 +29,13 @@ extension Project {
                                                infoPlist: [String: InfoPlist.Value] = [:],
                                                dependencies: [TargetDependency] = []) -> Project {
 
-        let domainTargets = makeFrameworkTargets(
+        let domainTargets = makeCleanArchitectureLayerTargets(
             name: "\(name)Domain",
             layer: .domain,
             iOSTargetVersion: iOSTargetVersion
         )
 
-        let presentationTargets = makeFrameworkTargets(
+        let presentationTargets = makeCleanArchitectureLayerTargets(
             name: "\(name)Presentation",
             layer: .presentation,
             iOSTargetVersion: iOSTargetVersion,
@@ -47,7 +47,7 @@ extension Project {
             ]
         )
 
-        let dataTargets = makeFrameworkTargets(
+        let dataTargets = makeCleanArchitectureLayerTargets(
             name: "\(name)Data",
             layer: .data,
             iOSTargetVersion: iOSTargetVersion,
@@ -64,7 +64,8 @@ extension Project {
                 .target(name: "\(name)Domain"),
                 .target(name: "\(name)Data"),
                 .target(name: "\(name)Presentation")
-            ]
+            ],
+            shouldIncludeTest: true
         )
 
         let demoAppTargets = makeAppTargets(
@@ -93,12 +94,18 @@ extension Project {
     }
 
     public static func framework(name: String,
+                                 product: Product = .staticFramework,
                                  platform: Platform, iOSTargetVersion: String,
-                                 dependencies: [TargetDependency] = []) -> Project {
-        let targets = makeFrameworkTargets(name: name,
-                                           platform: platform,
-                                           iOSTargetVersion: iOSTargetVersion,
-                                           dependencies: dependencies)
+                                 dependencies: [TargetDependency] = [],
+                                 shouldIncludeTest: Bool) -> Project {
+        let targets = makeFrameworkTargets(
+            name: name,
+            product: product,
+            platform: platform,
+            iOSTargetVersion: iOSTargetVersion,
+            dependencies: dependencies,
+            shouldIncludeTest: shouldIncludeTest
+        )
         return Project(name: name,
                        organizationName: organizationName,
                        targets: targets)
@@ -106,19 +113,11 @@ extension Project {
 }
 
 private extension Project {
-    enum Layer: String {
-        case domain = "Domain"
-        case presentation = "Presentation"
-        case data = "Data"
-    }
-}
 
-private extension Project {
-
-    static func makeFrameworkTargets(name: String, platform: Platform = .iOS, iOSTargetVersion: String, dependencies: [TargetDependency] = []) -> [Target] {
+    static func makeFrameworkTargets(name: String, product: Product = .staticFramework, platform: Platform = .iOS, iOSTargetVersion: String, dependencies: [TargetDependency] = [], shouldIncludeTest: Bool) -> [Target] {
         let sources = Target(name: name,
                              platform: platform,
-                             product: .framework,
+                             product: .staticFramework,
                              bundleId: "\(organizationName).\(name)",
                              deploymentTarget: .iOS(targetVersion: iOSTargetVersion, devices: [.iphone]),
                              infoPlist: .default,
@@ -135,18 +134,17 @@ private extension Project {
                            dependencies: [
                             .target(name: name)
                            ])
-        return [sources, tests]
+        return shouldIncludeTest ? [sources, tests] : [sources]
     }
 
-    static func makeFrameworkTargets(name: String, layer: Layer, platform: Platform = .iOS, iOSTargetVersion: String, dependencies: [TargetDependency] = []) -> [Target] {
+    static func makeCleanArchitectureLayerTargets(name: String, layer: Layer, platform: Platform = .iOS, iOSTargetVersion: String, dependencies: [TargetDependency] = []) -> [Target] {
         let sources = Target(name: name,
                              platform: platform,
-                             product: .framework,
+                             product: .staticFramework,
                              bundleId: "\(organizationName).\(name)",
                              deploymentTarget: .iOS(targetVersion: iOSTargetVersion, devices: [.iphone]),
                              infoPlist: .default,
                              sources: ["Sources/\(layer.rawValue)/**"],
-                             resources: ["Resources/**"],
                              dependencies: dependencies)
         let tests = Target(name: "\(name)\(layer.rawValue)Tests",
                            platform: platform,
@@ -187,5 +185,13 @@ private extension Project {
                 .target(name: "\(name)")
             ])
         return [mainTarget, testTarget]
+    }
+}
+
+private extension Project {
+    enum Layer: String {
+        case domain = "Domain"
+        case presentation = "Presentation"
+        case data = "Data"
     }
 }

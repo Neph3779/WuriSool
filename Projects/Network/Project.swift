@@ -13,10 +13,12 @@ private let iOSTargetVersion = "14.0"
 
 let project = Project.framework(
     name: projectName,
+    product: .dynamicLibrary,
     platform: .iOS,
     iOSTargetVersion: iOSTargetVersion,
     dependencies: [
         .external(name: "FirebaseFirestore"),
         .external(name: "Alamofire")
-    ]
+    ],
+    shouldIncludeTest: true
 )

@@ -11,14 +11,9 @@ import ProjectDescriptionHelpers
 private let projectName = "Design"
 private let iOSTargetVersion = "14.0"
 
-let project = Project(name: projectName, targets: [
-    Target(
-        name: projectName,
-        platform: .iOS,
-        product: .framework,
-        bundleId: "com.neph.\(projectName)",
-        deploymentTarget: .iOS(targetVersion: iOSTargetVersion, devices: [.iphone]),
-        infoPlist: .default,
-        resources: ["Resources/**"]
-    )
-])
+let project = Project.framework(
+    name: projectName,
+    platform: .iOS,
+    iOSTargetVersion: iOSTargetVersion,
+    shouldIncludeTest: false
+)
