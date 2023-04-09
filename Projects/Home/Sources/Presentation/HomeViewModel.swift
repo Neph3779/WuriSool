@@ -28,6 +28,7 @@ extension HomeViewModel {
     func viewDidLoad() {
         fetchViewTop10Liquors()
         fetchBuyTop10Liquors()
+        fetchViewTop10Keywords()
     }
 }
 
@@ -46,11 +47,15 @@ private extension HomeViewModel {
     private func fetchBuyTop10Liquors() {
         Task {
             do {
-                let liquors = try await repository.fetchViewTop10Liquors()
+                let liquors = try await repository.fetchBuyTop10Liquors()
                 applyDataSource?(.buyTop10(liquors))
             } catch {
                 logger.log("fetch view buy 10 failed \n message: \(error.localizedDescription)")
             }
         }
+    }
+
+    private func fetchViewTop10Keywords() {
+        applyDataSource?(.keyword(Keyword.allCases.shuffled().prefix(10).map { $0 }))
     }
 }

@@ -13,7 +13,7 @@ import OSLog
 
 // MARK: - Interface
 public protocol FirebaseRepositoryInterface {
-    func fetchLiquors(filters: [FirebaseRepository.LiquorFilterKey: Any], order: FirebaseRepository.LiquorOrderKey, page: Int, pageCapacity: Int) async throws -> [[String: Any]]
+    func fetchLiquors(filters: [FirebaseRepository.LiquorFilterKey: Any], order: FirebaseRepository.LiquorOrderKey, pageCapacity: Int, lastSnapShot: QuerySnapshot?) async throws -> [[String: Any]]
     func fetchBrewery(filters: [FirebaseRepository.BreweryFilterKey: Any], page: Int, pageCapacity: Int) async throws -> [[String: Any]]
 }
 
@@ -35,10 +35,10 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
         database = Firestore.firestore()
     }
 
-    public func fetchLiquors(filters: [LiquorFilterKey: Any], order: LiquorOrderKey, page: Int = 0, pageCapacity: Int = 10) async throws -> [[String: Any]] {
+    public func fetchLiquors(filters: [LiquorFilterKey: Any], order: LiquorOrderKey, pageCapacity: Int = 10, lastSnapShot: QuerySnapshot? = nil) async throws -> [[String: Any]] {
+
         var filters = filters
-        var finalQuery: Query = liquorReference.order(by: order.name)
-            .start(at: [page * pageCapacity])
+        var finalQuery: Query = liquorReference.order(by: order.name, descending: true)
             .limit(to: pageCapacity)
 
         while let filter = filters.popFirst() {
@@ -47,6 +47,10 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
             } else {
                 finalQuery = finalQuery.whereField(filter.key.name, isEqualTo: filter.value)
             }
+        }
+
+        if let lastDocumentSnapshot = lastSnapShot?.documents.last {
+            finalQuery.start(afterDocument: lastDocumentSnapshot)
         }
 
         return try await withCheckedThrowingContinuation { continuation in
@@ -128,7 +132,7 @@ extension FirebaseRepository {
             case .byHits:
                 return "hits"
             case .byPopularity:
-                return "purchaseCount"
+                return "purchaseConversion"
             }
         }
     }

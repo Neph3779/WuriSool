@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum Keyword: Int {
+public enum Keyword: Int, CaseIterable {
     case costEffective = 1
     case fall
     case winter
@@ -38,6 +38,10 @@ public enum Keyword: Int {
     case party
     case solo
     case home
+
+    public var imagePath: String {
+        return "https://thesool.com/common/imageView.do?targetId=D000010000" // TODO: 각 키워드에 맞는 사진 찾아서 리소스 파일에 넣기
+    }
 
     public var name: String {
         switch self {

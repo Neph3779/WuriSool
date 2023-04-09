@@ -21,6 +21,7 @@ final class KeywordCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 25
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = UIColor.lightGray.cgColor
+        imageView.clipsToBounds = true
         return imageView
     }()
 

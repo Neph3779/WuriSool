@@ -124,9 +124,9 @@ public final class HomeViewController: UIViewController {
             viewTop10SnapShot.appendItems(liquors)
             self.viewTop10LiquorDataSource.apply(viewTop10SnapShot)
         case .keyword(let keywords):
-            var keywordSnapShot = NSDiffableDataSourceSnapshot<KeywordSection, String>()
+            var keywordSnapShot = NSDiffableDataSourceSnapshot<KeywordSection, Keyword>()
             keywordSnapShot.appendSections([.main])
-            keywordSnapShot.appendItems(keywords.map { $0.name })
+            keywordSnapShot.appendItems(keywords.map { $0 })
             keywordListDataSource.apply(keywordSnapShot)
         case .buyTop10(let liquors):
             var buyTop10SnapShot = NSDiffableDataSourceSnapshot<BuyTop10Section, Liquor>()
@@ -177,10 +177,10 @@ extension HomeViewController {
         case main
     }
 
-    private func makeKeywordDataSource() -> UICollectionViewDiffableDataSource<KeywordSection, String> {
-        return .init(collectionView: keywordCollectionView) { collectionView, indexPath, itemIdentifier in
+    private func makeKeywordDataSource() -> UICollectionViewDiffableDataSource<KeywordSection, Keyword> {
+        return .init(collectionView: keywordCollectionView) { collectionView, indexPath, keyword in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KeywordCell.reuseIdentifier, for: indexPath) as? KeywordCell else { return UICollectionViewCell() }
-            cell.setUpContents(keyword: .berry, imagePath: itemIdentifier)
+            cell.setUpContents(keyword: keyword, imagePath: keyword.imagePath)
             return cell
         }
     }
@@ -222,9 +222,10 @@ extension HomeViewController {
     private func keywordCollectionViewLayout() -> UICollectionViewCompositionalLayout {
         let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(70))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.edgeSpacing = .init(leading: .fixed(5), top: .fixed(5), trailing: .fixed(5), bottom: .fixed(5))
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        item.edgeSpacing = .init(leading: .fixed(5), top: .fixed(0), trailing: .fixed(5), bottom: .fixed(0))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(70))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        group.edgeSpacing = .init(leading: .fixed(0), top: .fixed(10), trailing: .fixed(0), bottom: .fixed(0))
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: 0, leading: 11, bottom: 0, trailing: 11)
         return UICollectionViewCompositionalLayout(section: section)
