@@ -9,6 +9,7 @@
 import UIKit
 import HomeDomain
 import SnapKit
+import Design
 
 public final class HomeViewController: UIViewController {
 
@@ -17,7 +18,8 @@ public final class HomeViewController: UIViewController {
     private let contentVerticalStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = 20
+        stackView.spacing = 1
+        stackView.backgroundColor = DesignAsset.gray1.color
         return stackView
     }()
 
@@ -97,17 +99,21 @@ public final class HomeViewController: UIViewController {
             $0.height.equalTo(200)
         }
         viewTop10LiquorCollectionView.snp.makeConstraints {
-            $0.height.equalTo(280)
+            $0.height.equalTo(310)
         }
         keywordCollectionView.snp.makeConstraints {
-            $0.height.equalTo(168)
+            $0.height.equalTo(180)
         }
         buyTop10LiquorCollectionView.snp.makeConstraints {
-            $0.height.equalTo(280)
+            $0.height.equalTo(310)
         }
 
         [cardNewsCollectionView, viewTop10LiquorTitleBar, viewTop10LiquorCollectionView, keywordListTitleBar, keywordCollectionView, buyTop10LiquorTitleBar, buyTop10LiquorCollectionView].forEach {
             contentVerticalStackView.addArrangedSubview($0)
+        }
+
+        [viewTop10LiquorTitleBar, keywordListTitleBar, buyTop10LiquorTitleBar].forEach {
+            contentVerticalStackView.setCustomSpacing(0, after: $0)
         }
     }
 
@@ -214,7 +220,7 @@ extension HomeViewController {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         group.edgeSpacing = .init(leading: .fixed(10), top: .fixed(0), trailing: .fixed(10), bottom: .fixed(0))
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 0, leading: 6, bottom: 0, trailing: 16)
+        section.contentInsets = .init(top: 8, leading: 6, bottom: 16, trailing: 16)
         section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         return UICollectionViewCompositionalLayout(section: section)
     }
@@ -227,7 +233,7 @@ extension HomeViewController {
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         group.edgeSpacing = .init(leading: .fixed(0), top: .fixed(10), trailing: .fixed(0), bottom: .fixed(0))
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 0, leading: 11, bottom: 0, trailing: 11)
+        section.contentInsets = .init(top: 8, leading: 11, bottom: 8, trailing: 11)
         return UICollectionViewCompositionalLayout(section: section)
     }
 }

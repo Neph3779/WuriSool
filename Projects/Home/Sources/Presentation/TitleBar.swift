@@ -25,6 +25,7 @@ final class TitleBar: UIView {
 
     init(title: String, subTitle: String) {
         super.init(frame: .zero)
+        backgroundColor = .white
         titleLabel.text = title
         subTitleLabel.text = subTitle
         layout()
@@ -40,7 +41,7 @@ final class TitleBar: UIView {
         }
 
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview()
+            $0.top.equalToSuperview().inset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
 
