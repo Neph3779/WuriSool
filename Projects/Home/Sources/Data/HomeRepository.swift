@@ -19,7 +19,7 @@ final class HomeRepository: HomeRepositoryInterface {
 
     func fetchViewTop10Liquors() async throws -> [Liquor] {
         do {
-            let data = try await firebaseRepository.fetchLiquors(filters: [:], order: .byHits, pageCapacity: 10, lastSnapShot: nil)
+            let data = try await firebaseRepository.fetchLiquors(query: FirebaseQuery(filters: [:], orderKey: .byHits, pageCapacity: 10), pagination: true)
             return data.map { Liquor(data: $0) }
         } catch {
             throw error
@@ -28,7 +28,7 @@ final class HomeRepository: HomeRepositoryInterface {
 
     func fetchBuyTop10Liquors() async throws -> [Liquor] {
         do {
-            let data = try await firebaseRepository.fetchLiquors(filters: [:], order: .byPopularity, pageCapacity: 10, lastSnapShot: nil)
+            let data = try await firebaseRepository.fetchLiquors(query: FirebaseQuery(filters: [:], orderKey: .byPopularity, pageCapacity: 10), pagination: true)
             return data.map { Liquor(data: $0) }
         } catch {
             throw error

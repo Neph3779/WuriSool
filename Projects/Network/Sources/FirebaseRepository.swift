@@ -13,8 +13,20 @@ import OSLog
 
 // MARK: - Interface
 public protocol FirebaseRepositoryInterface {
-    func fetchLiquors(filters: [FirebaseRepository.LiquorFilterKey: Any], order: FirebaseRepository.LiquorOrderKey, pageCapacity: Int, lastSnapShot: QuerySnapshot?) async throws -> [[String: Any]]
-    func fetchBrewery(filters: [FirebaseRepository.BreweryFilterKey: Any], page: Int, pageCapacity: Int) async throws -> [[String: Any]]
+    func fetchLiquors(query: FirebaseQuery, pagination: Bool) async throws -> [[String: Any]]
+    func fetchBrewery(query: FirebaseQuery, pagination: Bool) async throws -> [[String: Any]]
+}
+
+public struct FirebaseQuery: Hashable {
+    var filters: [FirebaseRepository.FilterKey: String]
+    var orderKey: FirebaseRepository.OrderKey?
+    var pageCapacity: Int
+
+    public init(filters: [FirebaseRepository.FilterKey : String], orderKey: FirebaseRepository.OrderKey? = nil, pageCapacity: Int) {
+        self.filters = filters
+        self.orderKey = orderKey
+        self.pageCapacity = pageCapacity
+    }
 }
 
 // MARK: - Main
@@ -25,6 +37,7 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
     private let database: Firestore
     private lazy var liquorReference = database.collection("Liquor")
     private lazy var breweryReference = database.collection("Brewery")
+    private var queryDictionary: [FirebaseQuery: Query] = [:]
 
     public init() {
         let filePath = NetworkResources.bundle.path(forResource: "GoogleService-Info-Network", ofType: "plist")
@@ -35,11 +48,10 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
         database = Firestore.firestore()
     }
 
-    public func fetchLiquors(filters: [LiquorFilterKey: Any], order: LiquorOrderKey, pageCapacity: Int = 10, lastSnapShot: QuerySnapshot? = nil) async throws -> [[String: Any]] {
-
-        var filters = filters
-        var finalQuery: Query = liquorReference.order(by: order.name, descending: true)
-            .limit(to: pageCapacity)
+    public func fetchLiquors(query: FirebaseQuery, pagination: Bool = false) async throws -> [[String: Any]] {
+        var filters = query.filters
+        var finalQuery: Query = liquorReference.order(by: query.orderKey?.name ?? "id", descending: true)
+            .limit(to: query.pageCapacity)
 
         while let filter = filters.popFirst() {
             if filter.key == .byKeyword {
@@ -49,12 +61,8 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
             }
         }
 
-        if let lastDocumentSnapshot = lastSnapShot?.documents.last {
-            finalQuery.start(afterDocument: lastDocumentSnapshot)
-        }
-
         return try await withCheckedThrowingContinuation { continuation in
-            finalQuery.getDocuments { [weak self] snapshot, error in
+            let handler: ((QuerySnapshot?, Error?) -> Void) = { [weak self] snapshot, error in
                 if let error = error {
                     self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: \(error.localizedDescription)")
                     continuation.resume(throwing: error)
@@ -67,51 +75,73 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
                     continuation.resume(throwing: FirebaseError.noData)
                 }
             }
+
+            if let queryFromDict = queryDictionary[query] {
+                queryFromDict.addSnapshotListener { snapshot, error in
+                    guard let lastSnapshot = snapshot?.documents.last else { return }
+                    queryFromDict.start(afterDocument: lastSnapshot).getDocuments(completion: handler)
+                }
+            } else {
+                finalQuery.getDocuments(completion: handler)
+            }
+
+            if pagination {
+                queryDictionary.updateValue(finalQuery, forKey: query)
+            }
         }
     }
 
-    public func fetchBrewery(filters: [BreweryFilterKey: Any], page: Int = 0, pageCapacity: Int = 10) async throws -> [[String: Any]] {
-        var filters = filters
+    public func fetchBrewery(query: FirebaseQuery, pagination: Bool) async throws -> [[String: Any]] {
+        var filters = query.filters
         var finalQuery: Query = breweryReference.order(by: "id")
-            .start(at: [page * pageCapacity])
-            .limit(to: pageCapacity)
+            .limit(to: query.pageCapacity)
 
         while let filter = filters.popFirst() {
             finalQuery = finalQuery.whereField(filter.key.name, isEqualTo: filter.value)
         }
 
         return try await withCheckedThrowingContinuation { continuation in
-            finalQuery.getDocuments { [weak self] snapshot, error in
+            let handler: ((QuerySnapshot?, Error?) -> Void) = { [weak self] snapshot, error in
                 if let error = error {
                     self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: \(error.localizedDescription)")
                     continuation.resume(throwing: error)
                 }
                 if let snapshot = snapshot {
-                    self?.logger.debug("✅ Breweries fetching completed. LogId: \(self?.logId.uuidString ?? "unknown")")
+                    self?.logger.debug("✅ Liquors fetching completed. LogId: \(self?.logId.uuidString ?? "unknown")")
                     continuation.resume(returning: snapshot.documents.map { $0.data() })
                 } else {
                     self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: There is no data in snapshot")
                     continuation.resume(throwing: FirebaseError.noData)
                 }
             }
+
+            if let queryFromDict = queryDictionary[query] {
+                queryFromDict.addSnapshotListener { snapshot, error in
+                    guard let lastSnapshot = snapshot?.documents.last else { return }
+                    queryFromDict.start(afterDocument: lastSnapshot).getDocuments(completion: handler)
+                }
+            } else {
+                finalQuery.getDocuments(completion: handler)
+            }
+
+            if pagination {
+                queryDictionary.updateValue(finalQuery, forKey: query)
+            }
         }
     }
 }
 
-// MARK: - Search Target & Sorting Keys
-extension FirebaseRepository {
-    enum SearchTarget {
-        case liquor
-        case brewery
-        case cardNews
-    }
+// MARK: - FilterKey & OrderKey
 
-    public enum LiquorFilterKey {
+extension FirebaseRepository {
+
+    public enum FilterKey {
         case byKeyword
         case byCategory
         case byName
+        case byRegion
 
-        var name: String {
+        public var name: String {
             switch self {
             case .byKeyword:
                 return "keywords"
@@ -119,34 +149,22 @@ extension FirebaseRepository {
                 return "type"
             case .byName:
                 return "name"
+            case .byRegion:
+                return "region"
             }
         }
     }
 
-    public enum LiquorOrderKey {
+    public enum OrderKey {
         case byHits
         case byPopularity
 
-        var name: String {
+        public var name: String {
             switch self {
             case .byHits:
                 return "hits"
             case .byPopularity:
                 return "purchaseConversion"
-            }
-        }
-    }
-
-    public enum BreweryFilterKey {
-        case byRegion
-        case byName
-
-        var name: String {
-            switch self {
-            case .byRegion:
-                return "region"
-            case .byName:
-                return "name"
             }
         }
     }
