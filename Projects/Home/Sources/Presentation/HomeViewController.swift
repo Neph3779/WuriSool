@@ -10,7 +10,6 @@ import UIKit
 import HomeDomain
 import SnapKit
 import Design
-import BaseDomain
 
 public final class HomeViewController: UIViewController {
 

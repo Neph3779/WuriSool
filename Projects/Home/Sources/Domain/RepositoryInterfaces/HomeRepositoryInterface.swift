@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import BaseDomain
 
 public protocol HomeRepositoryInterface {
     func fetchViewTop10Liquors() async throws -> [Liquor]

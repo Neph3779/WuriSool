@@ -10,7 +10,7 @@ import UIKit
 import HomePresentation
 import HomeData
 import HomeDomain
-import BaseDomain
+//import BaseDomain
 
 final class HomeDIContainer {
     func makeHomeViewController() -> HomeViewController {
