@@ -76,7 +76,7 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
                 }
             }
 
-            if let queryFromDict = queryDictionary[query] {
+            if let queryFromDict = queryDictionary[query], pagination {
                 queryFromDict.addSnapshotListener { snapshot, error in
                     guard let lastSnapshot = snapshot?.documents.last else { return }
                     queryFromDict.start(afterDocument: lastSnapshot).getDocuments(completion: handler)
@@ -115,7 +115,7 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
                 }
             }
 
-            if let queryFromDict = queryDictionary[query] {
+            if let queryFromDict = queryDictionary[query], pagination {
                 queryFromDict.addSnapshotListener { snapshot, error in
                     guard let lastSnapshot = snapshot?.documents.last else { return }
                     queryFromDict.start(afterDocument: lastSnapshot).getDocuments(completion: handler)
