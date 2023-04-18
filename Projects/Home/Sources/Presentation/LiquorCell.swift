@@ -10,6 +10,7 @@ import UIKit
 import Kingfisher
 import HomeDomain
 import Design
+import BaseDomain
 
 final class LiquorCell: UICollectionViewCell {
 

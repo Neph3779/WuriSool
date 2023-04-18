@@ -32,7 +32,10 @@ extension Project {
         let domainTargets = makeCleanArchitectureLayerTargets(
             name: "\(name)Domain",
             layer: .domain,
-            iOSTargetVersion: iOSTargetVersion
+            iOSTargetVersion: iOSTargetVersion,
+            dependencies: [
+                .project(target: "BaseDomain", path: .relativeToRoot("Projects/Core/BaseDomain"))
+            ]
         )
 
         let presentationTargets = makeCleanArchitectureLayerTargets(
@@ -41,7 +44,7 @@ extension Project {
             iOSTargetVersion: iOSTargetVersion,
             dependencies: [
                 .target(name: "\(name)Domain"),
-                .project(target: "Design", path: .relativeToRoot("Projects/Design")),
+                .project(target: "Design", path: .relativeToRoot("Projects/Core/Design")),
                 .external(name: "SnapKit"),
                 .external(name: "Kingfisher")
             ]
@@ -53,7 +56,7 @@ extension Project {
             iOSTargetVersion: iOSTargetVersion,
             dependencies: [
                 .target(name: "\(name)Domain"),
-                .project(target: "Network", path: .relativeToManifest("../Network"))
+                .project(target: "Network", path: .relativeToRoot("Projects/Core/Network"))
             ]
         )
 

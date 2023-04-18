@@ -9,6 +9,7 @@
 import Foundation
 import HomeDomain
 import OSLog
+import BaseDomain
 
 public final class HomeViewModel {
 

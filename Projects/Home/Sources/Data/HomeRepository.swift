@@ -9,6 +9,7 @@
 import Foundation
 import Network
 import HomeDomain
+import BaseDomain
 
 final class HomeRepository: HomeRepositoryInterface {
     private let firebaseRepository: FirebaseRepositoryInterface
