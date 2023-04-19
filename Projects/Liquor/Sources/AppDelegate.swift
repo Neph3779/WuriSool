@@ -17,7 +17,7 @@ import UIKit
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
-        let viewController = ViewController()
+        let viewController = LiquorListViewController()
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
         return true
