@@ -15,6 +15,7 @@ import OSLog
 public protocol FirebaseRepositoryInterface {
     func fetchLiquors(query: FirebaseQuery, pagination: Bool) async throws -> [[String: Any]]
     func fetchBrewery(query: FirebaseQuery, pagination: Bool) async throws -> [[String: Any]]
+    func fetchLiquorCount(query: FirebaseQuery) async throws -> Int
 }
 
 public struct FirebaseQuery: Hashable {
@@ -92,6 +93,29 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
             } else {
                 finalQuery.getDocuments(completion: handler)
             }
+        }
+    }
+
+    public func fetchLiquorCount(query: FirebaseQuery) async throws -> Int {
+        var filters = query.filters
+        var finalQuery: Query = liquorReference.order(by: query.orderKey?.name ?? "id", descending: true)
+
+        while let filter = filters.popFirst() {
+            if filter.key == .byKeyword {
+                finalQuery = finalQuery.whereField(filter.key.name, arrayContains: Int(filter.value) ?? -1)
+            } else if filter.key == .byCategory {
+                finalQuery = finalQuery.whereField(filter.key.name, isEqualTo: Int(filter.value) ?? -1)
+            } else {
+                finalQuery = finalQuery.whereField(filter.key.name, isEqualTo: filter.value)
+            }
+        }
+
+        let countQuery = finalQuery.count
+        do {
+            let snapshot = try await countQuery.getAggregation(source: .server)
+            return Int(truncating: snapshot.count)
+        } catch {
+            throw error
         }
     }
 
