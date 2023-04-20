@@ -19,6 +19,7 @@ final class LiquorCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 10
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = DesignAsset.gray1.color.cgColor
+        imageView.clipsToBounds = true
         return imageView
     }()
     private let titleLabel: UILabel = {

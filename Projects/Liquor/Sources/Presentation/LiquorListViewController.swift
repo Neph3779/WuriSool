@@ -20,6 +20,7 @@ final class LiquorListViewController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.distribution = .fill
+        stackView.backgroundColor = DesignAsset.gray1.color
         return stackView
     }()
 
@@ -52,11 +53,13 @@ final class LiquorListViewController: UIViewController {
             infoView.addSubview($0)
         }
         productCountLabel.snp.makeConstraints {
-            $0.leading.top.bottom.equalToSuperview().inset(5)
+            $0.leading.top.bottom.equalToSuperview().inset(15)
         }
         categoryLabel.snp.makeConstraints {
-            $0.trailing.top.bottom.equalToSuperview().inset(5)
+            $0.trailing.top.bottom.equalToSuperview().inset(15)
         }
+
+        infoView.backgroundColor = .white
         return infoView
     }()
 
@@ -136,11 +139,12 @@ final class LiquorListViewController: UIViewController {
             outerStackView.addArrangedSubview($0)
         }
         keywordCollectionView.snp.makeConstraints {
-            $0.height.equalTo(150)
+            $0.height.equalTo(100)
         }
         liquorCollectionView.snp.makeConstraints {
             $0.height.greaterThanOrEqualTo(1) // trigger for estimate collectionView's size
         }
+        outerStackView.setCustomSpacing(1, after: keywordCollectionView)
     }
 }
 
@@ -148,9 +152,8 @@ final class LiquorListViewController: UIViewController {
 
 extension LiquorListViewController {
     private func keywordCollectionViewLayout() -> UICollectionViewCompositionalLayout {
-        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(150)))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .fractionalWidth(1/5), heightDimension: .absolute(150)), subitems: [item])
-        group.edgeSpacing = .init(leading: .fixed(0), top: .fixed(0), trailing: .fixed(10), bottom: .fixed(0))
+        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(100)))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .fractionalWidth(1/5), heightDimension: .absolute(100)), subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         return UICollectionViewCompositionalLayout(section: section)
@@ -176,8 +179,9 @@ extension LiquorListViewController {
     }
 
     private func makeKeywordDataSource() -> UICollectionViewDiffableDataSource<KeywordSection, Keyword> {
-        return .init(collectionView: keywordCollectionView) { collectionView, indexPath, itemIdentifier in
+        return .init(collectionView: keywordCollectionView) { collectionView, indexPath, keyword in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KeywordCell.reuseIdentifier, for: indexPath) as? KeywordCell else { return UICollectionViewCell() }
+            cell.setUpContents(keyword: keyword)
             return cell
         }
     }
