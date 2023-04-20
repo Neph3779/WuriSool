@@ -18,9 +18,9 @@ public protocol FirebaseRepositoryInterface {
 }
 
 public struct FirebaseQuery: Hashable {
-    var filters: [FirebaseRepository.FilterKey: String]
-    var orderKey: FirebaseRepository.OrderKey?
-    var pageCapacity: Int
+    public var filters: [FirebaseRepository.FilterKey: String]
+    public var orderKey: FirebaseRepository.OrderKey?
+    public var pageCapacity: Int
 
     public init(filters: [FirebaseRepository.FilterKey : String], orderKey: FirebaseRepository.OrderKey? = nil, pageCapacity: Int) {
         self.filters = filters
@@ -37,7 +37,7 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
     private let database: Firestore
     private lazy var liquorReference = database.collection("Liquor")
     private lazy var breweryReference = database.collection("Brewery")
-    private var queryDictionary: [FirebaseQuery: Query] = [:]
+    private var snapShotCache: [FirebaseQuery: QueryDocumentSnapshot?] = [:] // for support pagination
 
     public init() {
         let filePath = NetworkResources.bundle.path(forResource: "GoogleService-Info-Network", ofType: "plist")
@@ -55,7 +55,9 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
 
         while let filter = filters.popFirst() {
             if filter.key == .byKeyword {
-                finalQuery = finalQuery.whereField(filter.key.name, arrayContains: filter.value)
+                finalQuery = finalQuery.whereField(filter.key.name, arrayContains: Int(filter.value) ?? -1)
+            } else if filter.key == .byCategory {
+                finalQuery = finalQuery.whereField(filter.key.name, isEqualTo: Int(filter.value) ?? -1)
             } else {
                 finalQuery = finalQuery.whereField(filter.key.name, isEqualTo: filter.value)
             }
@@ -66,27 +68,29 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
                 if let error = error {
                     self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: \(error.localizedDescription)")
                     continuation.resume(throwing: error)
+                    return
                 }
                 if let snapshot = snapshot {
                     self?.logger.debug("✅ Liquors fetching completed. LogId: \(self?.logId.uuidString ?? "unknown")")
                     continuation.resume(returning: snapshot.documents.map { $0.data() })
+                    if pagination {
+                        self?.snapShotCache.updateValue(snapshot.documents.last, forKey: query)
+                    }
+                    return
                 } else {
                     self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: There is no data in snapshot")
                     continuation.resume(throwing: FirebaseError.noData)
+                    return
                 }
             }
 
-            if let queryFromDict = queryDictionary[query], pagination {
-                queryFromDict.addSnapshotListener { snapshot, error in
-                    guard let lastSnapshot = snapshot?.documents.last else { return }
-                    queryFromDict.start(afterDocument: lastSnapshot).getDocuments(completion: handler)
-                }
+            if let lastSnapshot = snapShotCache[query],
+               let lastSnapshot = lastSnapshot,
+               pagination {
+                finalQuery.start(afterDocument: lastSnapshot)
+                    .getDocuments(completion: handler)
             } else {
                 finalQuery.getDocuments(completion: handler)
-            }
-
-            if pagination {
-                queryDictionary.updateValue(finalQuery, forKey: query)
             }
         }
     }
@@ -105,29 +109,32 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
                 if let error = error {
                     self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: \(error.localizedDescription)")
                     continuation.resume(throwing: error)
+                    return
                 }
                 if let snapshot = snapshot {
                     self?.logger.debug("✅ Liquors fetching completed. LogId: \(self?.logId.uuidString ?? "unknown")")
                     continuation.resume(returning: snapshot.documents.map { $0.data() })
+                    return
                 } else {
                     self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: There is no data in snapshot")
                     continuation.resume(throwing: FirebaseError.noData)
+                    return
                 }
             }
 
-            if let queryFromDict = queryDictionary[query], pagination {
-                queryFromDict.addSnapshotListener { snapshot, error in
-                    guard let lastSnapshot = snapshot?.documents.last else { return }
-                    queryFromDict.start(afterDocument: lastSnapshot).getDocuments(completion: handler)
-                }
+            if let lastSnapshot = snapShotCache[query],
+               let lastSnapshot = lastSnapshot,
+               pagination {
+                finalQuery.start(afterDocument: lastSnapshot)
+                    .getDocuments(completion: handler)
             } else {
                 finalQuery.getDocuments(completion: handler)
             }
-
-            if pagination {
-                queryDictionary.updateValue(finalQuery, forKey: query)
-            }
         }
+    }
+
+    public func resetPagination() {
+        snapShotCache.removeAll()
     }
 }
 
