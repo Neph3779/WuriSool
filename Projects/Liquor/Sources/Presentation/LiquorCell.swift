@@ -7,7 +7,74 @@
 //
 
 import UIKit
+import LiquorDomain
+import Kingfisher
 
 final class LiquorCell: UICollectionViewCell {
     static let reuseIdentifier = String(describing: LiquorCell.self)
+
+    private let liquorImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.layer.cornerRadius = 10
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = DesignAsset.gray1.color.cgColor
+        return imageView
+    }()
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.applyFont(font: .titleSmall)
+        return label
+    }()
+    private let infoLabel: UILabel = {
+        let label = UILabel()
+        label.applyFont(font: .bodySmall)
+        label.textColor = DesignAsset.gray4.color
+        return label
+    }()
+    private let keywordLabel: UILabel = {
+        let label = UILabel()
+        label.applyFont(font: .bodySmall)
+        label.textColor = DesignAsset.gray4.color
+
+        return label
+    }()
+    private lazy var labelStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        [titleLabel, infoLabel, keywordLabel].forEach {
+            stackView.addArrangedSubview($0)
+        }
+        stackView.distribution = .equalSpacing
+        return stackView
+    }()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        layout()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func setUpContents(liquor: Liquor) {
+        liquorImageView.kf.setImage(with: URL(string: liquor.imagePath))
+        titleLabel.text = liquor.name
+        infoLabel.text = "\(liquor.dosage) | \(liquor.alcoholPercentage)"
+        keywordLabel.text = liquor.keywords.map { return "#\($0.name)" }.joined(separator: " ")
+        keywordLabel.lineBreakMode = .byTruncatingTail
+    }
+
+    private func layout() {
+        [liquorImageView, labelStackView].forEach { contentView.addSubview($0) }
+        liquorImageView.snp.makeConstraints {
+            $0.leading.top.trailing.equalToSuperview()
+            $0.height.equalTo(liquorImageView.snp.width)
+        }
+        labelStackView.snp.makeConstraints {
+            $0.leading.bottom.trailing.equalToSuperview()
+            $0.top.equalTo(liquorImageView.snp.bottom).offset(10)
+        }
+    }
 }

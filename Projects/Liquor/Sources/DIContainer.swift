@@ -7,3 +7,20 @@
 //
 
 import Foundation
+import LiquorDomain
+import LiquorPresentation
+import LiquorData
+
+final class DIContainer {
+    func makeLiquorRepository() -> LiquorRepositoryInterface {
+        return LiquorRepository()
+    }
+
+    func makeLiquorViewModel() -> LiquorListViewModel {
+        return LiquorListViewModel(repository: makeLiquorRepository())
+    }
+
+    func makeLiquorViewController() -> LiquorListViewController {
+        return LiquorListViewController(viewModel: makeLiquorViewModel())
+    }
+}

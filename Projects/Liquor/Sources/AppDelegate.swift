@@ -16,9 +16,9 @@ import UIKit
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
+        let DIContainer = DIContainer()
         window = UIWindow(frame: UIScreen.main.bounds)
-        let viewController = LiquorListViewController()
-        window?.rootViewController = viewController
+        window?.rootViewController = DIContainer.makeLiquorViewController()
         window?.makeKeyAndVisible()
         return true
     }
