@@ -27,7 +27,6 @@ public struct Liquor: Hashable {
     public let other: String
     public let imagePath: String
     public let hits: Int
-    public let mostRecentView: Date
     public let purchaseConversion: Int
 
     public init(data: [String: Any]) {
@@ -42,7 +41,6 @@ public struct Liquor: Hashable {
         award = data["award"] as? String ?? ""
         other = data["other"] as? String ?? ""
         hits = data["hits"] as? Int ?? -1
-        mostRecentView = data["mostRecentView"] as? Date ?? Date()
         purchaseConversion = data["purchaseConversion"] as? Int ?? -1
         keywords = (data["keywords"] as? [Int])?.compactMap {
             Keyword(rawValue: $0)
