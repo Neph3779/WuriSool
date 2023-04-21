@@ -27,6 +27,7 @@ final class LiquorListViewController: UIViewController {
     private lazy var keywordCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: keywordCollectionViewLayout())
         collectionView.register(KeywordCell.self, forCellWithReuseIdentifier: KeywordCell.reuseIdentifier)
+        collectionView.delegate = self
         return collectionView
     }()
     private lazy var keywordDataSource = makeKeywordDataSource()
@@ -210,7 +211,7 @@ extension LiquorListViewController {
             var keywordsSnapShot = NSDiffableDataSourceSnapshot<KeywordSection, Keyword>()
             keywordsSnapShot.deleteAllItems()
             keywordsSnapShot.appendSections([.main])
-            keywordsSnapShot.appendItems(Keyword.allCases) // keywords로 교체
+            keywordsSnapShot.appendItems(keywords) // keywords로 교체
             keywordDataSource.apply(keywordsSnapShot)
         case .liquors(let liquors):
             var liquorsSnapShot = NSDiffableDataSourceSnapshot<LiquorSection, Liquor>()
@@ -222,15 +223,23 @@ extension LiquorListViewController {
     }
 }
 
-// MARK: - CollectionView Delegate
+// MARK: - CollectionView & ScrollViewDelegate Delegate
 
 extension LiquorListViewController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
-        if scrollView.contentOffset.y > scrollView.contentSize.height - view.frame.height {
-            print("over")
-            // load next data
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y > scrollView.contentSize.height - view.frame.height
+            && !viewModel.isUpdating {
             viewModel.fetchLiquors()
+        }
+    }
+}
+
+extension LiquorListViewController: UICollectionViewDelegate {
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == keywordCollectionView {
+            viewModel.keywordDidTapped(indexPath: indexPath)
         }
     }
 }

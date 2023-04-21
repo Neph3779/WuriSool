@@ -13,8 +13,21 @@ final class LiquorListViewModel {
 
     private let repository: LiquorRepositoryInterface
     var liquors = [Liquor]()
-    var type: LiquorType?
-    var keyword: Keyword?
+    var keywords = [Keyword]()
+    var selectedType: LiquorType? {
+        didSet {
+            liquors = []
+            fetchLiquorCount()
+            fetchLiquors()
+        }
+    }
+    var selectedKeyword: Keyword? {
+        didSet {
+            liquors.removeAll()
+            fetchLiquorCount()
+            fetchLiquors()
+        }
+    }
     var isUpdating: Bool = false
 
 
@@ -30,8 +43,10 @@ final class LiquorListViewModel {
         isUpdating = true
         Task {
             do {
-                let fetched = try await repository.fetchLiquors(type: type, keyword: keyword)
-                liquors.append(contentsOf: fetched.filter { !liquors.contains($0) })
+                let fetched = try await repository.fetchLiquors(type: selectedType, keyword: selectedKeyword)
+                liquors.append(contentsOf: fetched.filter {
+                    !liquors.map { $0.id }.contains($0.id)
+                })
                 applyDataSource?(.liquors(liquors))
                 isUpdating = false
             } catch {
@@ -43,12 +58,21 @@ final class LiquorListViewModel {
     func fetchLiquorCount() {
         Task {
             do {
-                let data = try await repository.fetchLiquorCount(type: type, keyword: keyword)
+                let data = try await repository.fetchLiquorCount(type: selectedType, keyword: selectedKeyword)
                 updateLiquorCount?(data)
             } catch {
 
             }
         }
+    }
+
+    func keywordDidTapped(indexPath: IndexPath) {
+        selectedKeyword = keywords[indexPath.row]
+    }
+
+    func fetchKeywords() {
+        keywords = Keyword.allCases
+        applyDataSource?(.keywords(keywords))
     }
 }
 
@@ -58,5 +82,6 @@ extension LiquorListViewModel {
     func viewDidLoad() {
         fetchLiquors()
         fetchLiquorCount()
+        fetchKeywords()
     }
 }
