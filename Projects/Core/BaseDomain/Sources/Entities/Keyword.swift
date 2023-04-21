@@ -171,3 +171,9 @@ public enum Keyword: Int, CaseIterable {
         }
     }
 }
+
+public extension Keyword {
+    static func toDomain(data: [String: Any]) -> Keyword {
+        return Keyword.id(of: data["name"] as? String ?? "")
+    }
+}

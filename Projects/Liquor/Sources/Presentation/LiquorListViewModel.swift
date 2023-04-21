@@ -71,8 +71,14 @@ final class LiquorListViewModel {
     }
 
     func fetchKeywords() {
-        keywords = Keyword.allCases
-        applyDataSource?(.keywords(keywords))
+        Task {
+            do {
+                keywords = try await repository.fetchKeywords()
+                applyDataSource?(.keywords(keywords))
+            } catch {
+
+            }
+        }
     }
 }
 

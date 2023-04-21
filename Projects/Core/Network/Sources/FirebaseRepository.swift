@@ -16,6 +16,7 @@ public protocol FirebaseRepositoryInterface {
     func fetchLiquors(query: FirebaseQuery, pagination: Bool) async throws -> [[String: Any]]
     func fetchBrewery(query: FirebaseQuery, pagination: Bool) async throws -> [[String: Any]]
     func fetchLiquorCount(query: FirebaseQuery) async throws -> Int
+    func fetchKeywords() async throws -> [[String: Any]]
 }
 
 public struct FirebaseQuery: Hashable {
@@ -38,6 +39,7 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
     private let database: Firestore
     private lazy var liquorReference = database.collection("Liquor")
     private lazy var breweryReference = database.collection("Brewery")
+    private lazy var keywordReference = database.collection("Keyword")
     private var snapShotCache: [FirebaseQuery: QueryDocumentSnapshot?] = [:] // for support pagination
 
     public init() {
@@ -159,6 +161,30 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
 
     public func resetPagination() {
         snapShotCache.removeAll()
+    }
+
+    public func fetchKeywords() async throws -> [[String: Any]] {
+        let finalQuery: Query = keywordReference.order(by: "hits")
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let handler: ((QuerySnapshot?, Error?) -> Void) = { [weak self] snapshot, error in
+                if let error = error {
+                    self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: \(error.localizedDescription)")
+                    continuation.resume(throwing: error)
+                    return
+                }
+                if let snapshot = snapshot {
+                    self?.logger.debug("✅ Keywords fetching completed. LogId: \(self?.logId.uuidString ?? "unknown")")
+                    continuation.resume(returning: snapshot.documents.map { $0.data() })
+                    return
+                } else {
+                    self?.logger.log("🚨 file: \(#file), function: \(#function) errorMessage: There is no data in snapshot")
+                    continuation.resume(throwing: FirebaseError.noData)
+                    return
+                }
+            }
+            finalQuery.getDocuments(completion: handler)
+        }
     }
 }
 

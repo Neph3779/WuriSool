@@ -18,10 +18,6 @@ final class LiquorRepository: LiquorRepositoryInterface {
         self.firebaseRepository = firebaseRepository
     }
 
-    func fetchKeywords() async throws -> [Keyword] {
-        return []
-    }
-
     func fetchLiquors(type: LiquorType?, keyword: Keyword?) async throws -> [Liquor] {
         var query = FirebaseQuery(filters: [:], orderKey: .byHits, pageCapacity: 10)
         if let type = type {
@@ -30,15 +26,9 @@ final class LiquorRepository: LiquorRepositoryInterface {
         if let keyword = keyword {
             query.filters.updateValue(String(keyword.rawValue), forKey: .byKeyword)
         }
-        do {
-            let data = try await firebaseRepository.fetchLiquors(
-                query: query,
-                pagination: true
-            )
-            return data.map { Liquor(data: $0) }
-        } catch {
-            throw error
-        }
+
+        return try await firebaseRepository.fetchLiquors(query: query, pagination: true).map { Liquor(data: $0) }
+
     }
 
     func fetchLiquorCount(type: LiquorType?, keyword: Keyword?) async throws -> Int {
@@ -49,11 +39,11 @@ final class LiquorRepository: LiquorRepositoryInterface {
         if let keyword = keyword {
             query.filters.updateValue(String(keyword.rawValue), forKey: .byKeyword)
         }
-        do {
-            let data = try await firebaseRepository.fetchLiquorCount(query: query)
-            return data
-        } catch {
-            throw error
-        }
+
+        return try await firebaseRepository.fetchLiquorCount(query: query)
+    }
+
+    func fetchKeywords() async throws -> [Keyword] {
+        return try await firebaseRepository.fetchKeywords().map { Keyword.toDomain(data: $0) }
     }
 }
