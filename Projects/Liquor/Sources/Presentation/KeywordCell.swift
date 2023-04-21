@@ -13,6 +13,26 @@ import Kingfisher
 final class KeywordCell: UICollectionViewCell {
     static let reuseIdentifier = String(describing: KeywordCell.self)
 
+    override var isSelected: Bool {
+        didSet {
+            if isSelected {
+                keywordLabel.textColor = DesignAsset.gray7.color
+                bottomLine.snp.remakeConstraints {
+                    $0.leading.trailing.bottom.equalToSuperview()
+                    $0.height.equalTo(2)
+                }
+                bottomLine.backgroundColor = DesignAsset.gray7.color
+            } else {
+                keywordLabel.textColor = DesignAsset.gray4.color
+                bottomLine.snp.remakeConstraints {
+                    $0.leading.trailing.bottom.equalToSuperview()
+                    $0.height.equalTo(1)
+                }
+                bottomLine.backgroundColor = DesignAsset.gray1.color
+            }
+        }
+    }
+
     private let keywordImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 25
@@ -27,6 +47,12 @@ final class KeywordCell: UICollectionViewCell {
         label.textColor = DesignAsset.gray4.color
         label.applyFont(font: .buttonSmall)
         return label
+    }()
+
+    private let bottomLine: UIView = {
+        let line = UIView()
+        line.backgroundColor = DesignAsset.gray1.color
+        return line
     }()
 
     override init(frame: CGRect) {
@@ -44,17 +70,21 @@ final class KeywordCell: UICollectionViewCell {
     }
 
     private func layout() {
-        [keywordImageView, keywordLabel].forEach {
+        [keywordImageView, keywordLabel, bottomLine].forEach {
             contentView.addSubview($0)
         }
         keywordImageView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
+            $0.centerX.equalToSuperview().offset(-3)
             $0.top.equalToSuperview().inset(15)
             $0.width.height.equalTo(50)
         }
         keywordLabel.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
+            $0.centerX.equalToSuperview().offset(-3)
             $0.top.equalTo(keywordImageView.snp.bottom).offset(5)
+        }
+        bottomLine.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(1)
         }
     }
 }

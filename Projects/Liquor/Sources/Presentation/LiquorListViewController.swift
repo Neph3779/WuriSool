@@ -139,12 +139,11 @@ final class LiquorListViewController: UIViewController {
             outerStackView.addArrangedSubview($0)
         }
         keywordCollectionView.snp.makeConstraints {
-            $0.height.equalTo(100)
+            $0.height.equalTo(95)
         }
         liquorCollectionView.snp.makeConstraints {
             $0.height.greaterThanOrEqualTo(1) // trigger for estimate collectionView's size
         }
-        outerStackView.setCustomSpacing(1, after: keywordCollectionView)
     }
 }
 
@@ -152,8 +151,8 @@ final class LiquorListViewController: UIViewController {
 
 extension LiquorListViewController {
     private func keywordCollectionViewLayout() -> UICollectionViewCompositionalLayout {
-        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(100)))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .fractionalWidth(1/5), heightDimension: .absolute(100)), subitems: [item])
+        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(95)))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .absolute(70), heightDimension: .absolute(95)), subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         return UICollectionViewCompositionalLayout(section: section)
