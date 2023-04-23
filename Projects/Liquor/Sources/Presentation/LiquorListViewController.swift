@@ -73,6 +73,14 @@ final class LiquorListViewController: UIViewController {
 
     private lazy var liquorDataSource = makeLiquorDataSource()
 
+    private lazy var categoryTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
+        tableView.delegate = self
+        tableView.dataSource = self
+        return tableView
+    }()
+
     init(viewModel: LiquorListViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -211,21 +219,21 @@ extension LiquorListViewController {
             var keywordsSnapShot = NSDiffableDataSourceSnapshot<KeywordSection, Keyword>()
             keywordsSnapShot.deleteAllItems()
             keywordsSnapShot.appendSections([.main])
-            keywordsSnapShot.appendItems(keywords) // keywords로 교체
+            keywordsSnapShot.appendItems(keywords)
             keywordDataSource.apply(keywordsSnapShot)
         case .liquors(let liquors):
             var liquorsSnapShot = NSDiffableDataSourceSnapshot<LiquorSection, Liquor>()
             liquorsSnapShot.deleteAllItems()
             liquorsSnapShot.appendSections([.main])
-            liquorsSnapShot.appendItems(liquors) // liquors로 교체
+            liquorsSnapShot.appendItems(liquors)
             liquorDataSource.apply(liquorsSnapShot)
         }
     }
 }
 
-// MARK: - CollectionView & ScrollViewDelegate Delegate
+// MARK: - CollectionView Delegate
 
-extension LiquorListViewController: UIScrollViewDelegate {
+extension LiquorListViewController: UICollectionViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.contentOffset.y > scrollView.contentSize.height - view.frame.height
@@ -233,13 +241,24 @@ extension LiquorListViewController: UIScrollViewDelegate {
             viewModel.fetchLiquors()
         }
     }
-}
-
-extension LiquorListViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == keywordCollectionView {
             viewModel.keywordDidTapped(indexPath: indexPath)
         }
+    }
+}
+
+extension LiquorListViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return LiquorType.allCases.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        var content = cell.defaultContentConfiguration()
+        content.text = LiquorType.allCases[indexPath.row].name
+        cell.contentConfiguration = content
+        return cell
     }
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum LiquorType: Int {
+public enum LiquorType: Int, CaseIterable {
     case rawRiceWine = 1
     case refinedRiceWine
     case fruitWine
