@@ -24,10 +24,11 @@ final class LiquorListViewController: UIViewController {
         return stackView
     }()
 
-    private lazy var keywordCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: keywordCollectionViewLayout())
+    private lazy var keywordCollectionView: LiquorListCollectionView = {
+        let collectionView = LiquorListCollectionView(frame: .zero, collectionViewLayout: keywordCollectionViewLayout())
         collectionView.register(KeywordCell.self, forCellWithReuseIdentifier: KeywordCell.reuseIdentifier)
         collectionView.delegate = self
+        collectionView.isScrollEnabled = false
         return collectionView
     }()
     private lazy var keywordDataSource = makeKeywordDataSource()
@@ -40,11 +41,16 @@ final class LiquorListViewController: UIViewController {
         return label
     }()
 
-    private let categoryLabel: UILabel = {
+    private lazy var categoryLabel: UILabel = {
         let label = UILabel()
         label.applyFont(font: .buttonSmall)
         label.textColor = DesignAsset.gray4.color
         label.text = "카테고리 ▽"
+        label.isUserInteractionEnabled = true
+        label.addGestureRecognizer(UITapGestureRecognizer(
+            target: self,
+            action: #selector(categoryTapped(_:))
+        ))
         return label
     }()
 
@@ -78,7 +84,22 @@ final class LiquorListViewController: UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.layer.cornerRadius = 10
+        tableView.layer.borderColor = DesignAsset.gray1.color.cgColor
+        tableView.layer.borderWidth = 1
         return tableView
+    }()
+
+    private lazy var categoryModalView: UIView = {
+        let categoryView = UIView()
+        categoryView.backgroundColor = .black.withAlphaComponent(0.3)
+        categoryView.addSubview(categoryTableView)
+        categoryTableView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(300)
+        }
+        categoryView.isHidden = true
+        return categoryView
     }()
 
     init(viewModel: LiquorListViewModel) {
@@ -113,6 +134,13 @@ final class LiquorListViewController: UIViewController {
     }
 
     private func bind() {
+        keywordCollectionView.contentSizeDidChanged = { [weak self] size in
+            if size.height > 0 {
+                self?.keywordCollectionView.snp.remakeConstraints {
+                    $0.height.equalTo(size.height)
+                }
+            }
+        }
         liquorCollectionView.contentSizeDidChanged = { [weak self] size in
             if size.height > 0 {
                 self?.liquorCollectionView.snp.remakeConstraints {
@@ -136,9 +164,13 @@ final class LiquorListViewController: UIViewController {
 
     private func layout() {
         view.addSubview(scrollView)
+        view.addSubview(categoryModalView)
+        categoryModalView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
         scrollView.addSubview(outerStackView)
         scrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
         outerStackView.snp.makeConstraints {
             $0.leading.trailing.equalTo(view)
@@ -154,13 +186,18 @@ final class LiquorListViewController: UIViewController {
             $0.height.greaterThanOrEqualTo(1) // trigger for estimate collectionView's size
         }
     }
+
+    @objc
+    private func categoryTapped(_ sender: UITapGestureRecognizer) {
+        categoryModalView.isHidden = false
+    }
 }
 
 // MARK: - CollectionView Layout
 
 extension LiquorListViewController {
     private func keywordCollectionViewLayout() -> UICollectionViewCompositionalLayout {
-        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(95)))
+        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .absolute(70), heightDimension: .absolute(95)))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .absolute(70), heightDimension: .absolute(95)), subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
@@ -236,7 +273,8 @@ extension LiquorListViewController {
 extension LiquorListViewController: UICollectionViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y > scrollView.contentSize.height - view.frame.height
+        if scrollView != categoryTableView,
+           scrollView.contentOffset.y > scrollView.contentSize.height - view.frame.height
             && !viewModel.isUpdating {
             viewModel.fetchLiquors()
         }
@@ -259,6 +297,15 @@ extension LiquorListViewController: UITableViewDataSource, UITableViewDelegate {
         var content = cell.defaultContentConfiguration()
         content.text = LiquorType.allCases[indexPath.row].name
         cell.contentConfiguration = content
+        cell.selectionStyle = .none
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let liquorType = LiquorType.allCases[indexPath.row]
+        categoryModalView.isHidden = true
+        categoryLabel.text = liquorType.name
+        categoryLabel.font = .boldSystemFont(ofSize: 14)
+        viewModel.selectedType = liquorType
     }
 }
