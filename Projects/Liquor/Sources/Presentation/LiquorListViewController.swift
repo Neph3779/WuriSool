@@ -61,7 +61,7 @@ final class LiquorListViewController: UIViewController {
         label.isUserInteractionEnabled = true
         label.addGestureRecognizer(UITapGestureRecognizer(
             target: self,
-            action: #selector(categoryTapped(_:))
+            action: #selector(categoryCellTapped(_:))
         ))
         return label
     }()
@@ -86,6 +86,8 @@ final class LiquorListViewController: UIViewController {
         let collectionView = LiquorListCollectionView(frame: .zero, collectionViewLayout: liquorCollectionViewLayout())
         collectionView.register(LiquorCell.self, forCellWithReuseIdentifier: LiquorCell.reuseIdentifier)
         collectionView.isScrollEnabled = false
+        collectionView.contentInset = .init(top: 0, left: 0, bottom: 34, right: 0)
+        collectionView.delegate = self
         return collectionView
     }()
 
@@ -111,6 +113,10 @@ final class LiquorListViewController: UIViewController {
             $0.height.equalTo(300)
         }
         categoryView.isHidden = true
+        categoryView.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(modalBackgroundTapped(_:)))
+        tapGesture.cancelsTouchesInView = false
+        categoryView.addGestureRecognizer(tapGesture)
         return categoryView
     }()
 
@@ -182,7 +188,8 @@ final class LiquorListViewController: UIViewController {
         }
         scrollView.addSubview(outerStackView)
         scrollView.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.top.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view)
         }
         outerStackView.snp.makeConstraints {
             $0.leading.trailing.equalTo(view)
@@ -201,8 +208,13 @@ final class LiquorListViewController: UIViewController {
     }
 
     @objc
-    private func categoryTapped(_ sender: UITapGestureRecognizer) {
+    private func categoryCellTapped(_ sender: UITapGestureRecognizer) {
         categoryModalView.isHidden = false
+    }
+
+    @objc
+    private func modalBackgroundTapped(_ sender: UITapGestureRecognizer) {
+        categoryModalView.isHidden = true
     }
 }
 
@@ -296,6 +308,8 @@ extension LiquorListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == keywordCollectionView {
             viewModel.keywordDidTapped(indexPath: indexPath)
+        } else {
+
         }
     }
 }
