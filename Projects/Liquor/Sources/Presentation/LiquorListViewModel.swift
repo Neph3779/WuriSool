@@ -17,18 +17,17 @@ final class LiquorListViewModel {
     var selectedType: LiquorType? {
         didSet {
             liquors = []
-            fetchLiquorCount()
             fetchLiquors()
         }
     }
     var selectedKeyword: Keyword? {
         didSet {
             liquors.removeAll()
-            fetchLiquorCount()
             fetchLiquors()
         }
     }
     var isUpdating: Bool = false
+    var liquorFetchTask: Task<(), Never>?
 
 
     var applyDataSource: ((LiquorListViewController.LiquorListSection) -> Void)?
@@ -40,26 +39,20 @@ final class LiquorListViewModel {
 
     func fetchLiquors() {
         guard !isUpdating else { return }
+        liquorFetchTask?.cancel()
         isUpdating = true
-        Task {
+        liquorFetchTask = Task {
             do {
+                let liquorCount = try await repository.fetchLiquorCount(type: selectedType, keyword: selectedKeyword)
+                updateLiquorCount?(liquorCount)
+
                 let fetched = try await repository.fetchLiquors(type: selectedType, keyword: selectedKeyword)
                 liquors.append(contentsOf: fetched.filter {
                     !liquors.map { $0.id }.contains($0.id)
                 })
+
                 applyDataSource?(.liquors(liquors))
                 isUpdating = false
-            } catch {
-
-            }
-        }
-    }
-
-    func fetchLiquorCount() {
-        Task {
-            do {
-                let data = try await repository.fetchLiquorCount(type: selectedType, keyword: selectedKeyword)
-                updateLiquorCount?(data)
             } catch {
 
             }
@@ -87,7 +80,6 @@ final class LiquorListViewModel {
 extension LiquorListViewModel {
     func viewDidLoad() {
         fetchLiquors()
-        fetchLiquorCount()
         fetchKeywords()
     }
 }

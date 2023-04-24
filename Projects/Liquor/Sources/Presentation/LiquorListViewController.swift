@@ -14,7 +14,11 @@ final class LiquorListViewController: UIViewController {
 
     private let viewModel: LiquorListViewModel
 
-    private let scrollView = UIScrollView()
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.keyboardDismissMode = .onDrag
+        return scrollView
+    }()
 
     private let outerStackView: UIStackView = {
         let stackView = UIStackView()
@@ -22,6 +26,14 @@ final class LiquorListViewController: UIViewController {
         stackView.distribution = .fill
         stackView.backgroundColor = DesignAsset.gray1.color
         return stackView
+    }()
+
+    private lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.delegate = self
+        searchBar.searchBarStyle = .minimal
+        searchBar.backgroundColor = .white
+        return searchBar
     }()
 
     private lazy var keywordCollectionView: LiquorListCollectionView = {
@@ -176,7 +188,7 @@ final class LiquorListViewController: UIViewController {
             $0.leading.trailing.equalTo(view)
             $0.top.bottom.equalToSuperview()
         }
-        [keywordCollectionView, infoView, liquorCollectionView].forEach {
+        [searchBar, keywordCollectionView, infoView, liquorCollectionView].forEach {
             outerStackView.addArrangedSubview($0)
         }
         keywordCollectionView.snp.makeConstraints {
@@ -185,6 +197,7 @@ final class LiquorListViewController: UIViewController {
         liquorCollectionView.snp.makeConstraints {
             $0.height.greaterThanOrEqualTo(1) // trigger for estimate collectionView's size
         }
+        outerStackView.setCustomSpacing(0, after: searchBar)
     }
 
     @objc
@@ -308,4 +321,8 @@ extension LiquorListViewController: UITableViewDataSource, UITableViewDelegate {
         categoryLabel.font = .boldSystemFont(ofSize: 14)
         viewModel.selectedType = liquorType
     }
+}
+
+extension LiquorListViewController: UISearchBarDelegate {
+
 }
