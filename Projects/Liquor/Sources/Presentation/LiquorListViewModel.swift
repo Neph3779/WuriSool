@@ -28,7 +28,6 @@ final class LiquorListViewModel {
     var isUpdating = BehaviorRelay<Bool>(value: false)
     var liquorFetchTask: Task<(), Never>?
     var applyDataSource: ((LiquorListViewController.LiquorListSection) -> Void)?
-    var updateLiquorCount: ((Int) -> Void)?
     private var disposeBag = DisposeBag()
 
     init(repository: LiquorRepositoryInterface) {
@@ -49,7 +48,7 @@ final class LiquorListViewModel {
             do {
                 let liquorCount = try await repository.fetchLiquorCount(type: rxSelectedType.value,
                                                                         keyword: rxSelectedKeyword.value)
-                updateLiquorCount?(liquorCount)
+                updateLiquorCount(count: liquorCount)
 
                 let fetched = try await repository.fetchLiquors(type: rxSelectedType.value,
                                                                 keyword: rxSelectedKeyword.value)
@@ -74,6 +73,10 @@ final class LiquorListViewModel {
 
             }
         }
+    }
+
+    private func updateLiquorCount(count: Int) {
+        rxLiquorCount.onNext(count)
     }
 }
 

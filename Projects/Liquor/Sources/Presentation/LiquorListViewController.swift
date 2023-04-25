@@ -165,7 +165,7 @@ final class LiquorListViewController: UIViewController {
         }
 
         viewModel.rxLiquorCount
-            .map { String($0) }
+            .map { "상품 \($0)" }
             .bind(to: productCountLabel.rx.text)
             .disposed(by: disposeBag)
 
