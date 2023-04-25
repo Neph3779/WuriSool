@@ -46,7 +46,9 @@ extension Project {
                 .target(name: "\(name)Domain"),
                 .project(target: "Design", path: .relativeToRoot("Projects/Core/Design")),
                 .external(name: "SnapKit"),
-                .external(name: "Kingfisher")
+                .external(name: "Kingfisher"),
+                .external(name: "RxSwift"),
+                .external(name: "RxCocoa")
             ]
         )
 
