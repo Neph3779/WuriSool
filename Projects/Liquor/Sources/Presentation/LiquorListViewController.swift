@@ -102,7 +102,6 @@ final class LiquorListViewController: UIViewController {
     private lazy var categoryTableView: UITableView = {
         let tableView = UITableView()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
-        tableView.delegate = self
         tableView.dataSource = self
         tableView.layer.cornerRadius = 10
         tableView.layer.borderColor = DesignAsset.gray1.color.cgColor
@@ -138,7 +137,6 @@ final class LiquorListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        setUpScrollView()
         setUpCollectionViews()
         bind()
         layout()
@@ -146,10 +144,6 @@ final class LiquorListViewController: UIViewController {
             applyDataSource(section: $0)
         }
         viewModel.viewDidLoad()
-    }
-
-    private func setUpScrollView() {
-        scrollView.delegate = self
     }
 
     private func setUpCollectionViews() {
@@ -352,7 +346,7 @@ extension LiquorListViewController {
 
 // MARK: - CategoryTableView DataSource & Delegate
 
-extension LiquorListViewController: UITableViewDataSource, UITableViewDelegate {
+extension LiquorListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return LiquorType.allCases.count
     }
