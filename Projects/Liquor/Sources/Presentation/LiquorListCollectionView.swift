@@ -7,14 +7,16 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 final class LiquorListCollectionView: UICollectionView {
 
-    public var contentSizeDidChanged: ((CGSize) -> Void)?
+    var contentSizeDidChanged = PublishRelay<CGSize>()
 
     override var contentSize: CGSize {
         didSet {
-            contentSizeDidChanged?(contentSize)
+            contentSizeDidChanged.accept(contentSize)
         }
     }
 }

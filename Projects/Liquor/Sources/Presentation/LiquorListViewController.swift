@@ -9,10 +9,18 @@
 import UIKit
 import SnapKit
 import LiquorDomain
+import RxSwift
+import RxCocoa
 
 final class LiquorListViewController: UIViewController {
 
     private let viewModel: LiquorListViewModel
+    private var disposeBag = DisposeBag()
+
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        return indicator
+    }()
 
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -39,7 +47,6 @@ final class LiquorListViewController: UIViewController {
     private lazy var keywordCollectionView: LiquorListCollectionView = {
         let collectionView = LiquorListCollectionView(frame: .zero, collectionViewLayout: keywordCollectionViewLayout())
         collectionView.register(KeywordCell.self, forCellWithReuseIdentifier: KeywordCell.reuseIdentifier)
-        collectionView.delegate = self
         collectionView.isScrollEnabled = false
         return collectionView
     }()
@@ -87,7 +94,6 @@ final class LiquorListViewController: UIViewController {
         collectionView.register(LiquorCell.self, forCellWithReuseIdentifier: LiquorCell.reuseIdentifier)
         collectionView.isScrollEnabled = false
         collectionView.contentInset = .init(top: 0, left: 0, bottom: 34, right: 0)
-        collectionView.delegate = self
         return collectionView
     }()
 
@@ -152,39 +158,72 @@ final class LiquorListViewController: UIViewController {
     }
 
     private func bind() {
-        keywordCollectionView.contentSizeDidChanged = { [weak self] size in
-            if size.height > 0 {
-                self?.keywordCollectionView.snp.remakeConstraints {
-                    $0.height.equalTo(size.height)
-                }
-            }
-        }
-        liquorCollectionView.contentSizeDidChanged = { [weak self] size in
-            if size.height > 0 {
-                self?.liquorCollectionView.snp.remakeConstraints {
-                    $0.height.equalTo(size.height)
-                }
-            }
-        }
-
         viewModel.applyDataSource = { [weak self] section in
             DispatchQueue.main.async {
                 self?.applyDataSource(section: section)
             }
         }
 
-        viewModel.updateLiquorCount = { [weak self] liquorCount in
-            DispatchQueue.main.async {
-                self?.productCountLabel.text = "판매상품 \(liquorCount)개"
+        viewModel.rxLiquorCount
+            .map { String($0) }
+            .bind(to: productCountLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.isUpdating
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] isUpdating in
+            if isUpdating {
+                self?.loadingIndicator.startAnimating()
+                self?.keywordCollectionView.isUserInteractionEnabled = false
+            } else {
+                self?.loadingIndicator.stopAnimating()
+                self?.keywordCollectionView.isUserInteractionEnabled = true
             }
-        }
+        }.disposed(by: disposeBag)
+
+        scrollView.rx.reachedBottom()
+            .asDriver()
+            .drive(onNext: { [weak self] in
+                self?.viewModel.fetchLiquors()
+            }).disposed(by: disposeBag)
+
+        keywordCollectionView.rx.itemSelected
+            .observe(on: MainScheduler.instance)
+            .map { Keyword.allCases[$0.row] }
+            .bind(to: viewModel.rxSelectedKeyword)
+            .disposed(by: disposeBag)
+
+        keywordCollectionView.contentSizeDidChanged
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] size in
+                if size.height > 0 {
+                    self?.keywordCollectionView.snp.remakeConstraints {
+                        $0.height.equalTo(size.height)
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+
+        liquorCollectionView.contentSizeDidChanged
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] size in
+                if size.height > 0 {
+                    self?.liquorCollectionView.snp.remakeConstraints {
+                        $0.height.equalTo(size.height)
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
     }
 
     private func layout() {
-        view.addSubview(scrollView)
-        view.addSubview(categoryModalView)
+        [scrollView, categoryModalView, loadingIndicator].forEach { view.addSubview($0) }
+
         categoryModalView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
         scrollView.addSubview(outerStackView)
         scrollView.snp.makeConstraints {
@@ -293,26 +332,7 @@ extension LiquorListViewController {
     }
 }
 
-// MARK: - CollectionView Delegate
-
-extension LiquorListViewController: UICollectionViewDelegate {
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView != categoryTableView,
-           scrollView.contentOffset.y > scrollView.contentSize.height - view.frame.height
-            && !viewModel.isUpdating {
-            viewModel.fetchLiquors()
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == keywordCollectionView {
-            viewModel.keywordDidTapped(indexPath: indexPath)
-        } else {
-
-        }
-    }
-}
+// MARK: - CategoryTableView DataSource & Delegate
 
 extension LiquorListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -339,4 +359,24 @@ extension LiquorListViewController: UITableViewDataSource, UITableViewDelegate {
 
 extension LiquorListViewController: UISearchBarDelegate {
 
+}
+
+public extension Reactive where Base: UIScrollView {
+    /**
+     Shows if the bottom of the UIScrollView is reached.
+     - parameter offset: A threshhold indicating the bottom of the UIScrollView.
+     - returns: ControlEvent that emits when the bottom of the base UIScrollView is reached.
+     */
+    func reachedBottom(offset: CGFloat = 0.0) -> ControlEvent<Void> {
+        let source = contentOffset.map { [base] contentOffset in
+            let visibleHeight = base.frame.height - base.contentInset.top - base.contentInset.bottom
+            let y = contentOffset.y + base.contentInset.top
+            let threshold = max(offset, base.contentSize.height - visibleHeight)
+            return y >= threshold
+        }
+        .distinctUntilChanged()
+        .filter { $0 }
+        .map { _ in () }
+        return ControlEvent(events: source)
+    }
 }
