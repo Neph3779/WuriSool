@@ -14,14 +14,8 @@ import RxCocoa
 final class LiquorListViewModel {
 
     private let repository: LiquorRepositoryInterface
-    var liquors = [Liquor]()
-    var keywords = [Keyword]()
-    var selectedType: LiquorType? {
-        didSet {
-            liquors = []
-            fetchLiquors()
-        }
-    }
+    var rxLiquors = BehaviorRelay<[Liquor]>(value: [])
+    var rxKeywords = BehaviorRelay<[Keyword]>(value: [])
     var rxSelectedType = BehaviorRelay<LiquorType?>(value: nil)
     var rxSelectedKeyword = BehaviorRelay<Keyword?>(value: nil)
     var rxLiquorCount = BehaviorSubject<Int>(value: 0)
@@ -34,7 +28,7 @@ final class LiquorListViewModel {
         self.repository = repository
         Observable.combineLatest(rxSelectedType, rxSelectedKeyword)
             .subscribe(onNext: { [weak self] _, _ in
-                self?.liquors.removeAll()
+                self?.rxLiquors.accept([])
                 self?.fetchLiquors()
             })
             .disposed(by: disposeBag)
@@ -48,15 +42,17 @@ final class LiquorListViewModel {
             do {
                 let liquorCount = try await repository.fetchLiquorCount(type: rxSelectedType.value,
                                                                         keyword: rxSelectedKeyword.value)
-                updateLiquorCount(count: liquorCount)
+                rxLiquorCount.onNext(liquorCount)
 
                 let fetched = try await repository.fetchLiquors(type: rxSelectedType.value,
                                                                 keyword: rxSelectedKeyword.value)
+                var liquors = rxLiquors.value
+
                 liquors.append(contentsOf: fetched.filter {
                     !liquors.map { $0.id }.contains($0.id)
                 })
 
-                applyDataSource?(.liquors(liquors))
+                rxLiquors.accept(liquors)
                 isUpdating.accept(false)
             } catch {
 
@@ -67,16 +63,12 @@ final class LiquorListViewModel {
     func fetchKeywords() {
         Task {
             do {
-                keywords = try await repository.fetchKeywords()
-                applyDataSource?(.keywords(keywords))
+                let keywords = try await repository.fetchKeywords()
+                rxKeywords.accept(keywords)
             } catch {
 
             }
         }
-    }
-
-    private func updateLiquorCount(count: Int) {
-        rxLiquorCount.onNext(count)
     }
 }
 

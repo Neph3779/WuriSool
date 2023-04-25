@@ -158,12 +158,6 @@ final class LiquorListViewController: UIViewController {
     }
 
     private func bind() {
-        viewModel.applyDataSource = { [weak self] section in
-            DispatchQueue.main.async {
-                self?.applyDataSource(section: section)
-            }
-        }
-
         viewModel.rxLiquorCount
             .map { "상품 \($0)" }
             .bind(to: productCountLabel.rx.text)
@@ -213,6 +207,30 @@ final class LiquorListViewController: UIViewController {
                     }
                 }
             })
+            .disposed(by: disposeBag)
+
+        categoryTableView.rx.itemSelected
+            .observe(on: MainScheduler.instance)
+            .asDriver(onErrorDriveWith: .just(IndexPath(row: 0, section: 0)))
+            .drive { [weak self] indexPath in
+                let liquorType = LiquorType.allCases[indexPath.row]
+                self?.categoryModalView.isHidden = true
+                self?.categoryLabel.text = liquorType.name
+                self?.categoryLabel.font = .boldSystemFont(ofSize: 14)
+                self?.viewModel.rxSelectedType.accept(liquorType)
+            }
+            .disposed(by: disposeBag)
+
+        viewModel.rxLiquors.asDriver(onErrorJustReturn: [])
+            .drive { [weak self] liquors in
+                self?.applyDataSource(section: .liquors(liquors))
+            }
+            .disposed(by: disposeBag)
+
+        viewModel.rxKeywords.asDriver(onErrorJustReturn: [])
+            .drive { [weak self] keywords in
+                self?.applyDataSource(section: .keywords(keywords))
+            }
             .disposed(by: disposeBag)
     }
 
@@ -346,14 +364,6 @@ extension LiquorListViewController: UITableViewDataSource, UITableViewDelegate {
         cell.contentConfiguration = content
         cell.selectionStyle = .none
         return cell
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let liquorType = LiquorType.allCases[indexPath.row]
-        categoryModalView.isHidden = true
-        categoryLabel.text = liquorType.name
-        categoryLabel.font = .boldSystemFont(ofSize: 14)
-        viewModel.selectedType = liquorType
     }
 }
 
