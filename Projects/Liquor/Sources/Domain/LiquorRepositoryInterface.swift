@@ -12,4 +12,5 @@ public protocol LiquorRepositoryInterface {
     func fetchKeywords() async throws -> [Keyword]
     func fetchLiquors(type: LiquorType?, keyword: Keyword?) async throws -> [Liquor]
     func fetchLiquorCount(type: LiquorType?, keyword: Keyword?) async throws -> Int
+    func fetchLiquor(name: String) async throws -> Liquor
 }

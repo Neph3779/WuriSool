@@ -46,4 +46,11 @@ final class LiquorRepository: LiquorRepositoryInterface {
     func fetchKeywords() async throws -> [Keyword] {
         return try await firebaseRepository.fetchKeywords().map { Keyword.toDomain(data: $0) }
     }
+
+    func fetchLiquor(name: String) async throws -> Liquor {
+        let query = FirebaseQuery(filters: [.byName: name], pageCapacity: 1)
+        return try await firebaseRepository.fetchLiquors(query: query, pagination: false)
+            .map { Liquor(data: $0) }
+            .first ?? Liquor(data: [:])
+    }
 }

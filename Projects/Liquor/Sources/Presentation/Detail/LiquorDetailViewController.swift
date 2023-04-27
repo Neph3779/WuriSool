@@ -8,14 +8,20 @@
 
 import UIKit
 import RxSwift
+import Kingfisher
+import LiquorDomain
 
 final class LiquorDetailViewController: UIViewController {
+
+    private let viewModel: LiquorDetailViewModel
+    private let disposeBag = DisposeBag()
 
     private let scrollView = UIScrollView()
     private let outerStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 1
+        stackView.backgroundColor = DesignAsset.gray1.color
         return stackView
     }()
     private let liquorImageView: UIImageView = {
@@ -89,7 +95,7 @@ final class LiquorDetailViewController: UIViewController {
     }()
 
     private let wooriSoolDescriptionLabel = UILabel(title: "우리술 소개", font: .captionLarge, textColor: DesignAsset.gray5.color)
-    private let descriptionInfoView = LiquorDetailInfoView(title: "132", description: "소개내용")
+    private let descriptionInfoView = LiquorDetailInfoView(title: nil, description: "소개내용")
     private lazy var liquorDescriptionView: UIView = {
         let liquorDescriptionView = UIView()
         [wooriSoolDescriptionLabel, descriptionInfoView].forEach { liquorDescriptionView.addSubview($0) }
@@ -106,7 +112,7 @@ final class LiquorDetailViewController: UIViewController {
     }()
 
     private let foodLabel = UILabel(title: "어울리는 음식", font: .captionLarge, textColor: DesignAsset.gray5.color)
-    private let foodInfoView = LiquorDetailInfoView(title: "text", description: "text")
+    private let foodInfoView = LiquorDetailInfoView(title: nil, description: "text")
     private lazy var foodView: UIView = {
         let foodView = UIView()
         [foodLabel, foodInfoView].forEach { foodView.addSubview($0) }
@@ -123,10 +129,10 @@ final class LiquorDetailViewController: UIViewController {
     }()
 
     private let breweryInfoLabel = UILabel(title: "양조장 정보", font: .captionLarge, textColor: DesignAsset.gray5.color)
-    private let breweryNameInfoView = LiquorDetailInfoView(title: "text", description: "text")
-    private let breweryAddressInfoView = LiquorDetailInfoView(title: "text", description: "text")
-    private let breweryHomePageInfoView = LiquorDetailInfoView(title: "text", description: "text")
-    private let breweryPhoneNumberInfoView = LiquorDetailInfoView(title: "text", description: "text")
+    private let breweryNameInfoView = LiquorDetailInfoView(title: "양조장명", description: "text")
+    private let breweryAddressInfoView = LiquorDetailInfoView(title: "주소", description: "text")
+    private let breweryHomePageInfoView = LiquorDetailInfoView(title: "홈페이지", description: "text")
+    private let breweryPhoneNumberInfoView = LiquorDetailInfoView(title: "문의", description: "text")
     private lazy var breweryView: UIView = {
         let breweryView = UIView()
         [breweryInfoLabel, breweryNameInfoView, breweryAddressInfoView,
@@ -156,7 +162,7 @@ final class LiquorDetailViewController: UIViewController {
     }()
 
     private let sourceLabel = UILabel(title: "자료 출처", font: .captionLarge, textColor: DesignAsset.gray5.color)
-    private let sourceInfoView = LiquorDetailInfoView(title: "https://thesool.com", description: "text")
+    private let sourceInfoView = LiquorDetailInfoView(title: nil, description: "https://thesool.com")
     private lazy var sourceView: UIView = {
         let sourceView = UIView()
         [sourceLabel, sourceInfoView].forEach { sourceView.addSubview($0) }
@@ -172,10 +178,128 @@ final class LiquorDetailViewController: UIViewController {
         return sourceView
     }()
 
+    init(viewModel: LiquorDetailViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        bind()
         layout()
+    }
+
+    private func bind() {
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] liquor in
+                self?.liquorImageView.kf.setImage(with: URL(string: liquor.imagePath))
+            })
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.name }
+            .bind(to: liquorTitleLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.brewery.name }
+            .bind(to: breweryTitleLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.keywords.map { "#\($0.name)" }.joined(separator: " ") }
+            .bind(to: keywordLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.type.name }
+            .bind(to: liquorTypeInfoView.descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.dosage }
+            .bind(to: dosageInfoView.descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.alcoholPercentage }
+            .bind(to: alcoholPercentageInfoView.descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.award }
+            .bind(to: awardInfoView.descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.ingredients }
+            .bind(to: ingredientInfoView.descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.description }
+            .bind(to: descriptionInfoView.descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.foods }
+            .bind(to: foodInfoView.descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.brewery.name }
+            .bind(to: breweryNameInfoView.descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.brewery.address }
+            .bind(to: breweryAddressInfoView.descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.brewery.homePage }
+            .bind(to: breweryHomePageInfoView.descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+
+        viewModel.liquor
+            .share()
+            .observe(on: MainScheduler.instance)
+            .map { $0.brewery.phoneNumber }
+            .bind(to: breweryPhoneNumberInfoView.descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 
     private func layout() {
@@ -195,9 +319,11 @@ final class LiquorDetailViewController: UIViewController {
             liquorInfoView,
             liquorDescriptionView,
             foodView,
+            breweryView,
             sourceView
         ].forEach {
             outerStackView.addArrangedSubview($0)
+            $0.backgroundColor = .white
         }
 
         liquorImageView.snp.makeConstraints {

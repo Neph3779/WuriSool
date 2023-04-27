@@ -11,22 +11,27 @@ import UIKit
 final class LiquorDetailInfoView: UIView {
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.applyFont(font: .bodyMediumOverTwoLine)
+        label.applyFont(font: .bodyMedium)
+        label.textColor = DesignAsset.gray4.color
         return label
     }()
 
     let descriptionLabel: UILabel = {
         let label = UILabel()
         label.applyFont(font: .bodyMediumOverTwoLine)
+        label.numberOfLines = 0
         return label
     }()
 
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fill
         [titleLabel, descriptionLabel].forEach {
             stackView.addArrangedSubview($0)
+        }
+        titleLabel.snp.makeConstraints {
+            $0.width.equalToSuperview().multipliedBy(0.2)
         }
         return stackView
     }()
@@ -34,6 +39,7 @@ final class LiquorDetailInfoView: UIView {
     init(title: String? = nil, description: String? = nil) {
         super.init(frame: .zero)
         layout()
+        titleLabel.isHidden = title == nil
         titleLabel.text = title
         descriptionLabel.text = description
     }
