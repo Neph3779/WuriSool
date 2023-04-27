@@ -45,27 +45,23 @@ public struct Liquor: Hashable {
         keywords = (data["keywords"] as? [Int])?.compactMap {
             Keyword(rawValue: $0)
         } ?? []
-        type = (data["type"] as? [Int])?.compactMap {
-            LiquorType(rawValue: $0)
-        }.first ?? .others
-        brewery = ((data["brewery"] as? NSArray) as? [[String: Any]])?.compactMap {
-            BreweryOverview(data: $0)
-        }.first ?? BreweryOverview(data: [:])
+        type = LiquorType(rawValue: data["type"] as? Int ?? -1) ?? .others
+        brewery = BreweryOverview(data: data["brewery"] as? [String: Any] ?? [:])
     }
 }
 
 public struct BreweryOverview: Hashable {
-    let breweryId: Int
-    let name: String
-    let address: String
-    let homePage: String
-    let phoneNumber: String
+    public let breweryId: Int
+    public let name: String
+    public let address: String
+    public let homePage: String
+    public let phoneNumber: String
 
     public init(data: [String: Any]) {
         breweryId = data["breweryId"] as? Int ?? -1
-        name = data["name"] as? String ?? ""
-        address = data["address"] as? String ?? ""
-        homePage = data["homePage"] as? String ?? ""
-        phoneNumber = data["phoneNumber"] as? String ?? ""
+        name = data["breweryName"] as? String ?? ""
+        address = data["breweryAddress"] as? String ?? ""
+        homePage = data["brewryHomePage"] as? String ?? ""
+        phoneNumber = data["breweryPhoneNumber"] as? String ?? ""
     }
 }
