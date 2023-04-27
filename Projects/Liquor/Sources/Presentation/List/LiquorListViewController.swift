@@ -203,6 +203,13 @@ final class LiquorListViewController: UIViewController {
             })
             .disposed(by: disposeBag)
 
+        liquorCollectionView.rx.itemSelected
+            .asDriver()
+            .drive { [weak self] _ in
+                self?.navigationController?.pushViewController(LiquorDetailViewController(), animated: true)
+            }
+            .disposed(by: disposeBag)
+
         categoryTableView.rx.itemSelected
             .observe(on: MainScheduler.instance)
             .asDriver(onErrorDriveWith: .just(IndexPath(row: 0, section: 0)))
