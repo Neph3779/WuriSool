@@ -158,16 +158,17 @@ final class LiquorListViewController: UIViewController {
             .disposed(by: disposeBag)
 
         viewModel.isUpdating
-            .observe(on: MainScheduler.instance)
-            .subscribe { [weak self] isUpdating in
-            if isUpdating {
-                self?.loadingIndicator.startAnimating()
-                self?.keywordCollectionView.isUserInteractionEnabled = false
-            } else {
-                self?.loadingIndicator.stopAnimating()
-                self?.keywordCollectionView.isUserInteractionEnabled = true
+            .asDriver(onErrorJustReturn: true)
+            .drive { [weak self] isUpdating in
+                if isUpdating {
+                    self?.loadingIndicator.startAnimating()
+                    self?.keywordCollectionView.isUserInteractionEnabled = false
+                } else {
+                    self?.loadingIndicator.stopAnimating()
+                    self?.keywordCollectionView.isUserInteractionEnabled = true
+                }
             }
-        }.disposed(by: disposeBag)
+            .disposed(by: disposeBag)
 
         scrollView.rx.reachedBottom()
             .asDriver()
@@ -176,44 +177,43 @@ final class LiquorListViewController: UIViewController {
             }).disposed(by: disposeBag)
 
         keywordCollectionView.rx.itemSelected
-            .observe(on: MainScheduler.instance)
+            .asSignal()
             .map { Keyword.allCases[$0.row] }
-            .bind(to: viewModel.rxSelectedKeyword)
+            .emit(to: viewModel.rxSelectedKeyword)
             .disposed(by: disposeBag)
 
         keywordCollectionView.contentSizeDidChanged
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] size in
+            .asSignal()
+            .emit { [weak self] size in
                 if size.height > 0 {
                     self?.keywordCollectionView.snp.remakeConstraints {
                         $0.height.equalTo(size.height)
                     }
                 }
-            })
+            }
             .disposed(by: disposeBag)
 
         liquorCollectionView.contentSizeDidChanged
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] size in
+            .asSignal()
+            .emit { [weak self] size in
                 if size.height > 0 {
                     self?.liquorCollectionView.snp.remakeConstraints {
                         $0.height.equalTo(size.height)
                     }
                 }
-            })
+            }
             .disposed(by: disposeBag)
 
         liquorCollectionView.rx.itemSelected
-            .asDriver()
-            .drive { [weak self] _ in
-                self?.navigationController?.pushViewController(LiquorDetailViewController(), animated: true)
+            .asSignal()
+            .emit { [weak self] _ in
+
             }
             .disposed(by: disposeBag)
 
         categoryTableView.rx.itemSelected
-            .observe(on: MainScheduler.instance)
-            .asDriver(onErrorDriveWith: .just(IndexPath(row: 0, section: 0)))
-            .drive { [weak self] indexPath in
+            .asSignal(onErrorSignalWith: .just(IndexPath(row: 0, section: 0)))
+            .emit { [weak self] indexPath in
                 let liquorType = LiquorType.allCases[indexPath.row]
                 self?.categoryModalView.isHidden = true
                 self?.categoryLabel.text = liquorType.name
