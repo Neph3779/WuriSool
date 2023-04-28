@@ -19,7 +19,7 @@ final class TitleBar: UIView {
     private let subTitleLabel: UILabel = {
         let label = UILabel()
         label.applyFont(font: .captionMedium)
-        label.textColor = DesignAsset.gray4.color
+        label.textColor = DesignAsset.Colors.gray4.color
         return label
     }()
 

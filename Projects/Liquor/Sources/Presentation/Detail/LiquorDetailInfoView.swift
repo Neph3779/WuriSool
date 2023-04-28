@@ -11,8 +11,8 @@ import UIKit
 final class LiquorDetailInfoView: UIView {
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.applyFont(font: .bodyMedium)
-        label.textColor = DesignAsset.gray4.color
+        label.applyFont(font: .captionLarge)
+        label.textColor = DesignAsset.Colors.gray4.color
         return label
     }()
 
@@ -20,6 +20,7 @@ final class LiquorDetailInfoView: UIView {
         let label = UILabel()
         label.applyFont(font: .bodyMediumOverTwoLine)
         label.numberOfLines = 0
+        label.textColor = DesignAsset.Colors.gray6.color
         return label
     }()
 
@@ -27,11 +28,12 @@ final class LiquorDetailInfoView: UIView {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fill
+        stackView.spacing = 10
         [titleLabel, descriptionLabel].forEach {
             stackView.addArrangedSubview($0)
         }
         titleLabel.snp.makeConstraints {
-            $0.width.equalToSuperview().multipliedBy(0.2)
+            $0.width.equalToSuperview().multipliedBy(0.15)
         }
         return stackView
     }()

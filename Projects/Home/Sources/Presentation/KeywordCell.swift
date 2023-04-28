@@ -28,7 +28,7 @@ final class KeywordCell: UICollectionViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.applyFont(font: .buttonSmall)
-        label.textColor = DesignAsset.gray5.color
+        label.textColor = DesignAsset.Colors.gray5.color
         label.textAlignment = .center
         return label
     }()

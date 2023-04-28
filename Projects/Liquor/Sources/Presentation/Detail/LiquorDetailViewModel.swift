@@ -29,7 +29,6 @@ final class LiquorDetailViewModel {
             do {
                 let data = try await repository.fetchLiquor(name: name)
                 liquor.accept(data)
-                print(data)
             } catch {
 
             }

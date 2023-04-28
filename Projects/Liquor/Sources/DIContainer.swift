@@ -23,4 +23,12 @@ final class DIContainer {
     func makeLiquorViewController() -> LiquorListViewController {
         return LiquorListViewController(viewModel: makeLiquorViewModel())
     }
+
+    func makeLiquorDetailViewModel(liquorName: String) -> LiquorDetailViewModel {
+        return LiquorDetailViewModel(name: liquorName, repository: makeLiquorRepository())
+    }
+
+    func makeLiquorDetailViewController() -> LiquorDetailViewController {
+        return LiquorDetailViewController(viewModel: makeLiquorDetailViewModel(liquorName: "느린마을 막걸리"))
+    }
 }

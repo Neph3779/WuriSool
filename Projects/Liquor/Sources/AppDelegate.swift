@@ -18,7 +18,7 @@ import UIKit
     ) -> Bool {
         let DIContainer = DIContainer()
         window = UIWindow(frame: UIScreen.main.bounds)
-        let liquorViewController = DIContainer.makeLiquorViewController()
+        let liquorViewController = DIContainer.makeLiquorDetailViewController()
         window?.rootViewController = UINavigationController(rootViewController: liquorViewController)
         window?.makeKeyAndVisible()
         return true

@@ -19,7 +19,7 @@ public final class HomeViewController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 1
-        stackView.backgroundColor = DesignAsset.gray1.color
+        stackView.backgroundColor = DesignAsset.Colors.gray1.color
         return stackView
     }()
 

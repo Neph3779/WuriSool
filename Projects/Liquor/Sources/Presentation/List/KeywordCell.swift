@@ -16,19 +16,19 @@ final class KeywordCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             if isSelected {
-                keywordLabel.textColor = DesignAsset.gray7.color
+                keywordLabel.textColor = DesignAsset.Colors.gray7.color
                 bottomLine.snp.remakeConstraints {
                     $0.leading.trailing.bottom.equalToSuperview()
                     $0.height.equalTo(2)
                 }
-                bottomLine.backgroundColor = DesignAsset.gray7.color
+                bottomLine.backgroundColor = DesignAsset.Colors.gray7.color
             } else {
-                keywordLabel.textColor = DesignAsset.gray4.color
+                keywordLabel.textColor = DesignAsset.Colors.gray4.color
                 bottomLine.snp.remakeConstraints {
                     $0.leading.trailing.bottom.equalToSuperview()
                     $0.height.equalTo(1)
                 }
-                bottomLine.backgroundColor = DesignAsset.gray1.color
+                bottomLine.backgroundColor = DesignAsset.Colors.gray1.color
             }
         }
     }
@@ -44,14 +44,14 @@ final class KeywordCell: UICollectionViewCell {
     private let keywordLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.textColor = DesignAsset.gray4.color
+        label.textColor = DesignAsset.Colors.gray4.color
         label.applyFont(font: .buttonSmall)
         return label
     }()
 
     private let bottomLine: UIView = {
         let line = UIView()
-        line.backgroundColor = DesignAsset.gray1.color
+        line.backgroundColor = DesignAsset.Colors.gray1.color
         return line
     }()
 

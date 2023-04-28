@@ -18,7 +18,7 @@ final class LiquorCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 10
         imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = DesignAsset.gray1.color.cgColor
+        imageView.layer.borderColor = DesignAsset.Colors.gray1.color.cgColor
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -30,13 +30,13 @@ final class LiquorCell: UICollectionViewCell {
     private let infoLabel: UILabel = {
         let label = UILabel()
         label.applyFont(font: .bodySmall)
-        label.textColor = DesignAsset.gray4.color
+        label.textColor = DesignAsset.Colors.gray4.color
         return label
     }()
     private let keywordLabel: UILabel = {
         let label = UILabel()
         label.applyFont(font: .bodySmall)
-        label.textColor = DesignAsset.gray4.color
+        label.textColor = DesignAsset.Colors.gray4.color
 
         return label
     }()

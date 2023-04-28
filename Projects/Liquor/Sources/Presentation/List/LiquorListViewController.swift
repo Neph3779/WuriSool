@@ -32,7 +32,7 @@ final class LiquorListViewController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.distribution = .fill
-        stackView.backgroundColor = DesignAsset.gray1.color
+        stackView.backgroundColor = DesignAsset.Colors.gray1.color
         return stackView
     }()
 
@@ -56,14 +56,14 @@ final class LiquorListViewController: UIViewController {
         let label = UILabel()
         label.text = "판매상품 0개"
         label.applyFont(font: .buttonSmall)
-        label.textColor = DesignAsset.gray4.color
+        label.textColor = DesignAsset.Colors.gray4.color
         return label
     }()
 
     private lazy var categoryLabel: UILabel = {
         let label = UILabel()
         label.applyFont(font: .buttonSmall)
-        label.textColor = DesignAsset.gray4.color
+        label.textColor = DesignAsset.Colors.gray4.color
         label.text = "카테고리 ▽"
         label.isUserInteractionEnabled = true
         label.addGestureRecognizer(UITapGestureRecognizer(
@@ -104,7 +104,7 @@ final class LiquorListViewController: UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
         tableView.dataSource = self
         tableView.layer.cornerRadius = 10
-        tableView.layer.borderColor = DesignAsset.gray1.color.cgColor
+        tableView.layer.borderColor = DesignAsset.Colors.gray1.color.cgColor
         tableView.layer.borderWidth = 1
         return tableView
     }()
