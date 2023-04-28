@@ -181,6 +181,7 @@ final class LiquorDetailViewController: UIViewController {
             $0.top.equalTo(sourceLabel.snp.bottom).offset(8)
             $0.bottom.equalToSuperview().inset(15)
         }
+        sourceInfoView.descriptionLabel.applyFont(font: .captionLarge)
         return sourceView
     }()
 
