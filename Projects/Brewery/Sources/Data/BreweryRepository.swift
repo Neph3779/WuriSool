@@ -10,5 +10,14 @@ import Foundation
 import BreweryDomain
 
 final class BreweryRepository: BreweryRepositoryInterface {
+    private let firebaseRepository: FirebaseRepositoryInterface
 
+    init(firebaseRepository: FirebaseRepositoryInterface = FirebaseRepository()) {
+        self.firebaseRepository = firebaseRepository
+    }
+
+    func fetchBrewerys(region: String) async throws -> [Brewery] {
+        let query = FirebaseQuery(filters: [:], pageCapacity: 10)
+        return try await firebaseRepository.fetchBrewery(query: query, pagination: true).map { Brewery(data: $0) }
+    }
 }

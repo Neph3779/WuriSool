@@ -15,5 +15,9 @@ let project = Project.framework(
     name: projectName,
     platform: .iOS,
     iOSTargetVersion: iOSTargetVersion,
+    dependencies: [
+        .external(name: "RxSwift"),
+        .external(name: "RxCocoa")
+    ],
     shouldIncludeTest: false
 )

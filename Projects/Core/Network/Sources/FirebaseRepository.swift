@@ -138,7 +138,7 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
                     return
                 }
                 if let snapshot = snapshot {
-                    self?.logger.debug("✅ Liquors fetching completed. LogId: \(self?.logId.uuidString ?? "unknown")")
+                    self?.logger.debug("✅ Brewerys fetching completed. LogId: \(self?.logId.uuidString ?? "unknown")")
                     continuation.resume(returning: snapshot.documents.map { $0.data() })
                     return
                 } else {

@@ -8,18 +8,18 @@
 
 import Foundation
 
-public struct Brewery {
-    let id: Int
-    let address: String
-    let homePage: String
-    let name: String
-    let phoneNumber: String
-    let products: [LiquorOverview]
-    let programs: [Program]
-    let types: [LiquorType]
-    let imagePath: String
-    let hits: Int
-    let mostRecentView: Date
+public struct Brewery: Hashable {
+    public let id: Int
+    public let address: String
+    public let homePage: String
+    public let name: String
+    public let phoneNumber: String
+    public let products: [LiquorOverview]
+    public let programs: [Program]
+    public let types: [LiquorType]
+    public let imagePath: String
+    public let hits: Int
+    public let mostRecentView: Date
 
     public init(data: [String: Any]) {
         id = data["id"] as? Int ?? -1
@@ -36,20 +36,20 @@ public struct Brewery {
         types = (data["types"] as? [Int])?.compactMap {
             LiquorType(rawValue: $0)
         } ?? []
-        imagePath = ""
+        imagePath = data["imagePath"] as? String ?? ""
         hits = data["hits"] as? Int ?? -1
         mostRecentView = data["mostRecentView"] as? Date ?? Date()
     }
 }
 
-public struct Program {
-    let breweryId: Int
-    let cost: String
-    let description: String
-    let name: String
-    let place: String
-    let time: String
-    let imagePath: String
+public struct Program: Hashable {
+    public let breweryId: Int
+    public let cost: String
+    public let description: String
+    public let name: String
+    public let place: String
+    public let time: String
+    public let imagePath: String
 
     public init(data: [String: Any]) {
         breweryId = data["breweryId"] as? Int ?? -1
@@ -62,18 +62,44 @@ public struct Program {
     }
 }
 
-struct LiquorOverview {
-    let liquorId: Int
-    let name: String
-    let imagePath: String
-    let dosage: String
-    let alcoholPercentage: String
+public struct LiquorOverview: Hashable {
+    public let liquorId: Int
+    public let name: String
+    public let imagePath: String
+    public let dosage: String
+    public let alcoholPercentage: String
 
     public init(data: [String: Any]) {
         liquorId = data["liquorId"] as? Int ?? -1
-        name = data["name"] as? String ?? "name"
+        name = data["liquorName"] as? String ?? "name"
         imagePath = data["imagePath"] as? String ?? "imagePath"
-        dosage = data["dosage"] as? String ?? "dosage"
+        dosage = data["liquorDosage"] as? String ?? "dosage"
         alcoholPercentage = data["alcoholPercentage"] as? String ?? "alcoholPercentage"
+    }
+}
+
+public enum Region: CaseIterable {
+    case gyeonggi
+    case chungCheong
+    case jeolla
+    case gangWon
+    case gyeongSang
+    case jeju
+
+    public var name: String {
+        switch self {
+        case .gyeonggi:
+            return "경기도"
+        case .chungCheong:
+            return "충청도"
+        case .jeolla:
+            return "전라도"
+        case .gangWon:
+            return "강원도"
+        case .gyeongSang:
+            return "경상도"
+        case .jeju:
+            return "제주도"
+        }
     }
 }
