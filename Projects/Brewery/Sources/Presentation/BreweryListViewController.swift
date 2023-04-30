@@ -70,6 +70,7 @@ final class BreweryListViewController: UIViewController {
         bind()
         layout()
         applyDataSource(section: .address(Region.allCases.map { $0.name }))
+        addressCollectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .left)
     }
 
     private func setUpCollectionViews() {

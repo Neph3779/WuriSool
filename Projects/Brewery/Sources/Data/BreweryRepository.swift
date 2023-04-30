@@ -17,7 +17,7 @@ final class BreweryRepository: BreweryRepositoryInterface {
     }
 
     func fetchBrewerys(region: String) async throws -> [Brewery] {
-        let query = FirebaseQuery(filters: [:], pageCapacity: 10)
+        let query = FirebaseQuery(filters: [.byRegion: region], pageCapacity: 10)
         return try await firebaseRepository.fetchBrewery(query: query, pagination: true).map { Brewery(data: $0) }
     }
 }

@@ -16,7 +16,7 @@ final class BreweryListViewModel {
     private let repository: BreweryRepositoryInterface
     private let region = ""
     private let disposeBag = DisposeBag()
-    let selectedRegion = BehaviorRelay<String>(value: "서울, 경기")
+    let selectedRegion = BehaviorRelay<String>(value: "경기도")
     let brewerys = BehaviorRelay<[Brewery]>(value: [])
 
     init(repository: BreweryRepositoryInterface) {
@@ -46,6 +46,6 @@ final class BreweryListViewModel {
 
 extension BreweryListViewModel {
     func viewDidLoad() {
-        fetchBrewery()
+//        fetchBrewery()
     }
 }
