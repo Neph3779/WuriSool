@@ -54,8 +54,8 @@ final class BreweryCategoryCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setUpContents(address: String) {
-        addressLabel.text = address
+    func setUpContents(title: String) {
+        addressLabel.text = title
     }
 
     private func layout() {

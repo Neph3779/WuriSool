@@ -175,7 +175,7 @@ extension BreweryListViewController {
     private func makeAddressDataSource() -> UICollectionViewDiffableDataSource<AddressSeciton, String> {
         return .init(collectionView: addressCollectionView) { collectionView, indexPath, address in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BreweryCategoryCell.reuseIdentifier, for: indexPath) as? BreweryCategoryCell else { return UICollectionViewCell() }
-            cell.setUpContents(address: address)
+            cell.setUpContents(title: address)
             return cell
         }
     }
