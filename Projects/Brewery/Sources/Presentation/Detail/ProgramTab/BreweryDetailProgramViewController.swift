@@ -9,9 +9,18 @@
 import UIKit
 
 final class BreweryDetailProgramViewController: BreweryContainerViewController {
-
+    private let viewModel: BreweryDetailViewModel
     private let someView = UIView()
 
+    init(viewModel: BreweryDetailViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         someView.backgroundColor = .red

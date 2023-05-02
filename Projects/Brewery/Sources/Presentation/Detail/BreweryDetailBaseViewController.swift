@@ -88,9 +88,9 @@ final class BreweryDetailBaseViewController: UIViewController {
     private lazy var tabBarDataSource = makeTabBarDataSource()
 
     private let tabBarContainerView = UIView()
-    private let productViewController = BreweryDetailProductViewController()
-    private let programViewController = BreweryDetailProgramViewController()
-    private let operationInfoViewController = BreweryDetailOperationInfoViewController()
+    private lazy var productViewController = BreweryDetailProductViewController(viewModel: viewModel)
+    private lazy var programViewController = BreweryDetailProgramViewController(viewModel: viewModel)
+    private lazy var operationInfoViewController = BreweryDetailOperationInfoViewController(viewModel: viewModel)
 
     init(viewModel: BreweryDetailViewModel) {
         self.viewModel = viewModel
