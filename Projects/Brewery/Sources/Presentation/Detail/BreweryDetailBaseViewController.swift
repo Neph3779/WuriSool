@@ -105,7 +105,11 @@ final class BreweryDetailBaseViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setUpChildViewControllers()
-        applyDataSource(tabBars: TabBarCategory.allCases)
+        applyDataSource(tabBars: [
+            .products(viewController: productViewController),
+            .programs(viewController: programViewController),
+            .operationInfo(viewController: operationInfoViewController)
+        ])
         layout()
         bind()
     }
@@ -142,28 +146,13 @@ final class BreweryDetailBaseViewController: UIViewController {
             $0.height.greaterThanOrEqualTo(1)
         }
         tabBarContainerView.snp.makeConstraints {
-            $0.height.equalTo(2000)
+            $0.height.greaterThanOrEqualTo(1)
         }
 
         outerStackView.setCustomSpacing(-10, after: breweryImageView)
     }
 
     private func bind() {
-        // selected tab 바뀌면 기존것 removeFromSuperView하고 뷰 추가
-        /*
-         tabBarContainerView.addSubview(productViewController.view)
-         productViewController.view.snp.makeConstraints {
-             $0.edges.equalToSuperview()
-         }
-         productViewController.didMove(toParent: self)
-         */
-
-        tabBarContainerView.addSubview(productViewController.view)
-        productViewController.view.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        productViewController.didMove(toParent: self)
-
         tabBarCollectionView.contentSizeDidChanged
             .asSignal()
             .emit { [weak self] size in
@@ -175,6 +164,28 @@ final class BreweryDetailBaseViewController: UIViewController {
             }
             .disposed(by: disposeBag)
 
+        viewModel.selectedTab
+            .asDriver(onErrorJustReturn: (.products(viewController: productViewController)))
+            .drive { [weak self] tab in
+                guard let self = self else { return }
+                var containerViewController: BreweryContainerViewController
+                switch tab {
+                case let .products(viewController):
+                    containerViewController = viewController
+                case let .programs(viewController):
+                    containerViewController = viewController
+                case let .operationInfo(viewController):
+                    containerViewController = viewController
+                }
+                self.tabBarContainerView.subviews.forEach { $0.removeFromSuperview() }
+                self.tabBarContainerView.addSubview(containerViewController.view)
+                containerViewController.view.snp.makeConstraints {
+                    $0.edges.equalToSuperview()
+                }
+                containerViewController.didMove(toParent: self)
+            }
+            .disposed(by: disposeBag)
+
         tabBarCollectionView.rx
             .itemSelected
             .asDriver()
@@ -182,28 +193,6 @@ final class BreweryDetailBaseViewController: UIViewController {
                 if let tab = self?.tabBarDataSource.itemIdentifier(for: indexPath) {
                     self?.viewModel.selectedTab.accept(tab)
                 }
-            }
-            .disposed(by: disposeBag)
-
-        viewModel.selectedTab
-            .asDriver()
-            .drive { [weak self] tab in
-                self?.tabBarContainerView.subviews.forEach { $0.removeFromSuperview() }
-                var viewController: BreweryContainerViewController? = nil
-                switch tab {
-                case .products:
-                    viewController = self?.productViewController
-                case .programs:
-                    viewController = self?.programViewController
-                case .operationInfo:
-                    viewController = self?.operationInfoViewController
-                }
-                guard let viewController = viewController else { return }
-                self?.tabBarContainerView.addSubview(viewController.view)
-                viewController.view.snp.makeConstraints {
-                    $0.edges.equalToSuperview()
-                }
-                viewController.didMove(toParent: self)
             }
             .disposed(by: disposeBag)
     }
@@ -228,10 +217,10 @@ extension BreweryDetailBaseViewController {
 // MARK: - TabBar CollectionView DataSource
 
 extension BreweryDetailBaseViewController {
-    enum TabBarCategory: Hashable, CaseIterable {
-        case products
-        case programs
-        case operationInfo
+    enum TabBarCategory: Hashable {
+        case products(viewController: BreweryContainerViewController)
+        case programs(viewController: BreweryContainerViewController)
+        case operationInfo(viewController: BreweryContainerViewController)
 
         var name: String {
             switch self {

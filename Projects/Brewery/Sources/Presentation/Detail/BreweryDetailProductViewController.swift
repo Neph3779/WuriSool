@@ -20,7 +20,7 @@ final class BreweryDetailProductViewController: BreweryContainerViewController {
         sizableView.addSubview(someView)
         someView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-            $0.height.equalTo(2000)
+            $0.height.equalTo(1000)
         }
     }
 }
