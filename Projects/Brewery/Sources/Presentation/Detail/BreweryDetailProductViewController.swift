@@ -7,11 +7,20 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
-final class BreweryDetailProductViewController: UIViewController {
+final class BreweryDetailProductViewController: BreweryContainerViewController {
+    private let someView = UIView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .brown
+        view.backgroundColor = .cyan
+        someView.backgroundColor = .brown
+        sizableView.addSubview(someView)
+        someView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.equalTo(2000)
+        }
     }
 }

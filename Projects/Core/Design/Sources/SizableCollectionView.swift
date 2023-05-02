@@ -20,3 +20,13 @@ open class SizableCollectionView: UICollectionView {
         }
     }
 }
+
+open class SizableView: UIView {
+    open var contentSize = PublishRelay<CGSize>()
+
+    open override var bounds: CGRect {
+        didSet {
+            contentSize.accept(bounds.size)
+        }
+    }
+}

@@ -8,9 +8,17 @@
 
 import UIKit
 
-class BreweryDetailProgramViewController: UIViewController {
+final class BreweryDetailProgramViewController: BreweryContainerViewController {
+
+    private let someView = UIView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        someView.backgroundColor = .red
+        sizableView.addSubview(someView)
+        someView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.equalTo(2000)
+        }
     }
 }

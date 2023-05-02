@@ -18,8 +18,7 @@ import UIKit
     ) -> Bool {
         let DIContainer = DIContainer()
         window = UIWindow(frame: UIScreen.main.bounds)
-//        let viewController = DIContainer.makeBreweryListViewController()
-        let viewController = BreweryDetailBaseViewController()
+        let viewController = DIContainer.makeBreweryDetailViewController()
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
         return true

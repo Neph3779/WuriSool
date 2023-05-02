@@ -12,6 +12,8 @@ import RxCocoa
 
 final class BreweryDetailBaseViewController: UIViewController {
 
+    private let viewModel: BreweryDetailViewModel
+    private let disposeBag = DisposeBag()
     private let scrollView = UIScrollView()
     private let outerStackView: UIStackView = {
         let stackView = UIStackView()
@@ -26,21 +28,30 @@ final class BreweryDetailBaseViewController: UIViewController {
     private let breweryImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = .lightGray
         return imageView
     }()
 
     private let breweryTitleLabel: UILabel = {
         let label = UILabel()
+        label.applyFont(font: .titleLarge2)
+        label.text = "양조장 이름"
         return label
     }()
 
     private let breweryGuideLabel: UILabel = {
         let label = UILabel()
+        label.applyFont(font: .bodyMedium)
+        label.text = "방문 가이드 확인하기 >"
+        label.textColor = DesignAsset.Colors.gray5.color
         return label
     }()
 
     private let breweryAddressLabel: UILabel = {
         let label = UILabel()
+        label.applyFont(font: .bodyMedium)
+        label.text = "주소"
+        label.textColor = DesignAsset.Colors.gray5.color
         return label
     }()
 
@@ -50,18 +61,21 @@ final class BreweryDetailBaseViewController: UIViewController {
             infoView.addSubview($0)
         }
         breweryTitleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(26)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.top.equalToSuperview().inset(20)
+            $0.leading.trailing.equalToSuperview().inset(13)
         }
         breweryGuideLabel.snp.makeConstraints {
             $0.top.equalTo(breweryTitleLabel.snp.bottom).offset(8)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.leading.trailing.equalToSuperview().inset(13)
         }
         breweryAddressLabel.snp.makeConstraints {
-            $0.top.equalTo(breweryGuideLabel.snp.bottom).offset(4)
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(4)
+            $0.top.equalTo(breweryGuideLabel.snp.bottom).offset(8)
+            $0.leading.trailing.equalToSuperview().inset(13)
+            $0.bottom.equalToSuperview().inset(10)
         }
+        infoView.layer.cornerRadius = 10
+        infoView.clipsToBounds = true
+        infoView.backgroundColor = .white
         return infoView
     }()
 
@@ -78,11 +92,22 @@ final class BreweryDetailBaseViewController: UIViewController {
     private let programViewController = BreweryDetailProgramViewController()
     private let operationInfoViewController = BreweryDetailOperationInfoViewController()
 
+    init(viewModel: BreweryDetailViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setUpChildViewControllers()
         applyDataSource(tabBars: TabBarCategory.allCases)
+        layout()
+        bind()
     }
 
     private func setUpTabBarCollectionView() {
@@ -95,10 +120,13 @@ final class BreweryDetailBaseViewController: UIViewController {
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
+        scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.insetsLayoutMarginsFromSafeArea = false
+        outerStackView.insetsLayoutMarginsFromSafeArea = false
         scrollView.addSubview(outerStackView)
         scrollView.snp.makeConstraints {
-            $0.leading.trailing.top.equalTo(view.safeAreaLayoutGuide)
-            $0.bottom.equalTo(view)
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.top.bottom.equalTo(view)
         }
         outerStackView.snp.makeConstraints {
             $0.leading.trailing.equalTo(view)
@@ -108,8 +136,16 @@ final class BreweryDetailBaseViewController: UIViewController {
             outerStackView.addArrangedSubview($0)
         }
         breweryImageView.snp.makeConstraints {
-            $0.height.equalTo(200)
+            $0.height.equalTo(280)
         }
+        tabBarCollectionView.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(1)
+        }
+        tabBarContainerView.snp.makeConstraints {
+            $0.height.equalTo(2000)
+        }
+
+        outerStackView.setCustomSpacing(-10, after: breweryImageView)
     }
 
     private func bind() {
@@ -121,6 +157,55 @@ final class BreweryDetailBaseViewController: UIViewController {
          }
          productViewController.didMove(toParent: self)
          */
+
+        tabBarContainerView.addSubview(productViewController.view)
+        productViewController.view.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        productViewController.didMove(toParent: self)
+
+        tabBarCollectionView.contentSizeDidChanged
+            .asSignal()
+            .emit { [weak self] size in
+                if size.height > 0 {
+                    self?.tabBarCollectionView.snp.remakeConstraints {
+                        $0.height.equalTo(size.height)
+                    }
+                }
+            }
+            .disposed(by: disposeBag)
+
+        tabBarCollectionView.rx
+            .itemSelected
+            .asDriver()
+            .drive { [weak self] indexPath in
+                if let tab = self?.tabBarDataSource.itemIdentifier(for: indexPath) {
+                    self?.viewModel.selectedTab.accept(tab)
+                }
+            }
+            .disposed(by: disposeBag)
+
+        viewModel.selectedTab
+            .asDriver()
+            .drive { [weak self] tab in
+                self?.tabBarContainerView.subviews.forEach { $0.removeFromSuperview() }
+                var viewController: BreweryContainerViewController? = nil
+                switch tab {
+                case .products:
+                    viewController = self?.productViewController
+                case .programs:
+                    viewController = self?.programViewController
+                case .operationInfo:
+                    viewController = self?.operationInfoViewController
+                }
+                guard let viewController = viewController else { return }
+                self?.tabBarContainerView.addSubview(viewController.view)
+                viewController.view.snp.makeConstraints {
+                    $0.edges.equalToSuperview()
+                }
+                viewController.didMove(toParent: self)
+            }
+            .disposed(by: disposeBag)
     }
 
     private func setUpChildViewControllers() {
@@ -132,8 +217,8 @@ final class BreweryDetailBaseViewController: UIViewController {
 
 extension BreweryDetailBaseViewController {
     private func tabBarCollectionViewLayout() -> UICollectionViewCompositionalLayout {
-        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .estimated(70), heightDimension: .estimated(40)))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .estimated(70), heightDimension: .estimated(40)), subitems: [item])
+        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .estimated(120), heightDimension: .estimated(40)))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .estimated(120), heightDimension: .estimated(40)), subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         return UICollectionViewCompositionalLayout(section: section)

@@ -14,14 +14,14 @@ final class BreweryCategoryCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             if isSelected {
-                addressLabel.textColor = DesignAsset.Colors.gray7.color
+                titleLabel.textColor = DesignAsset.Colors.gray7.color
                 bottomLine.snp.remakeConstraints {
                     $0.leading.trailing.bottom.equalToSuperview()
                     $0.height.equalTo(2)
                 }
                 bottomLine.backgroundColor = DesignAsset.Colors.gray7.color
             } else {
-                addressLabel.textColor = DesignAsset.Colors.gray4.color
+                titleLabel.textColor = DesignAsset.Colors.gray4.color
                 bottomLine.snp.remakeConstraints {
                     $0.leading.trailing.bottom.equalToSuperview()
                     $0.height.equalTo(1)
@@ -31,7 +31,7 @@ final class BreweryCategoryCell: UICollectionViewCell {
         }
     }
 
-    private let addressLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.textColor = DesignAsset.Colors.gray4.color
@@ -55,15 +55,15 @@ final class BreweryCategoryCell: UICollectionViewCell {
     }
 
     func setUpContents(title: String) {
-        addressLabel.text = title
+        titleLabel.text = title
     }
 
     private func layout() {
-        [addressLabel, bottomLine].forEach {
+        [titleLabel, bottomLine].forEach {
             contentView.addSubview($0)
         }
-        addressLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
+        titleLabel.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(16)
             $0.top.equalToSuperview().inset(13)
         }
         bottomLine.snp.makeConstraints {
