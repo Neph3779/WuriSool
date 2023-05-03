@@ -114,6 +114,8 @@ final class BreweryDetailBaseViewController: UIViewController {
         ])
         layout()
         bind()
+        tabBarCollectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .left)
+        viewModel.selectedTab.accept(.products(viewController: productViewController))
     }
 
     private func setUpTabBarCollectionView() {

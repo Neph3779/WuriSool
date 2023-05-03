@@ -7,10 +7,22 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
+import BreweryDomain
 
 final class BreweryDetailOperationInfoViewController: BreweryContainerViewController {
+
+    private let disposeBag = DisposeBag()
     private let viewModel: BreweryDetailViewModel
-    private let someView = UIView()
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.spacing = 1
+        stackView.distribution = .equalSpacing
+        stackView.axis = .vertical
+        stackView.backgroundColor = DesignAsset.Colors.gray1.color
+        return stackView
+    }()
 
     init(viewModel: BreweryDetailViewModel) {
         self.viewModel = viewModel
@@ -23,11 +35,31 @@ final class BreweryDetailOperationInfoViewController: BreweryContainerViewContro
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        someView.backgroundColor = .blue
-        sizableView.addSubview(someView)
-        someView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.height.equalTo(3000)
+        layout()
+        bind()
+    }
+
+    private func layout() {
+        sizableView.addSubview(stackView)
+        stackView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.top.bottom.equalToSuperview()
         }
+    }
+
+    private func bind() {
+        viewModel.brewery
+            .asDriver()
+            .drive { [weak self] (brewery: Brewery) in
+                [
+                    (brewery.phoneNumber, DesignAsset.Images.phone.image),
+                    (brewery.homePage, DesignAsset.Images.link.image),
+                    (brewery.address, DesignAsset.Images.location.image)
+                ].forEach { (text: String, image: UIImage) in
+                    let infoView = InfoView(image: image, description: text)
+                    self?.stackView.addArrangedSubview(infoView)
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }

@@ -162,7 +162,6 @@ extension BreweryDetailProductViewController {
     private func makeProductDataSource() -> UICollectionViewDiffableDataSource<ProductSection, LiquorOverview> {
         return .init(collectionView: productCollectionView) { collectionView, indexPath, liquor in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProductCell.reuseIdentifier, for: indexPath) as? ProductCell else { return UICollectionViewCell() }
-            print(liquor)
             cell.setUpContents(liquor: liquor)
             return cell
         }
