@@ -18,6 +18,8 @@ final class ProductCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
+        imageView.layer.borderColor = DesignAsset.Colors.gray1.color.cgColor
+        imageView.layer.borderWidth = 1
         return imageView
     }()
 
@@ -58,13 +60,10 @@ final class ProductCell: UICollectionViewCell {
     }
 
     func setUpContents(liquor: LiquorOverview) {
-//        productImageView.kf.setImage(with: URL(string: liquor.imagePath))
-//        productNameLabel.text = liquor.name
-//        productInfoLabel.text = "\(liquor.alcoholPercentage) | \(liquor.dosage)"
-
-        productImageView.backgroundColor = .lightGray
-        productNameLabel.text = "text"
-        productInfoLabel.text = "text"
+        productImageView.kf.setImage(with: URL(string: liquor.imagePath))
+        productNameLabel.text = liquor.name
+        productInfoLabel.text = "\(liquor.alcoholPercentage) | \(liquor.dosage)"
+        categoryLabel.text = "임시"
     }
 
     private func layout() {
@@ -86,7 +85,8 @@ final class ProductCell: UICollectionViewCell {
 
         categoryLabel.snp.makeConstraints {
             $0.leading.equalTo(productImageView.snp.trailing).offset(12)
-            $0.top.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(productImageView.snp.top).offset(10)
         }
 
         productNameLabel.snp.makeConstraints {

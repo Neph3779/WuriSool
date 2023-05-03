@@ -72,7 +72,7 @@ public struct LiquorOverview: Hashable {
     public init(data: [String: Any]) {
         liquorId = data["liquorId"] as? Int ?? -1
         name = data["liquorName"] as? String ?? "name"
-        imagePath = data["imagePath"] as? String ?? "imagePath"
+        imagePath = data["liquorImagePath"] as? String ?? "imagePath"
         dosage = data["liquorDosage"] as? String ?? "dosage"
         alcoholPercentage = data["alcoholPercentage"] as? String ?? "alcoholPercentage"
     }

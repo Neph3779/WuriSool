@@ -14,8 +14,25 @@ final class BreweryDetailViewModel {
 
     private let repository: BreweryRepositoryInterface
     let selectedTab = PublishRelay<BreweryDetailBaseViewController.TabBarCategory>()
+    let brewery = BehaviorRelay<Brewery>(value: Brewery(data: [:]))
 
-    init(repository: BreweryRepositoryInterface) {
+    init(name: String, brewery: Brewery? = nil, repository: BreweryRepositoryInterface) {
         self.repository = repository
+        if let brewery = brewery {
+            self.brewery.accept(brewery)
+        } else {
+            fetchBrewery(name: name)
+        }
+    }
+
+    func fetchBrewery(name: String) {
+        Task {
+            do {
+                let data = try await repository.fetchBrewery(name: name)
+                brewery.accept(data)
+            } catch {
+
+            }
+        }
     }
 }

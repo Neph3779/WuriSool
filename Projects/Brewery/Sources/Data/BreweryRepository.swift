@@ -20,4 +20,10 @@ final class BreweryRepository: BreweryRepositoryInterface {
         let query = FirebaseQuery(filters: [.byRegion: region], pageCapacity: 10)
         return try await firebaseRepository.fetchBrewery(query: query, pagination: true).map { Brewery(data: $0) }
     }
+
+    func fetchBrewery(name: String) async throws -> Brewery {
+        let query = FirebaseQuery(filters: [.byName: name], pageCapacity: 1)
+        let data = try await firebaseRepository.fetchBrewery(query: query, pagination: false)
+        return Brewery(data: data.first ?? [:])
+    }
 }

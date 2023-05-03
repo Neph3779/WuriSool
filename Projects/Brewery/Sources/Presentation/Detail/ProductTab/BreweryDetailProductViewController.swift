@@ -63,7 +63,6 @@ final class BreweryDetailProductViewController: BreweryContainerViewController {
         layout()
         bind()
         applyDataSource(section: .category([.fruitWine, .rawRiceWine, .refinedRiceWine]))
-        applyDataSource(section: .product([LiquorOverview(data: [:])]))
     }
 
     private func setUpCollectionViews() {
@@ -102,6 +101,13 @@ final class BreweryDetailProductViewController: BreweryContainerViewController {
                 }
                 .disposed(by: disposeBag)
         }
+
+        viewModel.brewery.asDriver()
+            .map { $0.products }
+            .drive { [weak self] products in
+                self?.applyDataSource(section: .product(products))
+            }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -156,6 +162,7 @@ extension BreweryDetailProductViewController {
     private func makeProductDataSource() -> UICollectionViewDiffableDataSource<ProductSection, LiquorOverview> {
         return .init(collectionView: productCollectionView) { collectionView, indexPath, liquor in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProductCell.reuseIdentifier, for: indexPath) as? ProductCell else { return UICollectionViewCell() }
+            print(liquor)
             cell.setUpContents(liquor: liquor)
             return cell
         }

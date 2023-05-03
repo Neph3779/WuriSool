@@ -25,11 +25,11 @@ final class DIContainer {
         return BreweryListViewController(viewModel: makeBreweryListViewModel())
     }
 
-    func makeBreweryDetailViewModel() -> BreweryDetailViewModel {
-        return BreweryDetailViewModel(repository: makeBreweryRepository())
+    func makeBreweryDetailViewModel(name: String) -> BreweryDetailViewModel {
+        return BreweryDetailViewModel(name: name, repository: makeBreweryRepository())
     }
 
-    func makeBreweryDetailViewController() -> BreweryDetailBaseViewController {
-        return BreweryDetailBaseViewController(viewModel: makeBreweryDetailViewModel())
+    func makeBreweryDetailViewController(name: String) -> BreweryDetailBaseViewController {
+        return BreweryDetailBaseViewController(viewModel: makeBreweryDetailViewModel(name: name))
     }
 }

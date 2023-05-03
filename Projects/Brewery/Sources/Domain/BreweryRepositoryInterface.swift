@@ -8,4 +8,5 @@
 
 public protocol BreweryRepositoryInterface {
     func fetchBrewerys(region: String) async throws -> [Brewery]
+    func fetchBrewery(name: String) async throws -> Brewery
 }

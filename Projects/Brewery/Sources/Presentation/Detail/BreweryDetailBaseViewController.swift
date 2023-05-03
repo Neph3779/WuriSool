@@ -9,6 +9,8 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Kingfisher
+import BreweryDomain
 
 final class BreweryDetailBaseViewController: UIViewController {
 
@@ -193,6 +195,15 @@ final class BreweryDetailBaseViewController: UIViewController {
                 if let tab = self?.tabBarDataSource.itemIdentifier(for: indexPath) {
                     self?.viewModel.selectedTab.accept(tab)
                 }
+            }
+            .disposed(by: disposeBag)
+
+        viewModel.brewery
+            .asDriver()
+            .drive { [weak self] (brewery: Brewery) in
+                self?.breweryTitleLabel.text = brewery.name
+                self?.breweryAddressLabel.text = brewery.address
+                self?.breweryImageView.kf.setImage(with: URL(string: brewery.imagePath))
             }
             .disposed(by: disposeBag)
     }
