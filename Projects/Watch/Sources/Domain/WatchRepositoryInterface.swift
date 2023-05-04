@@ -9,5 +9,5 @@
 import Foundation
 
 public protocol WatchRepositoryInterface {
-
+    func fetchVideos(of channel: LiquorChannel) async throws -> [YoutubeVideo]
 }

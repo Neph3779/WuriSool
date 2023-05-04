@@ -36,8 +36,8 @@ final class CategoryCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setUpContents(category: LiquorType) {
-        categoryLabel.text = category.name
+    func setUpContents(channel: LiquorChannel) {
+        categoryLabel.text = channel.name
     }
 
     private func layout() {
@@ -49,7 +49,6 @@ final class CategoryCell: UICollectionViewCell {
     }
 
     private func setUpDeselected() {
-        contentView.backgroundColor = .white
         layer.cornerRadius = 8
         layer.borderColor = DesignAsset.Colors.gray2.color.cgColor
         categoryLabel.textColor = DesignAsset.Colors.gray4.color
@@ -58,11 +57,10 @@ final class CategoryCell: UICollectionViewCell {
     }
 
     private func setUpSelected() {
-        contentView.backgroundColor = DesignAsset.Colors.primary1.color
         layer.cornerRadius = 8
-        layer.borderColor = DesignAsset.Colors.primary8.color.cgColor
-        layer.borderWidth = 1
-        categoryLabel.textColor = DesignAsset.Colors.primary10.color
+        layer.borderColor = DesignAsset.Colors.gray5.color.cgColor
+        layer.borderWidth = 2
+        categoryLabel.textColor = DesignAsset.Colors.gray7.color
         clipsToBounds = true
     }
 }

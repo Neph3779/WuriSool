@@ -11,9 +11,22 @@ import WatchDomain
 
 final class WatchRepository: WatchRepositoryInterface {
 
-    private let firebaseRepository: FirebaseRepositoryInterface
+    private let youtubeRepository: YoutubeRepositoryInterface
 
-    init(firebaseRepository: FirebaseRepositoryInterface = FirebaseRepository()) {
-        self.firebaseRepository = firebaseRepository
+    init(youtubeRepository: YoutubeRepositoryInterface = YoutubeRepository()) {
+        self.youtubeRepository = youtubeRepository
+    }
+
+    func fetchVideos(of channel: LiquorChannel) async throws -> [YoutubeVideo] {
+        let videoIds = try await youtubeRepository.fetchVideos(of: channel, maxResults: 10, nextPageToken: nil)
+        let orderedVideoIds = videoIds.enumerated().map { (index, item) -> (index: Int, id: String) in
+            return (index, item)
+        }
+        var results = [YoutubeVideo]()
+
+        for video in orderedVideoIds {
+            results.append(try await youtubeRepository.fetchVideo(id: video.id))
+        }
+        return results
     }
 }

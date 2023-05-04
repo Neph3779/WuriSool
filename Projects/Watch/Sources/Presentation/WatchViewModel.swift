@@ -12,9 +12,24 @@ import RxCocoa
 import WatchDomain
 
 final class WatchViewModel {
+
     private let repository: WatchRepositoryInterface
+    let videos = BehaviorRelay<[YoutubeVideo]>(value: [])
+    var selectedChannel: LiquorChannel = .drinkHouse
 
     init(repository: WatchRepositoryInterface) {
         self.repository = repository
+        fetchVideos()
+    }
+
+    func fetchVideos() {
+        Task {
+            do {
+                let data = try await repository.fetchVideos(of: selectedChannel)
+                videos.accept(data)
+            } catch {
+                print(error)
+            }
+        }
     }
 }

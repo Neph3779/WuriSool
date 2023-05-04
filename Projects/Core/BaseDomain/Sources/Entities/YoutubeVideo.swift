@@ -9,29 +9,29 @@
 import Foundation
 
 // MARK: - YoutubeVideo
-public struct YoutubeVideo: Codable {
+public struct YoutubeVideo: Codable, Hashable {
     public let items: [Item]
 
     // MARK: - Item
-    public struct Item: Codable {
+    public struct Item: Codable, Hashable {
         public let id: String
         public let snippet: Snippet
     }
 
     // MARK: - Snippet
-    public struct Snippet: Codable {
+    public struct Snippet: Codable, Hashable {
         public let title: String
         public let thumbnails: Thumbnails
         public let channelTitle: String
     }
 
     // MARK: - Thumbnails
-    public struct Thumbnails: Codable {
-        public let `default`: Default
+    public struct Thumbnails: Codable, Hashable {
+        public let `default`, medium, high, standard: Default
     }
 
     // MARK: - Default
-    public struct Default: Codable {
+    public struct Default: Codable, Hashable {
         public let url: String
     }
 }

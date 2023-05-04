@@ -13,6 +13,7 @@ import Alamofire
 
 public protocol YoutubeRepositoryInterface {
     func fetchVideos(of channel: LiquorChannel, maxResults: Int, nextPageToken: String?) async throws -> [String]
+    func fetchVideo(id: String) async throws -> YoutubeVideo
 }
 
 public final class YoutubeRepository: YoutubeRepositoryInterface {

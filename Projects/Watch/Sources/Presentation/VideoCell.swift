@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import WatchDomain
+import Kingfisher
 
 final class VideoCell: UICollectionViewCell {
 
@@ -15,6 +17,7 @@ final class VideoCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
         let youtubeImageView = UIImageView()
         youtubeImageView.image = DesignAsset.Images.youtube.image
         imageView.addSubview(youtubeImageView)
@@ -25,7 +28,7 @@ final class VideoCell: UICollectionViewCell {
     }()
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.applyFont(font: .bodySmall)
+        label.applyFont(font: .buttonMedium)
         return label
     }()
     private let profileImageView: UIImageView = {
@@ -51,8 +54,12 @@ final class VideoCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setUpContents() {
-
+    func setUpContents(video: YoutubeVideo, channel: LiquorChannel) {
+        guard let video = video.items.first else { return }
+        thumbnailImageView.kf.setImage(with: URL(string: video.snippet.thumbnails.high.url))
+        titleLabel.text = video.snippet.title
+        profileImageView.image = channel.profileImage
+        channelNameLabel.text = video.snippet.channelTitle
     }
 
     private func layout() {
@@ -64,17 +71,17 @@ final class VideoCell: UICollectionViewCell {
             $0.height.equalTo(190)
         }
         titleLabel.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview()
-            $0.top.equalTo(thumbnailImageView.snp.bottom).offset(4)
+            $0.leading.trailing.equalToSuperview().inset(5)
+            $0.top.equalTo(thumbnailImageView.snp.bottom).offset(8)
         }
         profileImageView.snp.makeConstraints {
-            $0.width.height.equalTo(24)
+            $0.width.height.equalTo(20)
             $0.top.equalTo(titleLabel.snp.bottom).offset(4)
-            $0.leading.equalToSuperview()
+            $0.leading.equalToSuperview().inset(5)
         }
         channelNameLabel.snp.makeConstraints {
-            $0.leading.equalTo(profileImageView.snp.trailing).offset(4)
-            $0.top.equalTo(titleLabel.snp.bottom).offset(4)
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(8)
+            $0.centerY.equalTo(profileImageView)
             $0.trailing.equalToSuperview()
         }
     }

@@ -6,9 +6,9 @@
 //  Copyright © 2023 com.neph. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
-public enum LiquorChannel {
+public enum LiquorChannel: Hashable, CaseIterable {
     case drinkHouse
     case juryuhak
     case alcoholCanyon
@@ -32,6 +32,17 @@ public enum LiquorChannel {
             return "주류학개론"
         case .alcoholCanyon:
             return "알콜의협곡"
+        }
+    }
+
+    public var profileImage: UIImage? {
+        switch self {
+        case .drinkHouse:
+            return UIImage(systemName: "person")
+        case .juryuhak:
+            return UIImage(systemName: "person")
+        case .alcoholCanyon:
+            return UIImage(systemName: "person")
         }
     }
 }
