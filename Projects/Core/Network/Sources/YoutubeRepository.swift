@@ -52,6 +52,17 @@ public final class YoutubeRepository: YoutubeRepositoryInterface {
         return playListItem.items.map { $0.contentDetails.videoId }
     }
 
+    public func fetchVideo(id: String) async throws -> YoutubeVideo {
+        let path = "/videos"
+        let parameters: [String: Any] = [
+            "part": "snippet",
+            "id": id,
+            "key": apiKey
+        ]
+        let request = session.request(baseURL + path, method: .get, parameters: parameters)
+        return try await request.serializingDecodable(YoutubeVideo.self).value
+    }
+
     private func fetchChannel(id: String) async throws -> YoutubeChannel {
         let path = "/channels"
         let parameters: [String: Any] = [
