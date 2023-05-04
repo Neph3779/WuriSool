@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import WatchDomain
 
 final class CategoryCell: UICollectionViewCell {
 

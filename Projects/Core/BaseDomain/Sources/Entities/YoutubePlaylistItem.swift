@@ -9,23 +9,23 @@
 import Foundation
 
 // MARK: - YoutubePlaylistItem
-struct YoutubePlaylistItem: Codable {
-    let nextPageToken, prevPageToken: String?
-    let items: [Item]
-    let pageInfo: PageInfo
+public struct YoutubePlaylistItem: Codable {
+    public let nextPageToken, prevPageToken: String?
+    public let items: [Item]
+    public let pageInfo: PageInfo
 
     // MARK: - Item
-    struct Item: Codable {
-        let contentDetails: ContentDetails
+    public struct Item: Codable {
+        public let contentDetails: ContentDetails
     }
 
     // MARK: - ContentDetails
-    struct ContentDetails: Codable {
-        let videoId: String
+    public struct ContentDetails: Codable {
+        public let videoId: String
     }
 
     // MARK: - PageInfo
-    struct PageInfo: Codable {
-        let totalResults, resultsPerPage: Int
+    public struct PageInfo: Codable {
+        public let totalResults, resultsPerPage: Int
     }
 }

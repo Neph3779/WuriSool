@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Network
 
 @main class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -21,6 +22,17 @@ import UIKit
         let viewController = DIContainer.makeWatchViewController()
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
+
+        let youtubeRepository = YoutubeRepository()
+        Task {
+            do {
+                let data = try await youtubeRepository.fetchVideos(of: .drinkHouse)
+                print(data)
+            } catch {
+                print(error)
+            }
+
+        }
         return true
     }
 }

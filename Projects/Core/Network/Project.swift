@@ -18,7 +18,8 @@ let project = Project.framework(
     iOSTargetVersion: iOSTargetVersion,
     dependencies: [
         .external(name: "FirebaseFirestore"),
-        .external(name: "Alamofire")
+        .external(name: "Alamofire"),
+        .project(target: "BaseDomain", path: .relativeToRoot("Projects/Core/BaseDomain"))
     ],
     shouldIncludeTest: true
 )

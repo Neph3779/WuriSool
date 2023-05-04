@@ -9,39 +9,38 @@
 import Foundation
 
 // MARK: - YoutubeChannel
-struct YoutubeChannel: Decodable {
-    let items: [Item]
+public struct YoutubeChannel: Decodable {
+    public let items: [Item]
 
     // MARK: - Item
-    struct Item: Decodable {
-        let snippet: Snippet
-        let contentDetails: ContentDetails
+    public struct Item: Decodable {
+        public let snippet: Snippet
+        public let contentDetails: ContentDetails
     }
 
     // MARK: - ContentDetails
-    struct ContentDetails: Decodable {
-        let relatedPlaylists: RelatedPlaylists
+    public struct ContentDetails: Decodable {
+        public let relatedPlaylists: RelatedPlaylists
     }
 
     // MARK: - RelatedPlaylists
-    struct RelatedPlaylists: Decodable {
-        let uploads: String
+    public struct RelatedPlaylists: Decodable {
+        public let uploads: String
     }
 
     // MARK: - Snippet
-    struct Snippet: Decodable {
-        let title, description: String
-        let thumbnails: Thumbnails
+    public struct Snippet: Decodable {
+        public let title, description: String
+        public let thumbnails: Thumbnails
     }
 
     // MARK: - Thumbnails
-    struct Thumbnails: Decodable {
-        let `default`: Default
+    public struct Thumbnails: Decodable {
+        public let `default`: Default
     }
 
     // MARK: - Default
-    struct Default: Decodable {
-        let url: String
-        let width, height: Int
+    public struct Default: Decodable {
+        public let url: String
     }
 }
