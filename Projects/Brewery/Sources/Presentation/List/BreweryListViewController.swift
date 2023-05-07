@@ -120,10 +120,8 @@ final class BreweryListViewController: UIViewController {
             .asDriver()
             .drive { [weak self] (indexPath: IndexPath) in
                 guard let self = self else { return }
-                print(indexPath)
                 let item = self.viewModel.brewerys.value[indexPath.row]
                 self.coordinator?.listCellSelected(breweryName: item.name)
-                print(self.coordinator)
             }
             .disposed(by: disposeBag)
     }
