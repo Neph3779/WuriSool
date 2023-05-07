@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol DIContainer: AnyObject {
+public protocol DIContainer: AnyObject {
 
 }

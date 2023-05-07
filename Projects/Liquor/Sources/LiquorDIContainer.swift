@@ -6,12 +6,17 @@
 //  Copyright © 2023 com.neph. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import LiquorDomain
 import LiquorPresentation
 import LiquorData
 
-final class DIContainer {
+final class LiquorDIContainer: DIContainer {
+
+    func makeLiquorCoordinator(navigationController: UINavigationController) -> LiquorCoordinator {
+        return LiquorCoordinator(DIContainer: self, navigationController: navigationController)
+    }
+
     func makeLiquorRepository() -> LiquorRepositoryInterface {
         return LiquorRepository()
     }
@@ -28,7 +33,7 @@ final class DIContainer {
         return LiquorDetailViewModel(name: liquorName, repository: makeLiquorRepository())
     }
 
-    func makeLiquorDetailViewController() -> LiquorDetailViewController {
-        return LiquorDetailViewController(viewModel: makeLiquorDetailViewModel(liquorName: "느린마을 막걸리"))
+    func makeLiquorDetailViewController(liquorName: String) -> LiquorDetailViewController {
+        return LiquorDetailViewController(viewModel: makeLiquorDetailViewModel(liquorName: liquorName))
     }
 }

@@ -16,11 +16,13 @@ import UIKit
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
-        let DIContainer = DIContainer()
+        let DIContainer = LiquorDIContainer()
+        let navigationController = UINavigationController()
+        let coordinator = DIContainer.makeLiquorCoordinator(navigationController: navigationController)
         window = UIWindow(frame: UIScreen.main.bounds)
-        let liquorViewController = DIContainer.makeLiquorDetailViewController()
-        window?.rootViewController = UINavigationController(rootViewController: liquorViewController)
+        window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
+        coordinator.start()
         return true
     }
 }

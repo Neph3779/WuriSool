@@ -14,7 +14,7 @@ final class LiquorRepository: LiquorRepositoryInterface {
 
     private let firebaseRepository: FirebaseRepositoryInterface
 
-    init(firebaseRepository: FirebaseRepositoryInterface = FirebaseRepository()) {
+    init(firebaseRepository: FirebaseRepositoryInterface = FirebaseRepository.shared) {
         self.firebaseRepository = firebaseRepository
     }
 

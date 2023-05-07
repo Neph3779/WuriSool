@@ -13,6 +13,7 @@ import LiquorDomain
 
 final class LiquorDetailViewController: UIViewController {
 
+    var coordinator: (any LiquorCoordinatorInterface)?
     private let viewModel: LiquorDetailViewModel
     private let disposeBag = DisposeBag()
 
@@ -250,6 +251,7 @@ final class LiquorDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        navigationController?.navigationBar.tintColor = .black
         bind()
         layout()
     }

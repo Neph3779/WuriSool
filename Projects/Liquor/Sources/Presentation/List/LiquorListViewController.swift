@@ -14,6 +14,7 @@ import RxCocoa
 
 final class LiquorListViewController: UIViewController {
 
+    var coordinator: (any LiquorCoordinatorInterface)?
     private let viewModel: LiquorListViewModel
     private var disposeBag = DisposeBag()
 
@@ -137,6 +138,7 @@ final class LiquorListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        navigationItem.backButtonDisplayMode = .minimal
         setUpCollectionViews()
         bind()
         layout()
@@ -206,8 +208,10 @@ final class LiquorListViewController: UIViewController {
 
         liquorCollectionView.rx.itemSelected
             .asSignal()
-            .emit { [weak self] _ in
-
+            .emit { [weak self] indexPath in
+                guard let self = self else { return }
+                let itemName = self.viewModel.rxLiquors.value[indexPath.row].name
+                self.coordinator?.liquorItemSelected(itemName: itemName)
             }
             .disposed(by: disposeBag)
 

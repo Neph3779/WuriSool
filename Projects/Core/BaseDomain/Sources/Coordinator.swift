@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol Coordinator: AnyObject {
+public protocol Coordinator: AnyObject {
     associatedtype DIContainerProtocol: DIContainer
     var DIContainer: DIContainerProtocol { get }
 
