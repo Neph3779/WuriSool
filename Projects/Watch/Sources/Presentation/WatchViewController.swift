@@ -106,6 +106,20 @@ final class WatchViewController: UIViewController {
                 }
             }
             .disposed(by: disposeBag)
+
+        videoCollectionView.rx.itemSelected
+            .asSignal()
+            .emit { [weak self] indexPath in
+                if let id = self?.viewModel.videos.value[indexPath.row].items.first?.id {
+                    if let youtubeURL = URL(string: "youtube://" + id),
+                       UIApplication.shared.canOpenURL(youtubeURL) {
+                        UIApplication.shared.open(youtubeURL, options: [:], completionHandler: nil)
+                    } else if let url = URL(string: "http://www.youtube.com/watch?v=" + id) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            }
+            .disposed(by: disposeBag)
     }
 
     private func layout() {
