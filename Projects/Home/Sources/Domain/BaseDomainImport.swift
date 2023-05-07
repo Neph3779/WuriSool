@@ -6,4 +6,4 @@
 //  Copyright © 2023 com.neph. All rights reserved.
 //
 
-@_exported import  BaseDomain
+@_exported import BaseDomain

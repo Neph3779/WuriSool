@@ -10,27 +10,17 @@ import UIKit
 import HomePresentation
 import HomeData
 import HomeDomain
-//import BaseDomain
 
 final class HomeDIContainer {
+    func makeHomeCoordinator(navigationController: UINavigationController) -> HomeCoordinator {
+        return HomeCoordinator(navigationController: navigationController, DIContainer: self)
+    }
+
     func makeHomeViewController() -> HomeViewController {
         return HomeViewController(viewModel: makeHomeViewModel())
     }
 
     func makeHomeViewModel() -> HomeViewModel {
         return HomeViewModel(repository: HomeRepository())
-    }
-}
-
-
-// MARK: - MockRepositories
-
-final class MockHomeRepository: HomeRepositoryInterface {
-    func fetchViewTop10Liquors() async throws -> [Liquor] {
-        return []
-    }
-
-    func fetchBuyTop10Liquors() async throws -> [Liquor] {
-        return []
     }
 }

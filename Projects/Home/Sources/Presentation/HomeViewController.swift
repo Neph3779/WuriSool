@@ -13,6 +13,7 @@ import Design
 
 public final class HomeViewController: UIViewController {
 
+    var coordinator: HomeCoordinatorInterface?
     private let viewModel: HomeViewModel
     private let contentScrollView = UIScrollView()
     private let contentVerticalStackView: UIStackView = {
