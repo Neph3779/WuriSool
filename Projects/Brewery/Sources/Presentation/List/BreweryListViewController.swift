@@ -13,7 +13,7 @@ import RxCocoa
 import SnapKit
 
 final class BreweryListViewController: UIViewController {
-
+    var coordinator: BreweryCoordinatorInterface?
     private let viewModel: BreweryListViewModel
     private var disposeBag = DisposeBag()
 
@@ -66,6 +66,7 @@ final class BreweryListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        navigationItem.backButtonDisplayMode = .minimal
         setUpCollectionViews()
         bind()
         layout()
@@ -112,6 +113,17 @@ final class BreweryListViewController: UIViewController {
                         $0.height.equalTo(size.height)
                     }
                 }
+            }
+            .disposed(by: disposeBag)
+
+        breweryCollectionView.rx.itemSelected
+            .asDriver()
+            .drive { [weak self] (indexPath: IndexPath) in
+                guard let self = self else { return }
+                print(indexPath)
+                let item = self.viewModel.brewerys.value[indexPath.row]
+                self.coordinator?.listCellSelected(breweryName: item.name)
+                print(self.coordinator)
             }
             .disposed(by: disposeBag)
     }

@@ -6,12 +6,16 @@
 //  Copyright © 2023 com.neph. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import BreweryDomain
 import BreweryData
 import BreweryPresentation
 
-final class DIContainer {
+final class BreweryDIContainer {
+
+    func makeBreweryCoordinator(navigationController: UINavigationController) -> BreweryCoordinator {
+        return BreweryCoordinator(navigationController: navigationController, DIContainer: self)
+    }
 
     func makeBreweryRepository() -> BreweryRepositoryInterface {
         return BreweryRepository()

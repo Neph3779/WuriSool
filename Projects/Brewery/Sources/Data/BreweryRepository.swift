@@ -12,7 +12,7 @@ import BreweryDomain
 final class BreweryRepository: BreweryRepositoryInterface {
     private let firebaseRepository: FirebaseRepositoryInterface
 
-    init(firebaseRepository: FirebaseRepositoryInterface = FirebaseRepository()) {
+    init(firebaseRepository: FirebaseRepositoryInterface = FirebaseRepository.shared) {
         self.firebaseRepository = firebaseRepository
     }
 

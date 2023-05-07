@@ -16,11 +16,13 @@ import UIKit
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
-        let DIContainer = DIContainer()
+        let DIContainer = BreweryDIContainer()
+        let navigationController = UINavigationController()
+        let cooridnator = DIContainer.makeBreweryCoordinator(navigationController: navigationController)
         window = UIWindow(frame: UIScreen.main.bounds)
-        let viewController = DIContainer.makeBreweryDetailViewController(name: "밝은세상영농조합")
-        window?.rootViewController = viewController
+        window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
+        cooridnator.start()
         return true
     }
 }

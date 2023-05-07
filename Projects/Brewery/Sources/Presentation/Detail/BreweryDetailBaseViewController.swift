@@ -106,6 +106,7 @@ final class BreweryDetailBaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        setUpNavigationBar()
         setUpChildViewControllers()
         applyDataSource(tabBars: [
             .products(viewController: productViewController),
@@ -116,6 +117,10 @@ final class BreweryDetailBaseViewController: UIViewController {
         bind()
         tabBarCollectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .left)
         viewModel.selectedTab.accept(.products(viewController: productViewController))
+    }
+
+    private func setUpNavigationBar() {
+        navigationController?.navigationBar.tintColor = .white
     }
 
     private func setUpTabBarCollectionView() {

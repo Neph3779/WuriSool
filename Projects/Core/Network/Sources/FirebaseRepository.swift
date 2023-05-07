@@ -33,6 +33,9 @@ public struct FirebaseQuery: Hashable {
 
 // MARK: - Main
 public final class FirebaseRepository: FirebaseRepositoryInterface {
+
+    public static let shared = FirebaseRepository()
+
     private let logId = UUID()
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "",
                                 category: "FirebaseRepository")
@@ -42,6 +45,7 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
     private lazy var keywordReference = database.collection("Keyword")
     private var snapShotCache: [FirebaseQuery: QueryDocumentSnapshot?] = [:] // for support pagination
 
+    // TODO: singleton pattern 사용하므로 init private으로 바꾸기
     public init() {
         let filePath = NetworkResources.bundle.path(forResource: "GoogleService-Info-Network", ofType: "plist")
         guard let fileOptions = FirebaseOptions(contentsOfFile: filePath!) else {
