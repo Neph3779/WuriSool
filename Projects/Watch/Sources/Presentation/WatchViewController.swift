@@ -96,6 +96,15 @@ final class WatchViewController: UIViewController {
             }
             .disposed(by: disposeBag)
 
+        categoryCollectionView.rx.itemSelected
+            .asDriver()
+            .drive { [weak self] indexPath in
+                if let channel = self?.categoryDataSource.itemIdentifier(for: indexPath) {
+                    self?.viewModel.selectedChannel.accept(channel)
+                }
+            }
+            .disposed(by: disposeBag)
+
         videoCollectionView.contentSizeDidChanged
             .asSignal()
             .emit { [weak self] size in
@@ -194,7 +203,7 @@ extension WatchViewController {
     private func makeVideoDataSource() -> UICollectionViewDiffableDataSource<Videosection, YoutubeVideo> {
         return .init(collectionView: videoCollectionView) { [weak self] collectionView, indexPath, video in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCell.reuseIdentifier, for: indexPath) as? VideoCell else { return UICollectionViewCell() }
-            cell.setUpContents(video: video, channel: self?.viewModel.selectedChannel ?? .drinkHouse)
+            cell.setUpContents(video: video, channel: self?.viewModel.selectedChannel.value ?? .drinkHouse)
             return cell
         }
     }

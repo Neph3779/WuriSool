@@ -13,19 +13,26 @@ import WatchDomain
 
 final class WatchViewModel {
 
+    private let disposeBag = DisposeBag()
     private let repository: WatchRepositoryInterface
     let videos = BehaviorRelay<[YoutubeVideo]>(value: [])
-    var selectedChannel: LiquorChannel = .drinkHouse
+    var selectedChannel = BehaviorRelay<LiquorChannel>(value: .drinkHouse)
 
     init(repository: WatchRepositoryInterface) {
         self.repository = repository
         fetchVideos()
+        selectedChannel
+            .asDriver()
+            .drive { [weak self] channel in
+                self?.fetchVideos()
+            }
+            .disposed(by: disposeBag)
     }
 
     func fetchVideos() {
         Task {
             do {
-                let data = try await repository.fetchVideos(of: selectedChannel)
+                let data = try await repository.fetchVideos(of: selectedChannel.value)
                 videos.accept(data)
             } catch {
                 print(error)
