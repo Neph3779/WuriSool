@@ -27,4 +27,12 @@ final class BreweryCoordinator: BreweryCoordinatorInterface {
         let detailViewController = DIContainer.makeBreweryDetailViewController(name: breweryName)
         navigationController.pushViewController(detailViewController, animated: true)
     }
+
+    func visitGuideTapped(breweryId: Int) {
+        
+    }
+
+    func liquorTapped(liquorName: String) {
+
+    }
 }

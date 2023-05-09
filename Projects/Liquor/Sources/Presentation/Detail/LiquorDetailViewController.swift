@@ -191,7 +191,7 @@ final class LiquorDetailViewController: UIViewController {
         button.backgroundColor = DesignAsset.Colors.naver.color
         button.setImage(DesignAsset.Images.naverShopping.image, for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
-        button.setTitle("네이버 쇼핑으로 이동", for: .normal)
+        button.setTitle("네이버 쇼핑", for: .normal)
         button.imageView?.setContentHuggingPriority(.required, for: .horizontal)
         button.titleLabel?.setContentCompressionResistancePriority(.required, for: .horizontal)
         return button
@@ -203,7 +203,7 @@ final class LiquorDetailViewController: UIViewController {
         button.setImage(DesignAsset.Images.kakaoShopping.image, for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         button.imageEdgeInsets = .init(top: 0, left: 0, bottom: 0, right: 0)
-        button.setTitle("카카오 쇼핑으로 이동", for: .normal)
+        button.setTitle("카카오 쇼핑", for: .normal)
         return button
     }()
 

@@ -29,4 +29,12 @@ final class LiquorCoordinator: Coordinator, LiquorCoordinatorInterface {
         liquorDetailViewController.coordinator = self
         navigationController.pushViewController(liquorDetailViewController, animated: true)
     }
+
+    func breweryTapped(breweryName: String) {
+
+    }
+
+    func keywordTapped(keyword: Keyword) {
+
+    }
 }

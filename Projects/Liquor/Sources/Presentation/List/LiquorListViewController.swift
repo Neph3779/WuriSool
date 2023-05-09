@@ -42,6 +42,7 @@ final class LiquorListViewController: UIViewController {
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
         searchBar.backgroundColor = .white
+        searchBar.placeholder = "주류를 검색해보세요"
         return searchBar
     }()
 

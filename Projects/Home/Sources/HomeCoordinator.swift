@@ -23,4 +23,12 @@ final class HomeCoordinator: HomeCoordinatorInterface {
         homeViewController.coordinator = self
         navigationController.pushViewController(homeViewController, animated: true)
     }
+
+    func liquorTapped(liquorName: String) {
+
+    }
+
+    func keywordTapped(keyword: Keyword) {
+        
+    }
 }
