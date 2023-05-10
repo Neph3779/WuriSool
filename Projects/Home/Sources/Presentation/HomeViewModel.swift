@@ -36,8 +36,8 @@ private extension HomeViewModel {
     private func fetchViewTop10Liquors() {
         Task {
             do {
-                let liquors = try await repository.fetchViewTop10Liquors()
-                applyDataSource?(.viewTop10(liquors))
+                viewTop10Liquors = try await repository.fetchViewTop10Liquors()
+                applyDataSource?(.viewTop10(viewTop10Liquors))
             } catch {
                 logger.log("fetch view top 10 failed \n message: \(error.localizedDescription)")
             }
@@ -47,8 +47,8 @@ private extension HomeViewModel {
     private func fetchBuyTop10Liquors() {
         Task {
             do {
-                let liquors = try await repository.fetchBuyTop10Liquors()
-                applyDataSource?(.buyTop10(liquors))
+                buyTop10Liquors = try await repository.fetchBuyTop10Liquors()
+                applyDataSource?(.buyTop10(buyTop10Liquors))
             } catch {
                 logger.log("fetch view buy 10 failed \n message: \(error.localizedDescription)")
             }

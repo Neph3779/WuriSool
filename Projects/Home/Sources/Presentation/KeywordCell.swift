@@ -20,7 +20,7 @@ final class KeywordCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 25
         imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.lightGray.cgColor
+        imageView.layer.borderColor = DesignAsset.Colors.gray3.color.cgColor
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -42,9 +42,9 @@ final class KeywordCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setUpContents(keyword: Keyword, imagePath: String) {
+    func setUpContents(keyword: Keyword) {
         titleLabel.text = "#\(keyword.name)"
-        imageView.kf.setImage(with: URL(string: imagePath))
+        imageView.image = keyword.image
     }
 
     private func layout() {

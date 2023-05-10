@@ -10,18 +10,35 @@ import UIKit
 import HomeDomain
 import SnapKit
 import Design
+import RxSwift
+import RxCocoa
 
 public final class HomeViewController: UIViewController {
 
     var coordinator: HomeCoordinatorInterface?
+    private var disposeBag = DisposeBag()
     private let viewModel: HomeViewModel
+
     private let contentScrollView = UIScrollView()
     private let contentVerticalStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = 1
+        stackView.spacing = 0
         stackView.backgroundColor = DesignAsset.Colors.gray1.color
         return stackView
+    }()
+
+    private let logoTitleBar: UIView = {
+        let titleBar = UIView()
+        let logoImageView = UIImageView(image: DesignAsset.Images.logo.image)
+        titleBar.addSubview(logoImageView)
+        logoImageView.snp.makeConstraints {
+            $0.leading.top.bottom.equalToSuperview()
+        }
+        logoImageView.setContentHuggingPriority(.required, for: .horizontal)
+        logoImageView.contentMode = .scaleAspectFit
+        titleBar.backgroundColor = .white
+        return titleBar
     }()
 
     private lazy var cardNewsDataSource = makeCardNewsDataSource()
@@ -29,17 +46,17 @@ public final class HomeViewController: UIViewController {
                                                                collectionViewLayout: cardNewsCollectionViewLayout())
 
     private lazy var viewTop10LiquorDataSource = makeViewTop10DataSource()
-    private let viewTop10LiquorTitleBar = TitleBar(title: "방금 보고갔어요 👀", subTitle: "조회수가 높은 상품들")
+    private let viewTop10LiquorTitleBar = TitleBar(title: "View Top", subTitle: "조회수가 높은 상품")
     private lazy var viewTop10LiquorCollectionView = UICollectionView(frame: .zero,
                                                                       collectionViewLayout: liquorCollectionViewLayout())
 
     private lazy var keywordListDataSource = makeKeywordDataSource()
-    private let keywordListTitleBar = TitleBar(title: "키워드로 찾는 우리술", subTitle: "주류별 키워드")
+    private let keywordListTitleBar = TitleBar(title: "Keyword", subTitle: "주류별 키워드")
     private lazy var keywordCollectionView = UICollectionView(frame: .zero,
                                                               collectionViewLayout: keywordCollectionViewLayout())
 
     private lazy var buyTop10DataSource = makeBuyTop10DataSource()
-    private let buyTop10LiquorTitleBar = TitleBar(title: "인기 Top 10 🥇", subTitle: "구매 페이지로 이동이 많은 상품들")
+    private let buyTop10LiquorTitleBar = TitleBar(title: "Most Popular", subTitle: "구매 이동이 많은 상품")
     private lazy var buyTop10LiquorCollectionView = UICollectionView(frame: .zero,
                                                                      collectionViewLayout: liquorCollectionViewLayout())
 
@@ -52,9 +69,14 @@ public final class HomeViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    public override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = true
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        navigationItem.backButtonDisplayMode = .minimal
         setUpCollectionViews()
         layout()
         HomeSection.allCases.forEach {
@@ -64,12 +86,35 @@ public final class HomeViewController: UIViewController {
         viewModel.viewDidLoad()
     }
 
+    public override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = false
+    }
+
     private func bind() {
         viewModel.applyDataSource = { [weak self] section in
             DispatchQueue.main.async {
                 self?.applyDataSource(section: section)
             }
         }
+        viewTop10LiquorCollectionView.rx.itemSelected
+            .asSignal()
+            .emit { [weak self] (indexPath: IndexPath) in
+                self?.coordinator?.liquorTapped(liquorName: self?.viewModel.viewTop10Liquors[indexPath.row].name ?? "")
+            }
+            .disposed(by: disposeBag)
+        buyTop10LiquorCollectionView.rx.itemSelected
+            .asSignal()
+            .emit { [weak self] (indexPath: IndexPath) in
+                self?.coordinator?.liquorTapped(liquorName: self?.viewModel.buyTop10Liquors[indexPath.row].name ?? "")
+            }
+            .disposed(by: disposeBag)
+        keywordCollectionView.rx.itemSelected
+            .asSignal()
+            .emit { [weak self] (indexPath: IndexPath) in
+                let keyword = self?.keywordListDataSource.itemIdentifier(for: indexPath)
+                self?.coordinator?.keywordTapped(keyword: keyword ?? .others)
+            }
+            .disposed(by: disposeBag)
     }
 
     private func setUpCollectionViews() {
@@ -81,6 +126,7 @@ public final class HomeViewController: UIViewController {
 
         keywordCollectionView.register(KeywordCell.self, forCellWithReuseIdentifier: KeywordCell.reuseIdentifier)
         keywordCollectionView.dataSource = keywordListDataSource
+        keywordCollectionView.isScrollEnabled = false
 
         buyTop10LiquorCollectionView.register(LiquorCell.self, forCellWithReuseIdentifier: LiquorCell.reuseIdentifier)
         buyTop10LiquorCollectionView.dataSource = buyTop10DataSource
@@ -97,7 +143,7 @@ public final class HomeViewController: UIViewController {
             $0.top.bottom.equalToSuperview()
         }
         cardNewsCollectionView.snp.makeConstraints {
-            $0.height.equalTo(200)
+            $0.height.equalTo(300)
         }
         viewTop10LiquorCollectionView.snp.makeConstraints {
             $0.height.equalTo(310)
@@ -109,12 +155,18 @@ public final class HomeViewController: UIViewController {
             $0.height.equalTo(310)
         }
 
-        [cardNewsCollectionView, viewTop10LiquorTitleBar, viewTop10LiquorCollectionView, keywordListTitleBar, keywordCollectionView, buyTop10LiquorTitleBar, buyTop10LiquorCollectionView].forEach {
+        [
+            logoTitleBar,
+            cardNewsCollectionView,
+            keywordListTitleBar, keywordCollectionView,
+            viewTop10LiquorTitleBar, viewTop10LiquorCollectionView,
+            buyTop10LiquorTitleBar, buyTop10LiquorCollectionView
+        ].forEach {
             contentVerticalStackView.addArrangedSubview($0)
         }
 
-        [viewTop10LiquorTitleBar, keywordListTitleBar, buyTop10LiquorTitleBar].forEach {
-            contentVerticalStackView.setCustomSpacing(0, after: $0)
+        [keywordCollectionView, viewTop10LiquorCollectionView].forEach {
+            contentVerticalStackView.setCustomSpacing(1, after: $0)
         }
     }
 
@@ -187,7 +239,7 @@ extension HomeViewController {
     private func makeKeywordDataSource() -> UICollectionViewDiffableDataSource<KeywordSection, Keyword> {
         return .init(collectionView: keywordCollectionView) { collectionView, indexPath, keyword in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KeywordCell.reuseIdentifier, for: indexPath) as? KeywordCell else { return UICollectionViewCell() }
-            cell.setUpContents(keyword: keyword, imagePath: keyword.imagePath)
+            cell.setUpContents(keyword: keyword)
             return cell
         }
     }
@@ -207,7 +259,7 @@ extension HomeViewController {
     private func cardNewsCollectionViewLayout() -> UICollectionViewCompositionalLayout {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(200))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(300))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .paging
@@ -227,13 +279,14 @@ extension HomeViewController {
     }
 
     private func keywordCollectionViewLayout() -> UICollectionViewCompositionalLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(70))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1/6), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.edgeSpacing = .init(leading: .fixed(5), top: .fixed(0), trailing: .fixed(5), bottom: .fixed(0))
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(70))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-        group.edgeSpacing = .init(leading: .fixed(0), top: .fixed(10), trailing: .fixed(0), bottom: .fixed(0))
-        let section = NSCollectionLayoutSection(group: group)
+        item.contentInsets = .init(top: 5, leading: 5, bottom: 5, trailing: 5)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1/2))
+        let horizontalGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        let verticalGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let verticalGroup = NSCollectionLayoutGroup.vertical(layoutSize: verticalGroupSize, subitems: [horizontalGroup])
+        let section = NSCollectionLayoutSection(group: verticalGroup)
         section.contentInsets = .init(top: 8, leading: 11, bottom: 8, trailing: 11)
         return UICollectionViewCompositionalLayout(section: section)
     }

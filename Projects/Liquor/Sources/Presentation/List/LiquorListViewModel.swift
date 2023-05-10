@@ -13,7 +13,6 @@ import RxCocoa
 
 final class LiquorListViewModel {
 
-    private let repository: LiquorRepositoryInterface
     var rxLiquors = BehaviorRelay<[Liquor]>(value: [])
     var rxKeywords = BehaviorRelay<[Keyword]>(value: [])
     var rxSelectedType = BehaviorRelay<LiquorType?>(value: nil)
@@ -22,9 +21,11 @@ final class LiquorListViewModel {
     var isUpdating = BehaviorRelay<Bool>(value: false)
     var liquorFetchTask: Task<(), Never>?
     var applyDataSource: ((LiquorListViewController.LiquorListSection) -> Void)?
-    private var disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
+    private let repository: LiquorRepositoryInterface
+    private var selectedKeyword: Keyword?
 
-    init(repository: LiquorRepositoryInterface) {
+    init(repository: LiquorRepositoryInterface, keyword: Keyword? = nil) {
         self.repository = repository
         Observable.combineLatest(rxSelectedType, rxSelectedKeyword)
             .subscribe(onNext: { [weak self] _, _ in
@@ -32,6 +33,7 @@ final class LiquorListViewModel {
                 self?.fetchLiquors()
             })
             .disposed(by: disposeBag)
+        selectedKeyword = keyword
     }
 
     func fetchLiquors() {
@@ -65,6 +67,9 @@ final class LiquorListViewModel {
             do {
                 let keywords = try await repository.fetchKeywords()
                 rxKeywords.accept(keywords)
+                if let selectedKeyword = selectedKeyword {
+                    rxSelectedKeyword.accept(selectedKeyword)
+                }
             } catch {
 
             }

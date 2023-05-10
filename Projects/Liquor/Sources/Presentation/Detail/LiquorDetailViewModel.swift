@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import LiquorDomain
 
-final class LiquorDetailViewModel {
+public final class LiquorDetailViewModel {
     let liquor = BehaviorRelay<Liquor>(value: Liquor(data: [:]))
     private let repository: LiquorRepositoryInterface
 

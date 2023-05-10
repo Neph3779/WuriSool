@@ -65,6 +65,10 @@ final class WatchViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = true
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -73,6 +77,10 @@ final class WatchViewController: UIViewController {
         layout()
         applyDataSource(section: .category(LiquorChannel.allCases))
         categoryCollectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .left)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = false
     }
 
     private func setUpCollectionViews() {

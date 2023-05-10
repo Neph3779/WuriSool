@@ -21,5 +21,6 @@ let project = Project.framework(
         .external(name: "Alamofire"),
         .project(target: "BaseDomain", path: .relativeToRoot("Projects/Core/BaseDomain"))
     ],
-    shouldIncludeTest: true
+    shouldIncludeTest: true,
+    shouldIncludeResources: true
 )

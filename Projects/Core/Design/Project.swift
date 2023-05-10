@@ -19,5 +19,6 @@ let project = Project.framework(
         .external(name: "RxSwift"),
         .external(name: "RxCocoa")
     ],
-    shouldIncludeTest: false
+    shouldIncludeTest: false,
+    shouldIncludeResources: true
 )

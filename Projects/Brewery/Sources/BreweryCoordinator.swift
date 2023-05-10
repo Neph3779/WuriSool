@@ -8,8 +8,11 @@
 
 import UIKit
 import BreweryDomain
+import AppCoordinator
 
 public final class BreweryCoordinator: Coordinator, BreweryCoordinatorInterface {
+
+    public var appCoordinator: AppCoordinatorInterface?
     private let navigationController: UINavigationController
     public let DIContainer: BreweryDIContainer
 

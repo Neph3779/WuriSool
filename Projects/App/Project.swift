@@ -24,6 +24,7 @@ let project = Project.app(
         "UIUserInterfaceStyle": "Light"
     ],
     dependencies: [
+        .project(target: "AppCoordinator", path: .relativeToRoot("Projects/AppCoordinator")),
         .project(target: "Home", path: .relativeToCurrentFile("../Home")),
         .project(target: "Brewery", path: .relativeToCurrentFile("../Brewery")),
         .project(target: "Liquor", path: .relativeToCurrentFile("../Liquor")),

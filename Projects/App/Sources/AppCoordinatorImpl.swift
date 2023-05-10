@@ -11,8 +11,9 @@ import Home
 import Liquor
 import Brewery
 import Watch
+import AppCoordinator
 
-final class AppCoordinator {
+final class AppCoordinatorImpl {
 
     private let tabBarController = UITabBarController()
     private let homeNavigationController: UINavigationController = {
@@ -61,10 +62,12 @@ final class AppCoordinator {
         tabBarController.tabBar.isTranslucent = false
         tabBarController.tabBar.tintColor = .black
         tabBarController.tabBar.unselectedItemTintColor = DesignAsset.Colors.gray4.color
+        tabBarController.tabBar.shadowImage = UIImage()
+        tabBarController.tabBar.backgroundImage = UIImage()
+        tabBarController.tabBar.backgroundColor = UIColor.white
         [homeNavigationController, liquorNavigationController, breweryNavigationController, watchNavigationController].forEach {
             tabBarController.addChild($0)
         }
-        tabBarController.tabBarItem.imageInsets = .init(top: 100, left: 0, bottom: 0, right: 0)
     }
 
     func start() {
@@ -79,24 +82,50 @@ final class AppCoordinator {
     func startHome() {
         let homeDIContainer = HomeDIContainer()
         let homeCoordinator = homeDIContainer.makeHomeCoordinator(navigationController: homeNavigationController)
+        homeCoordinator.appCoordinator = self
         homeCoordinator.start()
     }
 
     func startBrewery() {
         let breweryDIContainer = BreweryDIContainer()
         let breweryCoordinator = breweryDIContainer.makeBreweryCoordinator(navigationController: breweryNavigationController)
+        breweryCoordinator.appCoordinator = self
         breweryCoordinator.start()
     }
 
     func startLiquor() {
         let liquorDIContainer = LiquorDIContainer()
         let liquorCoordinator = LiquorCoordinator(DIContainer: liquorDIContainer, navigationController: liquorNavigationController)
+        liquorCoordinator.appCoordinator = self
         liquorCoordinator.start()
     }
 
     func startWatch() {
         let watchDIContainer = WatchDIContainer()
         let watchCoordinator = WatchCoordinator(DIContainer: watchDIContainer, navigationController: watchNavigationController)
+        watchCoordinator.appCoordinator = self
         watchCoordinator.start()
+    }
+}
+
+// TODO: 각 탭별로 Coordinator를 분리
+
+extension AppCoordinatorImpl: AppCoordinatorInterface {
+
+    // MARK: - Home
+
+    func pushLiquorView(liquorName: String) {
+        let liquorDIContainer = LiquorDIContainer()
+        let liquorViewController = liquorDIContainer.makeLiquorDetailViewController(liquorName: liquorName)
+        homeNavigationController.pushViewController(liquorViewController, animated: true)
+    }
+
+    func moveToLiquorTab(with keyword: Keyword) {
+        liquorNavigationController.popToRootViewController(animated: false)
+        let liquorDIContainer = LiquorDIContainer()
+        let liquorCoordinator = LiquorCoordinator(DIContainer: liquorDIContainer, navigationController: liquorNavigationController)
+        liquorCoordinator.appCoordinator = self
+        liquorCoordinator.start(keyword: keyword)
+        tabBarController.selectedIndex = 1
     }
 }

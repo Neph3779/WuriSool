@@ -8,8 +8,11 @@
 
 import UIKit
 import HomeDomain
+import AppCoordinator
 
 public final class HomeCoordinator: Coordinator, HomeCoordinatorInterface {
+
+    public var appCoordinator: AppCoordinatorInterface?
     private let navigationController: UINavigationController
     public let DIContainer: HomeDIContainer
 
@@ -25,10 +28,10 @@ public final class HomeCoordinator: Coordinator, HomeCoordinatorInterface {
     }
 
     public func liquorTapped(liquorName: String) {
-
+        appCoordinator?.pushLiquorView(liquorName: liquorName)
     }
 
     public func keywordTapped(keyword: Keyword) {
-        
+        appCoordinator?.moveToLiquorTab(with: keyword)
     }
 }

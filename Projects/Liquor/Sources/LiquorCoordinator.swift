@@ -8,8 +8,11 @@
 
 import UIKit
 import BaseDomain
+import AppCoordinator
 
 public final class LiquorCoordinator: Coordinator, LiquorCoordinatorInterface {
+
+    public var appCoordinator: AppCoordinatorInterface?
     public let DIContainer: LiquorDIContainer
     private let navigationController: UINavigationController
 
@@ -20,6 +23,12 @@ public final class LiquorCoordinator: Coordinator, LiquorCoordinatorInterface {
 
     public func start() {
         let liquorViewController = DIContainer.makeLiquorViewController()
+        liquorViewController.coordinator = self
+        navigationController.pushViewController(liquorViewController, animated: true)
+    }
+
+    public func start(keyword: Keyword) {
+        let liquorViewController = DIContainer.makeLiquorViewController(keyword: keyword)
         liquorViewController.coordinator = self
         navigationController.pushViewController(liquorViewController, animated: true)
     }

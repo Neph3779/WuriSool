@@ -63,6 +63,10 @@ public final class BreweryListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    public override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = true
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -72,6 +76,10 @@ public final class BreweryListViewController: UIViewController {
         layout()
         applyDataSource(section: .address(Region.allCases.map { $0.name }))
         addressCollectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .left)
+    }
+
+    public override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = false
     }
 
     private func setUpCollectionViews() {

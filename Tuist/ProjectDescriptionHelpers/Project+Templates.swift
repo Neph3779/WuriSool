@@ -68,9 +68,11 @@ extension Project {
             dependencies: [
                 .target(name: "\(name)Domain"),
                 .target(name: "\(name)Data"),
-                .target(name: "\(name)Presentation")
+                .target(name: "\(name)Presentation"),
+                .project(target: "AppCoordinator", path: .relativeToRoot("Projects/AppCoordinator")),
             ],
-            shouldIncludeTest: true
+            shouldIncludeTest: true,
+            shouldIncludeResources: true
         )
 
         let demoAppTargets = makeAppTargets(
@@ -98,18 +100,22 @@ extension Project {
                        targets: targets)
     }
 
-    public static func framework(name: String,
-                                 product: Product = .staticFramework,
-                                 platform: Platform, iOSTargetVersion: String,
-                                 dependencies: [TargetDependency] = [],
-                                 shouldIncludeTest: Bool) -> Project {
+    public static func framework(
+        name: String,
+        product: Product = .staticFramework,
+        platform: Platform, iOSTargetVersion: String,
+        dependencies: [TargetDependency] = [],
+        shouldIncludeTest: Bool,
+        shouldIncludeResources: Bool
+    ) -> Project {
         let targets = makeFrameworkTargets(
             name: name,
             product: product,
             platform: platform,
             iOSTargetVersion: iOSTargetVersion,
             dependencies: dependencies,
-            shouldIncludeTest: shouldIncludeTest
+            shouldIncludeTest: shouldIncludeTest,
+            shouldIncludeResources: shouldIncludeResources
         )
         return Project(name: name,
                        organizationName: organizationName,
@@ -119,7 +125,15 @@ extension Project {
 
 private extension Project {
 
-    static func makeFrameworkTargets(name: String, product: Product = .staticFramework, platform: Platform = .iOS, iOSTargetVersion: String, dependencies: [TargetDependency] = [], shouldIncludeTest: Bool) -> [Target] {
+    static func makeFrameworkTargets(
+        name: String,
+        product: Product = .staticFramework,
+        platform: Platform = .iOS,
+        iOSTargetVersion: String,
+        dependencies: [TargetDependency] = [],
+        shouldIncludeTest: Bool,
+        shouldIncludeResources: Bool
+    ) -> [Target] {
         let sources = Target(name: name,
                              platform: platform,
                              product: .staticFramework,
@@ -127,7 +141,7 @@ private extension Project {
                              deploymentTarget: .iOS(targetVersion: iOSTargetVersion, devices: [.iphone]),
                              infoPlist: .default,
                              sources: ["Sources/**"],
-                             resources: ["Resources/**"],
+                             resources: shouldIncludeResources ? ["Resources/**"] : nil,
                              dependencies: dependencies)
         let tests = Target(name: "\(name)Tests",
                            platform: platform,
@@ -135,7 +149,6 @@ private extension Project {
                            bundleId: "\(organizationName).\(name)Tests",
                            infoPlist: .default,
                            sources: ["Tests/**"],
-                           resources: [],
                            dependencies: [
                             .target(name: name)
                            ])

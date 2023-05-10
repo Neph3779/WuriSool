@@ -8,9 +8,11 @@
 
 import UIKit
 import WatchDomain
+import AppCoordinator
 
 public final class WatchCoordinator: Coordinator, WatchCoordinatorInterface {
 
+    public var appCoordinator: AppCoordinatorInterface?
     public let DIContainer: WatchDIContainer
     private let navigationController: UINavigationController
 

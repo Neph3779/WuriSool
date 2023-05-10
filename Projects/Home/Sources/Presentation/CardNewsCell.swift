@@ -15,7 +15,7 @@ final class CardNewsCell: UICollectionViewCell {
     static let reuseIdentifier = String(describing: CardNewsCell.self)
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 

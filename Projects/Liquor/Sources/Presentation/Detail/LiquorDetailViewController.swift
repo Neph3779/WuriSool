@@ -11,7 +11,7 @@ import RxSwift
 import Kingfisher
 import LiquorDomain
 
-final class LiquorDetailViewController: UIViewController {
+public final class LiquorDetailViewController: UIViewController {
 
     var coordinator: (any LiquorCoordinatorInterface)?
     private let viewModel: LiquorDetailViewModel
@@ -239,16 +239,17 @@ final class LiquorDetailViewController: UIViewController {
         return shoppingView
     }()
 
-    init(viewModel: LiquorDetailViewModel) {
+    public init(viewModel: LiquorDetailViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        hidesBottomBarWhenPushed = true
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .black
@@ -355,12 +356,12 @@ final class LiquorDetailViewController: UIViewController {
             view.addSubview($0)
         }
         shoppingButtonView.snp.makeConstraints {
-            $0.bottom.leading.trailing.equalToSuperview()
+            $0.bottom.leading.trailing.equalTo(view)
             $0.height.equalTo(100)
         }
         scrollView.addSubview(outerStackView)
         scrollView.snp.makeConstraints {
-            $0.leading.trailing.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.top.equalTo(view)
             $0.bottom.equalTo(view)
         }
         outerStackView.snp.makeConstraints {

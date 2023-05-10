@@ -36,8 +36,9 @@ final class KeywordCell: UICollectionViewCell {
     private let keywordImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 25
-        imageView.backgroundColor = .lightGray
         imageView.clipsToBounds = true
+        imageView.layer.borderColor = DesignAsset.Colors.gray3.color.cgColor
+        imageView.layer.borderWidth = 1
         return imageView
     }()
 
@@ -65,7 +66,7 @@ final class KeywordCell: UICollectionViewCell {
     }
 
     func setUpContents(keyword: Keyword) {
-        keywordImageView.kf.setImage(with: URL(string: keyword.imagePath))
+        keywordImageView.image = keyword.image
         keywordLabel.text = "#\(keyword.name)"
     }
 

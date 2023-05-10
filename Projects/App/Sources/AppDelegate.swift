@@ -16,7 +16,7 @@ import UIKit
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
-        let coordinator = AppCoordinator()
+        let coordinator = AppCoordinatorImpl()
         window = UIWindow(frame: UIScreen.main.bounds)
         let viewController = ViewController()
         window?.rootViewController = viewController

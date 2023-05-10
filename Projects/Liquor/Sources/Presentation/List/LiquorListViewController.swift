@@ -12,7 +12,7 @@ import LiquorDomain
 import RxSwift
 import RxCocoa
 
-final class LiquorListViewController: UIViewController {
+public final class LiquorListViewController: UIViewController {
 
     var coordinator: (any LiquorCoordinatorInterface)?
     private let viewModel: LiquorListViewModel
@@ -136,7 +136,11 @@ final class LiquorListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
+    public override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = true
+    }
+
+    public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.backButtonDisplayMode = .minimal
@@ -149,6 +153,10 @@ final class LiquorListViewController: UIViewController {
         viewModel.viewDidLoad()
     }
 
+    public override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.navigationBar.isHidden = false
+    }
+
     private func setUpCollectionViews() {
         keywordCollectionView.dataSource = keywordDataSource
         liquorCollectionView.dataSource = liquorDataSource
@@ -156,8 +164,9 @@ final class LiquorListViewController: UIViewController {
 
     private func bind() {
         viewModel.rxLiquorCount
+            .asDriver(onErrorJustReturn: 0)
             .map { "상품 \($0)" }
-            .bind(to: productCountLabel.rx.text)
+            .drive(productCountLabel.rx.text)
             .disposed(by: disposeBag)
 
         viewModel.isUpdating
@@ -236,6 +245,17 @@ final class LiquorListViewController: UIViewController {
         viewModel.rxKeywords.asDriver(onErrorJustReturn: [])
             .drive { [weak self] keywords in
                 self?.applyDataSource(section: .keywords(keywords))
+            }
+            .disposed(by: disposeBag)
+
+        viewModel.rxSelectedKeyword
+            .asDriver()
+            .drive { [weak self] (keyword: Keyword?) in
+                if let selectedCount = self?.keywordCollectionView.indexPathsForSelectedItems?.count,
+                   selectedCount == 0 {
+                    let indexPathToSelect = self?.keywordDataSource.indexPath(for: keyword ?? .others)
+                    self?.keywordCollectionView.selectItem(at: indexPathToSelect, animated: true, scrollPosition: .centeredHorizontally)
+                }
             }
             .disposed(by: disposeBag)
     }
@@ -359,11 +379,11 @@ extension LiquorListViewController {
 // MARK: - CategoryTableView DataSource & Delegate
 
 extension LiquorListViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return LiquorType.allCases.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         var content = cell.defaultContentConfiguration()
         content.text = LiquorType.allCases[indexPath.row].name

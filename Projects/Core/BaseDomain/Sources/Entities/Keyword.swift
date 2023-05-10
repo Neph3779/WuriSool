@@ -6,7 +6,8 @@
 //  Copyright © 2023 com.neph. All rights reserved.
 //
 
-import Foundation
+import UIKit
+import Design
 
 public enum Keyword: Int, CaseIterable {
     case costEffective = 1
@@ -39,8 +40,67 @@ public enum Keyword: Int, CaseIterable {
     case solo
     case home
 
-    public var imagePath: String {
-        return "https://thesool.com/common/imageView.do?targetId=D000010000" // TODO: 각 키워드에 맞는 사진 찾아서 리소스 파일에 넣기
+    public var image: UIImage {
+        switch self {
+        case .costEffective:
+            return DesignAsset.Images.keywordCostEffective.image
+        case .fall:
+            return DesignAsset.Images.keywordFall.image
+        case .winter:
+            return DesignAsset.Images.keywordWinter.image
+        case .ancientWriting:
+            return DesignAsset.Images.keywordAncientWriting.image
+        case .fruity:
+            return DesignAsset.Images.keywordFruity.image
+        case .anniversary:
+            return DesignAsset.Images.keywordAnniversary.image
+        case .sugary:
+            return DesignAsset.Images.keywordSugary.image
+        case .dry:
+            return DesignAsset.Images.keywordDry.image
+        case .holiday:
+            return DesignAsset.Images.keywordHoliday.image
+        case .noSweetener:
+            return DesignAsset.Images.keywordNoSweetener.image
+        case .berry:
+            return DesignAsset.Images.keywordBerry.image
+        case .spring:
+            return DesignAsset.Images.keywordSpring.image
+        case .ginseng:
+            return DesignAsset.Images.keywordGinseng.image
+        case .present:
+            return DesignAsset.Images.keywordPresent.image
+        case .smallAmount:
+            return DesignAsset.Images.keywordSmallAmount.image
+        case .summer:
+            return DesignAsset.Images.keywordSummer.image
+        case .pretty:
+            return DesignAsset.Images.keywordPretty.image
+        case .unusual:
+            return DesignAsset.Images.keywordUnusual.image
+        case .lowDegree:
+            return DesignAsset.Images.keywordLowDegree.image
+        case .lowAmount:
+            return DesignAsset.Images.keywordLowAmount.image
+        case .heavyTaste:
+            return DesignAsset.Images.keywordHeavyTaste.image
+        case .houseWarming:
+            return DesignAsset.Images.keywordHouseWarming.image
+        case .cocktail:
+            return DesignAsset.Images.keywordCocktail.image
+        case .couple:
+            return DesignAsset.Images.keywordCouple.image
+        case .others:
+            return DesignAsset.Images.keywordOthers.image
+        case .carbonated:
+            return DesignAsset.Images.keywordCarbonated.image
+        case .party:
+            return DesignAsset.Images.keywordParty.image
+        case .solo:
+            return DesignAsset.Images.keywordSolo.image
+        case .home:
+            return DesignAsset.Images.keywordHome.image
+        }
     }
 
     public var name: String {

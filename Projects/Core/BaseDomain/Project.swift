@@ -16,5 +16,6 @@ let project = Project.framework(
     product: .dynamicLibrary,
     platform: .iOS,
     iOSTargetVersion: iOSTargetVersion,
-    shouldIncludeTest: true
+    shouldIncludeTest: true,
+    shouldIncludeResources: false
 )

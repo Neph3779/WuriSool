@@ -10,4 +10,6 @@ import Foundation
 
 public protocol HomeCoordinatorInterface {
     func start()
+    func liquorTapped(liquorName: String)
+    func keywordTapped(keyword: Keyword)
 }

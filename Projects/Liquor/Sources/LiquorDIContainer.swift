@@ -23,19 +23,19 @@ public final class LiquorDIContainer: DIContainer {
         return LiquorRepository()
     }
 
-    func makeLiquorViewModel() -> LiquorListViewModel {
-        return LiquorListViewModel(repository: makeLiquorRepository())
+    func makeLiquorViewModel(keyword: Keyword? = nil) -> LiquorListViewModel {
+        return LiquorListViewModel(repository: makeLiquorRepository(), keyword: keyword)
     }
 
-    func makeLiquorViewController() -> LiquorListViewController {
-        return LiquorListViewController(viewModel: makeLiquorViewModel())
+    public func makeLiquorViewController(keyword: Keyword? = nil) -> LiquorListViewController {
+        return LiquorListViewController(viewModel: makeLiquorViewModel(keyword: keyword))
     }
 
     func makeLiquorDetailViewModel(liquorName: String) -> LiquorDetailViewModel {
         return LiquorDetailViewModel(name: liquorName, repository: makeLiquorRepository())
     }
 
-    func makeLiquorDetailViewController(liquorName: String) -> LiquorDetailViewController {
+    public func makeLiquorDetailViewController(liquorName: String) -> LiquorDetailViewController {
         return LiquorDetailViewController(viewModel: makeLiquorDetailViewModel(liquorName: liquorName))
     }
 }
