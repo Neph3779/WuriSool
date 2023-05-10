@@ -9,26 +9,26 @@
 import UIKit
 import HomeDomain
 
-final class HomeCoordinator: HomeCoordinatorInterface {
+public final class HomeCoordinator: Coordinator, HomeCoordinatorInterface {
     private let navigationController: UINavigationController
-    private let DIContainer: HomeDIContainer
+    public let DIContainer: HomeDIContainer
 
-    init(navigationController: UINavigationController, DIContainer: HomeDIContainer) {
+    public init(navigationController: UINavigationController, DIContainer: HomeDIContainer) {
         self.navigationController = navigationController
         self.DIContainer = DIContainer
     }
-    
-    func start() {
+
+    public func start() {
         let homeViewController = DIContainer.makeHomeViewController()
         homeViewController.coordinator = self
         navigationController.pushViewController(homeViewController, animated: true)
     }
 
-    func liquorTapped(liquorName: String) {
+    public func liquorTapped(liquorName: String) {
 
     }
 
-    func keywordTapped(keyword: Keyword) {
+    public func keywordTapped(keyword: Keyword) {
         
     }
 }

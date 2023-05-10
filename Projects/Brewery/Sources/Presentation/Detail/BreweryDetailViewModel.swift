@@ -10,7 +10,7 @@ import BreweryDomain
 import RxSwift
 import RxCocoa
 
-final class BreweryDetailViewModel {
+public final class BreweryDetailViewModel {
 
     private let repository: BreweryRepositoryInterface
     let selectedTab = PublishRelay<BreweryDetailBaseViewController.TabBarCategory>()

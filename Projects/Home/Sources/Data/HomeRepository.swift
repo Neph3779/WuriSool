@@ -13,7 +13,7 @@ import HomeDomain
 final class HomeRepository: HomeRepositoryInterface {
     private let firebaseRepository: FirebaseRepositoryInterface
 
-    init(firebaseRepository: FirebaseRepositoryInterface = FirebaseRepository()) {
+    init(firebaseRepository: FirebaseRepositoryInterface = FirebaseRepository.shared) {
         self.firebaseRepository = firebaseRepository
     }
 

@@ -10,7 +10,9 @@ import WatchDomain
 import WatchData
 import WatchPresentation
 
-final class DIContainer {
+public final class WatchDIContainer: DIContainer {
+
+    public init() {}
 
     func makeWatchRepository() -> WatchRepository {
         return WatchRepository()

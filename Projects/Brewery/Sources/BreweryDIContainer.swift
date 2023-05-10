@@ -11,29 +11,31 @@ import BreweryDomain
 import BreweryData
 import BreweryPresentation
 
-final class BreweryDIContainer {
+public final class BreweryDIContainer: DIContainer {
 
-    func makeBreweryCoordinator(navigationController: UINavigationController) -> BreweryCoordinator {
+    public init() {}
+
+    public func makeBreweryCoordinator(navigationController: UINavigationController) -> BreweryCoordinator {
         return BreweryCoordinator(navigationController: navigationController, DIContainer: self)
     }
 
-    func makeBreweryRepository() -> BreweryRepositoryInterface {
+    public func makeBreweryRepository() -> BreweryRepositoryInterface {
         return BreweryRepository()
     }
 
-    func makeBreweryListViewModel() -> BreweryListViewModel {
+    public func makeBreweryListViewModel() -> BreweryListViewModel {
         return BreweryListViewModel(repository: makeBreweryRepository())
     }
 
-    func makeBreweryListViewController() -> BreweryListViewController {
+    public func makeBreweryListViewController() -> BreweryListViewController {
         return BreweryListViewController(viewModel: makeBreweryListViewModel())
     }
 
-    func makeBreweryDetailViewModel(name: String) -> BreweryDetailViewModel {
+    public func makeBreweryDetailViewModel(name: String) -> BreweryDetailViewModel {
         return BreweryDetailViewModel(name: name, repository: makeBreweryRepository())
     }
 
-    func makeBreweryDetailViewController(name: String) -> BreweryDetailBaseViewController {
+    public func makeBreweryDetailViewController(name: String) -> BreweryDetailBaseViewController {
         return BreweryDetailBaseViewController(viewModel: makeBreweryDetailViewModel(name: name))
     }
 }

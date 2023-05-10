@@ -7,32 +7,33 @@
 //
 
 import UIKit
+import BreweryDomain
 
-final class BreweryCoordinator: BreweryCoordinatorInterface {
+public final class BreweryCoordinator: Coordinator, BreweryCoordinatorInterface {
     private let navigationController: UINavigationController
-    private let DIContainer: BreweryDIContainer
+    public let DIContainer: BreweryDIContainer
 
-    init(navigationController: UINavigationController, DIContainer: BreweryDIContainer) {
+    public init(navigationController: UINavigationController, DIContainer: BreweryDIContainer) {
         self.navigationController = navigationController
         self.DIContainer = DIContainer
     }
 
-    func start() {
+    public func start() {
         let listViewController = DIContainer.makeBreweryListViewController()
         listViewController.coordinator = self
         navigationController.pushViewController(listViewController, animated: true)
     }
 
-    func listCellSelected(breweryName: String) {
+    public func listCellSelected(breweryName: String) {
         let detailViewController = DIContainer.makeBreweryDetailViewController(name: breweryName)
         navigationController.pushViewController(detailViewController, animated: true)
     }
 
-    func visitGuideTapped(breweryId: Int) {
+    public func visitGuideTapped(breweryId: Int) {
         
     }
 
-    func liquorTapped(liquorName: String) {
+    public func liquorTapped(liquorName: String) {
 
     }
 }

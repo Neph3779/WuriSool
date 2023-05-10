@@ -11,16 +11,19 @@ import HomePresentation
 import HomeData
 import HomeDomain
 
-final class HomeDIContainer {
-    func makeHomeCoordinator(navigationController: UINavigationController) -> HomeCoordinator {
+public final class HomeDIContainer: DIContainer {
+
+    public init() {}
+    
+    public func makeHomeCoordinator(navigationController: UINavigationController) -> HomeCoordinator {
         return HomeCoordinator(navigationController: navigationController, DIContainer: self)
     }
 
-    func makeHomeViewController() -> HomeViewController {
+    public func makeHomeViewController() -> HomeViewController {
         return HomeViewController(viewModel: makeHomeViewModel())
     }
 
-    func makeHomeViewModel() -> HomeViewModel {
+    public func makeHomeViewModel() -> HomeViewModel {
         return HomeViewModel(repository: HomeRepository())
     }
 }

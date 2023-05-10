@@ -11,7 +11,7 @@ import BreweryDomain
 import RxSwift
 import RxCocoa
 
-final class BreweryListViewModel {
+public final class BreweryListViewModel {
 
     private let repository: BreweryRepositoryInterface
     private let region = ""

@@ -11,9 +11,11 @@ import LiquorDomain
 import LiquorPresentation
 import LiquorData
 
-final class LiquorDIContainer: DIContainer {
+public final class LiquorDIContainer: DIContainer {
 
-    func makeLiquorCoordinator(navigationController: UINavigationController) -> LiquorCoordinator {
+    public init() {}
+    
+    public func makeLiquorCoordinator(navigationController: UINavigationController) -> LiquorCoordinator {
         return LiquorCoordinator(DIContainer: self, navigationController: navigationController)
     }
 

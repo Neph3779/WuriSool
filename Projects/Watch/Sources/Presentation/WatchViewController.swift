@@ -14,6 +14,7 @@ import SnapKit
 
 final class WatchViewController: UIViewController {
 
+    var coordinator: WatchCoordinatorInterface?
     private let viewModel: WatchViewModel
     private var disposeBag = DisposeBag()
 

@@ -12,7 +12,7 @@ import RxSwift
 import RxCocoa
 import SnapKit
 
-final class BreweryListViewController: UIViewController {
+public final class BreweryListViewController: UIViewController {
     var coordinator: BreweryCoordinatorInterface?
     private let viewModel: BreweryListViewModel
     private var disposeBag = DisposeBag()
@@ -63,7 +63,7 @@ final class BreweryListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.backButtonDisplayMode = .minimal

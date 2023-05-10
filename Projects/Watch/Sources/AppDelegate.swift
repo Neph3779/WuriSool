@@ -17,7 +17,7 @@ import Network
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
-        let DIContainer = DIContainer()
+        let DIContainer = WatchDIContainer()
         window = UIWindow(frame: UIScreen.main.bounds)
         let viewController = DIContainer.makeWatchViewController()
         window?.rootViewController = viewController

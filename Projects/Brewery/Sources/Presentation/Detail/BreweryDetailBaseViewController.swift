@@ -12,7 +12,7 @@ import RxCocoa
 import Kingfisher
 import BreweryDomain
 
-final class BreweryDetailBaseViewController: UIViewController {
+public final class BreweryDetailBaseViewController: UIViewController {
 
     private let viewModel: BreweryDetailViewModel
     private let disposeBag = DisposeBag()
@@ -103,7 +103,7 @@ final class BreweryDetailBaseViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setUpNavigationBar()
