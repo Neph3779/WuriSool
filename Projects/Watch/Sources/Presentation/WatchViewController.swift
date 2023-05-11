@@ -38,6 +38,15 @@ final class WatchViewController: UIViewController {
         return stackView
     }()
 
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.applyFont(font: .titleLarge2)
+        label.text = "Watch"
+        label.textAlignment = .center
+        label.backgroundColor = .white
+        return label
+    }()
+
     private lazy var categoryCollectionView: SizableCollectionView = {
         let collectionView = SizableCollectionView(frame: .zero, collectionViewLayout: categoryCollectionViewLayout())
         collectionView.register(CategoryCell.self, forCellWithReuseIdentifier: CategoryCell.reuseIdentifier)
@@ -65,13 +74,10 @@ final class WatchViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.isHidden = true
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        setUpNavigationBar()
         setUpCollectionViews()
         bind()
         layout()
@@ -79,8 +85,9 @@ final class WatchViewController: UIViewController {
         categoryCollectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .left)
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        navigationController?.navigationBar.isHidden = false
+    private func setUpNavigationBar() {
+        navigationItem.title = "Watch"
+        navigationController?.navigationBar.isTranslucent = false
     }
 
     private func setUpCollectionViews() {
@@ -158,6 +165,9 @@ final class WatchViewController: UIViewController {
         [categoryCollectionView, videoCollectionView].forEach {
             outerStackView.addArrangedSubview($0)
         }
+//        titleLabel.snp.makeConstraints {
+//            $0.height.equalTo(50)
+//        }
         categoryCollectionView.snp.makeConstraints {
             $0.height.equalTo(70)
         }
@@ -184,8 +194,8 @@ extension WatchViewController {
         let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(250)))
         let group = NSCollectionLayoutGroup.vertical(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(250)), subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 10, leading: 10, bottom: 0, trailing: 10)
-        section.interGroupSpacing = 10
+        section.contentInsets = .init(top: 20, leading: 10, bottom: 0, trailing: 10)
+        section.interGroupSpacing = 15
         return UICollectionViewCompositionalLayout(section: section)
     }
 }

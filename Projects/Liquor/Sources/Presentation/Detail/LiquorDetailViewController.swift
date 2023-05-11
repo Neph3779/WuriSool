@@ -243,6 +243,7 @@ public final class LiquorDetailViewController: UIViewController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         hidesBottomBarWhenPushed = true
+
     }
 
     required init?(coder: NSCoder) {
@@ -252,12 +253,32 @@ public final class LiquorDetailViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        navigationController?.navigationBar.tintColor = .black
+        setUpNavigationBar()
         bind()
         layout()
     }
 
+    private func setUpNavigationBar() {
+        let standardAppearance = UINavigationBarAppearance()
+        standardAppearance.configureWithDefaultBackground()
+        standardAppearance.backgroundColor = .white
+        standardAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        navigationController?.navigationBar.standardAppearance = standardAppearance
+
+        let scrollEdgeAppearance = UINavigationBarAppearance()
+        scrollEdgeAppearance.configureWithTransparentBackground()
+        scrollEdgeAppearance.backgroundColor = .white
+        scrollEdgeAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
+        navigationController?.navigationBar.tintColor = .black
+    }
+
     private func bind() {
+        viewModel.liquor
+            .asDriver()
+            .map { $0.name }
+            .drive(navigationItem.rx.title)
+            .disposed(by: disposeBag)
         viewModel.liquor
             .share()
             .observe(on: MainScheduler.instance)

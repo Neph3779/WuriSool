@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Design
 
 public enum LiquorChannel: Hashable, CaseIterable {
     case drinkHouse
@@ -38,11 +39,11 @@ public enum LiquorChannel: Hashable, CaseIterable {
     public var profileImage: UIImage? {
         switch self {
         case .drinkHouse:
-            return UIImage(systemName: "person")
+            return DesignAsset.Images.drinkHouse.image
         case .juryuhak:
-            return UIImage(systemName: "person")
+            return DesignAsset.Images.juryuhak.image
         case .alcoholCanyon:
-            return UIImage(systemName: "person")
+            return DesignAsset.Images.alcoholCanyon.image
         }
     }
 }

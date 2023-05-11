@@ -16,6 +16,9 @@ let project = Project.framework(
     product: .dynamicLibrary,
     platform: .iOS,
     iOSTargetVersion: iOSTargetVersion,
+    dependencies: [
+        .project(target: "Design", path: .relativeToRoot("Projects/Core/Design"))
+    ],
     shouldIncludeTest: true,
     shouldIncludeResources: false
 )

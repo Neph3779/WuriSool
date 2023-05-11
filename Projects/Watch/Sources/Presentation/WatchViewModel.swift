@@ -24,6 +24,7 @@ final class WatchViewModel {
         selectedChannel
             .asDriver()
             .drive { [weak self] channel in
+                self?.videos.accept([])
                 self?.fetchVideos()
             }
             .disposed(by: disposeBag)

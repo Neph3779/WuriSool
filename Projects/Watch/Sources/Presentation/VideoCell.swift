@@ -16,7 +16,7 @@ final class VideoCell: UICollectionViewCell {
     private let thumbnailImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 10
+        imageView.layer.cornerRadius = 5
         imageView.clipsToBounds = true
         let youtubeImageView = UIImageView()
         youtubeImageView.image = DesignAsset.Images.youtube.image
@@ -29,11 +29,13 @@ final class VideoCell: UICollectionViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.applyFont(font: .buttonMedium)
+        label.lineBreakMode = .byTruncatingTail
+        label.numberOfLines = 2
         return label
     }()
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.layer.cornerRadius = 12
+        imageView.layer.cornerRadius = 10
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
@@ -60,6 +62,7 @@ final class VideoCell: UICollectionViewCell {
         titleLabel.text = video.snippet.title
         profileImageView.image = channel.profileImage
         channelNameLabel.text = video.snippet.channelTitle
+        titleLabel.lineBreakMode = .byTruncatingTail
     }
 
     private func layout() {

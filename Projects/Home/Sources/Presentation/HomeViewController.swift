@@ -135,7 +135,8 @@ public final class HomeViewController: UIViewController {
     private func layout() {
         view.addSubview(contentScrollView)
         contentScrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.leading.trailing.top.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view)
         }
         contentScrollView.addSubview(contentVerticalStackView)
         contentVerticalStackView.snp.makeConstraints {
