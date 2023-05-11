@@ -70,3 +70,5 @@ Derived/
 Tuist/Dependencies
 *GoogleService-Info*
 Projects/Core/Network/Resources/APIKeys.plist
+Tuist/Signing
+Tuist/master.key
