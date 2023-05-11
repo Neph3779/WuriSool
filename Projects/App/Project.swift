@@ -8,7 +8,7 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-private let projectName = "App"
+private let projectName = "WuriSool"
 private let iOSTargetVersion = "14.0"
 
 let project = Project.app(

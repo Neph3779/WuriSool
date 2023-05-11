@@ -28,7 +28,6 @@ final class LiquorRepository: LiquorRepositoryInterface {
         }
 
         return try await firebaseRepository.fetchLiquors(query: query, pagination: true).map { Liquor(data: $0) }
-
     }
 
     func fetchLiquorCount(type: LiquorType?, keyword: Keyword?) async throws -> Int {
@@ -52,5 +51,9 @@ final class LiquorRepository: LiquorRepositoryInterface {
         return try await firebaseRepository.fetchLiquors(query: query, pagination: false)
             .map { Liquor(data: $0) }
             .first ?? Liquor(data: [:])
+    }
+
+    func resetPagination() {
+        firebaseRepository.resetPagination()
     }
 }

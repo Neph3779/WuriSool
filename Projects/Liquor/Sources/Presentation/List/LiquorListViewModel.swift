@@ -20,7 +20,7 @@ final class LiquorListViewModel {
     var rxLiquorCount = BehaviorSubject<Int>(value: 0)
     var isUpdating = BehaviorRelay<Bool>(value: false)
     var liquorFetchTask: Task<(), Never>?
-    var applyDataSource: ((LiquorListViewController.LiquorListSection) -> Void)?
+
     private let disposeBag = DisposeBag()
     private let repository: LiquorRepositoryInterface
     private var selectedKeyword: Keyword?
@@ -29,6 +29,7 @@ final class LiquorListViewModel {
         self.repository = repository
         Observable.combineLatest(rxSelectedType, rxSelectedKeyword)
             .subscribe(onNext: { [weak self] _, _ in
+                self?.repository.resetPagination()
                 self?.rxLiquors.accept([])
                 self?.fetchLiquors()
             })
@@ -68,6 +69,7 @@ final class LiquorListViewModel {
                 let keywords = try await repository.fetchKeywords()
                 rxKeywords.accept(keywords)
                 if let selectedKeyword = selectedKeyword {
+                    rxLiquors.accept([])
                     rxSelectedKeyword.accept(selectedKeyword)
                 }
             } catch {

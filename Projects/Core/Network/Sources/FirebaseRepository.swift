@@ -17,6 +17,7 @@ public protocol FirebaseRepositoryInterface {
     func fetchBrewery(query: FirebaseQuery, pagination: Bool) async throws -> [[String: Any]]
     func fetchLiquorCount(query: FirebaseQuery) async throws -> Int
     func fetchKeywords() async throws -> [[String: Any]]
+    func resetPagination()
 }
 
 public struct FirebaseQuery: Hashable {

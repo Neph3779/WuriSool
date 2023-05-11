@@ -190,8 +190,14 @@ public final class LiquorListViewController: UIViewController {
 
         keywordCollectionView.rx.itemSelected
             .asSignal()
-            .map { Keyword.allCases[$0.row] }
-            .emit(to: viewModel.rxSelectedKeyword)
+            .emit { [weak self] indexPath in
+                if let currentSelectedKewyord = self?.viewModel.rxSelectedKeyword.value,
+                   let selectedKeyword = self?.keywordDataSource.itemIdentifier(for: indexPath),
+                   selectedKeyword == currentSelectedKewyord  {
+                    return
+                }
+                self?.viewModel.rxSelectedKeyword.accept(self?.viewModel.rxKeywords.value[indexPath.row])
+            }
             .disposed(by: disposeBag)
 
         keywordCollectionView.contentSizeDidChanged
