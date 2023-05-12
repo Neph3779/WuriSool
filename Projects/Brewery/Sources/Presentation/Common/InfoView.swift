@@ -43,8 +43,9 @@ final class InfoView: UIView {
             addSubview($0)
         }
         imageView.snp.makeConstraints {
-            $0.top.bottom.equalTo(descriptionLabel)
+            $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview()
+            $0.height.width.equalTo(16)
         }
         descriptionLabel.snp.makeConstraints {
             $0.leading.equalTo(imageView.snp.trailing).offset(16)
