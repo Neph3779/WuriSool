@@ -23,12 +23,12 @@ public final class LiquorDIContainer: DIContainer {
         return LiquorRepository()
     }
 
-    func makeLiquorViewModel(keyword: Keyword? = nil) -> LiquorListViewModel {
-        return LiquorListViewModel(repository: makeLiquorRepository(), keyword: keyword)
+    func makeLiquorViewModel(mode: LiquorListViewModel.Mode) -> LiquorListViewModel {
+        return LiquorListViewModel(repository: makeLiquorRepository(), mode: mode)
     }
 
-    public func makeLiquorViewController(keyword: Keyword? = nil) -> LiquorListViewController {
-        return LiquorListViewController(viewModel: makeLiquorViewModel(keyword: keyword))
+    public func makeLiquorViewController(mode: LiquorListViewModel.Mode) -> LiquorListViewController {
+        return LiquorListViewController(viewModel: makeLiquorViewModel(mode: mode))
     }
 
     func makeLiquorDetailViewModel(liquorName: String) -> LiquorDetailViewModel {

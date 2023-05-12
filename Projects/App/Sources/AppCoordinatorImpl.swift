@@ -121,11 +121,8 @@ extension AppCoordinatorImpl: AppCoordinatorInterface {
     }
 
     func moveToLiquorTab(with keyword: Keyword) {
-        liquorNavigationController.popToRootViewController(animated: false)
         let liquorDIContainer = LiquorDIContainer()
-        let liquorCoordinator = LiquorCoordinator(DIContainer: liquorDIContainer, navigationController: liquorNavigationController)
-        liquorCoordinator.appCoordinator = self
-        liquorCoordinator.start(keyword: keyword)
-        tabBarController.selectedIndex = 1
+        let liquorDetailViewController = liquorDIContainer.makeLiquorViewController(mode: .keyword(keyword))
+        homeNavigationController.pushViewController(liquorDetailViewController, animated: true)
     }
 }

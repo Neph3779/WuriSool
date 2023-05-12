@@ -11,8 +11,12 @@ import LiquorDomain
 import RxSwift
 import RxCocoa
 
-final class LiquorListViewModel {
-
+public final class LiquorListViewModel {
+    public enum Mode: Equatable {
+        case search
+        case keyword(Keyword)
+    }
+    let mode: Mode
     var rxLiquors = BehaviorRelay<[Liquor]>(value: [])
     var rxKeywords = BehaviorRelay<[Keyword]>(value: [])
     var rxSelectedType = BehaviorRelay<LiquorType?>(value: nil)
@@ -25,16 +29,13 @@ final class LiquorListViewModel {
     private let repository: LiquorRepositoryInterface
     private var selectedKeyword: Keyword?
 
-    init(repository: LiquorRepositoryInterface, keyword: Keyword? = nil) {
+    init(repository: LiquorRepositoryInterface, mode: Mode) {
+        self.mode = mode
         self.repository = repository
-        Observable.combineLatest(rxSelectedType, rxSelectedKeyword)
-            .subscribe(onNext: { [weak self] _, _ in
-                self?.repository.resetPagination()
-                self?.rxLiquors.accept([])
-                self?.fetchLiquors()
-            })
-            .disposed(by: disposeBag)
-        selectedKeyword = keyword
+
+        if case .keyword(let keyword) = mode {
+            rxSelectedKeyword.accept(keyword)
+        }
     }
 
     func fetchLiquors() {
@@ -83,7 +84,13 @@ final class LiquorListViewModel {
 
 extension LiquorListViewModel {
     func viewDidLoad() {
-        fetchLiquors()
         fetchKeywords()
+        Observable.combineLatest(rxSelectedType, rxSelectedKeyword)
+            .subscribe(onNext: { [weak self] _, _ in
+                self?.repository.resetPagination()
+                self?.rxLiquors.accept([])
+                self?.fetchLiquors()
+            })
+            .disposed(by: disposeBag)
     }
 }

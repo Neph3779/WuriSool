@@ -137,13 +137,18 @@ public final class LiquorListViewController: UIViewController {
     }
 
     public override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.isHidden = true
+        if case .keyword(let keyword) = viewModel.mode {
+            navigationItem.title = "#\(keyword.name)"
+        } else {
+            navigationController?.navigationBar.isHidden = true
+        }
     }
 
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.backButtonDisplayMode = .minimal
+        navigationController?.navigationBar.tintColor = .black
         setUpCollectionViews()
         bind()
         layout()
@@ -284,16 +289,23 @@ public final class LiquorListViewController: UIViewController {
             $0.leading.trailing.equalTo(view)
             $0.top.bottom.equalToSuperview()
         }
-        [searchBar, keywordCollectionView, infoView, liquorCollectionView].forEach {
-            outerStackView.addArrangedSubview($0)
-        }
-        keywordCollectionView.snp.makeConstraints {
-            $0.height.equalTo(95)
+
+        if case .search = viewModel.mode {
+            [searchBar, keywordCollectionView, infoView, liquorCollectionView].forEach {
+                outerStackView.addArrangedSubview($0)
+            }
+            keywordCollectionView.snp.makeConstraints {
+                $0.height.equalTo(95)
+            }
+            outerStackView.setCustomSpacing(0, after: searchBar)
+        } else {
+            [infoView, liquorCollectionView].forEach {
+                outerStackView.addArrangedSubview($0)
+            }
         }
         liquorCollectionView.snp.makeConstraints {
             $0.height.greaterThanOrEqualTo(1) // trigger for estimate collectionView's size
         }
-        outerStackView.setCustomSpacing(0, after: searchBar)
     }
 
     @objc

@@ -22,13 +22,13 @@ public final class LiquorCoordinator: Coordinator, LiquorCoordinatorInterface {
     }
 
     public func start() {
-        let liquorViewController = DIContainer.makeLiquorViewController()
+        let liquorViewController = DIContainer.makeLiquorViewController(mode: .search)
         liquorViewController.coordinator = self
         navigationController.pushViewController(liquorViewController, animated: true)
     }
 
     public func start(keyword: Keyword) {
-        let liquorViewController = DIContainer.makeLiquorViewController(keyword: keyword)
+        let liquorViewController = DIContainer.makeLiquorViewController(mode: .keyword(keyword))
         liquorViewController.coordinator = self
         navigationController.pushViewController(liquorViewController, animated: true)
     }
