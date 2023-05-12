@@ -33,7 +33,7 @@ final class ProgramCell: UICollectionViewCell {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 1
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fill
         stackView.backgroundColor = DesignAsset.Colors.gray1.color
         return stackView
     }()
@@ -48,7 +48,7 @@ final class ProgramCell: UICollectionViewCell {
         infoStackView.snp.makeConstraints {
             $0.top.equalTo(programTitleLabel.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview()
         }
         infoView.backgroundColor = .white
         infoView.layer.cornerRadius = 6

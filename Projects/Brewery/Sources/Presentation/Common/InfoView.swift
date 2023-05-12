@@ -25,13 +25,23 @@ final class InfoView: UIView {
         label.lineBreakStrategy = .hangulWordPriority
         return label
     }()
+    lazy var copyButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "doc.on.doc"), for: .normal)
+        button.tintColor = .black
+        button.addAction(UIAction { [weak self] _ in
+            UIPasteboard.general.string = self?.descriptionLabel.text
+        }, for: .touchUpInside)
+        return button
+    }()
 
-    init(image: UIImage?, description: String) {
+    init(image: UIImage?, description: String, isCopyEnable: Bool = false) {
         super.init(frame: .zero)
+        backgroundColor = .white
         imageView.image = image
         descriptionLabel.text = description
-        backgroundColor = .white
         layout()
+        copyButton.isHidden = !isCopyEnable
     }
 
     required init?(coder: NSCoder) {
@@ -39,7 +49,7 @@ final class InfoView: UIView {
     }
 
     private func layout() {
-        [imageView, descriptionLabel].forEach {
+        [imageView, descriptionLabel, copyButton].forEach {
             addSubview($0)
         }
         imageView.snp.makeConstraints {
@@ -50,7 +60,13 @@ final class InfoView: UIView {
         descriptionLabel.snp.makeConstraints {
             $0.leading.equalTo(imageView.snp.trailing).offset(16)
             $0.top.bottom.equalToSuperview().inset(15)
-            $0.trailing.equalToSuperview().inset(13)
+            $0.trailing.equalToSuperview().inset(13).priority(.low)
+            $0.trailing.equalTo(copyButton.snp.leading).priority(.high)
+        }
+        copyButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(15)
+            $0.height.width.equalTo(16)
         }
     }
 }

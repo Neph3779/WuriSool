@@ -10,6 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import BreweryDomain
+import Toast
 
 final class BreweryDetailOperationInfoViewController: BreweryContainerViewController {
 
@@ -21,6 +22,8 @@ final class BreweryDetailOperationInfoViewController: BreweryContainerViewContro
         stackView.distribution = .equalSpacing
         stackView.axis = .vertical
         stackView.backgroundColor = DesignAsset.Colors.gray1.color
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.layoutMargins = .init(top: 0, left: 0, bottom: 1, right: 0)
         return stackView
     }()
 
@@ -43,7 +46,7 @@ final class BreweryDetailOperationInfoViewController: BreweryContainerViewContro
         sizableView.addSubview(stackView)
         stackView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.top.bottom.equalToSuperview()
+            $0.top.equalToSuperview()
         }
     }
 
@@ -51,13 +54,21 @@ final class BreweryDetailOperationInfoViewController: BreweryContainerViewContro
         viewModel.brewery
             .asDriver()
             .drive { [weak self] (brewery: Brewery) in
+                guard let self = self else { return }
                 [
                     (brewery.phoneNumber, DesignAsset.Images.phone.image),
                     (brewery.homePage, DesignAsset.Images.link.image),
                     (brewery.address, DesignAsset.Images.location.image)
                 ].forEach { (text: String, image: UIImage) in
-                    let infoView = InfoView(image: image, description: text)
-                    self?.stackView.addArrangedSubview(infoView)
+                    let infoView = InfoView(image: image, description: text, isCopyEnable: true)
+                    self.stackView.addArrangedSubview(infoView)
+                    infoView.copyButton.rx.tap
+                        .asSignal()
+                        .emit { [weak self] _ in
+                            guard let self = self else { return }
+                            self.view.makeToast("복사가 완료되었습니다.")
+                        }
+                        .disposed(by: self.disposeBag)
                 }
             }
             .disposed(by: disposeBag)

@@ -156,6 +156,7 @@ public final class BreweryDetailBaseViewController: UIViewController {
         }
         tabBarContainerView.snp.makeConstraints {
             $0.height.greaterThanOrEqualTo(1)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).priority(.low)
         }
 
         outerStackView.setCustomSpacing(-10, after: breweryImageView)
