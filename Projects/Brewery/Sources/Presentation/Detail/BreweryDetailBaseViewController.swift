@@ -120,6 +120,17 @@ public final class BreweryDetailBaseViewController: UIViewController {
     }
 
     private func setUpNavigationBar() {
+        let standardAppearance = UINavigationBarAppearance()
+        standardAppearance.configureWithDefaultBackground()
+        standardAppearance.backgroundColor = .white
+        standardAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        navigationController?.navigationBar.standardAppearance = standardAppearance
+
+        let scrollEdgeAppearance = UINavigationBarAppearance()
+        scrollEdgeAppearance.configureWithTransparentBackground()
+        scrollEdgeAppearance.backgroundColor = .clear
+        scrollEdgeAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
+        navigationController?.navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
         navigationController?.navigationBar.tintColor = .white
     }
 
@@ -212,6 +223,14 @@ public final class BreweryDetailBaseViewController: UIViewController {
                 self?.breweryTitleLabel.text = brewery.name
                 self?.breweryAddressLabel.text = brewery.address
                 self?.breweryImageView.kf.setImage(with: URL(string: brewery.imagePath))
+                self?.navigationItem.title = brewery.name
+            }
+            .disposed(by: disposeBag)
+
+        scrollView.rx.contentOffset
+            .asDriver()
+            .drive { [weak self] offset in
+                self?.navigationController?.navigationBar.tintColor = offset.y <= 0 ? .white : .black
             }
             .disposed(by: disposeBag)
     }
@@ -225,8 +244,8 @@ public final class BreweryDetailBaseViewController: UIViewController {
 
 extension BreweryDetailBaseViewController {
     private func tabBarCollectionViewLayout() -> UICollectionViewCompositionalLayout {
-        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .estimated(120), heightDimension: .estimated(40)))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .estimated(120), heightDimension: .estimated(40)), subitems: [item])
+        let item = NSCollectionLayoutItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(40)))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: .init(widthDimension: .fractionalWidth(1/3), heightDimension: .estimated(40)), subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         return UICollectionViewCompositionalLayout(section: section)
