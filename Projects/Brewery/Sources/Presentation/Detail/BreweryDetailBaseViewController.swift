@@ -97,6 +97,7 @@ public final class BreweryDetailBaseViewController: UIViewController {
     init(viewModel: BreweryDetailViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        hidesBottomBarWhenPushed = true
     }
 
     required init?(coder: NSCoder) {
@@ -155,6 +156,7 @@ public final class BreweryDetailBaseViewController: UIViewController {
         outerStackView.snp.makeConstraints {
             $0.leading.trailing.equalTo(view)
             $0.top.bottom.equalToSuperview()
+            $0.height.greaterThanOrEqualTo(view.frame.height)
         }
         [breweryImageView, breweryInfoView, tabBarCollectionView, tabBarContainerView].forEach {
             outerStackView.addArrangedSubview($0)
@@ -167,7 +169,6 @@ public final class BreweryDetailBaseViewController: UIViewController {
         }
         tabBarContainerView.snp.makeConstraints {
             $0.height.greaterThanOrEqualTo(1)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).priority(.low)
         }
 
         outerStackView.setCustomSpacing(-10, after: breweryImageView)
