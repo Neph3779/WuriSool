@@ -11,7 +11,7 @@ import BaseDomain
 
 public protocol AppCoordinatorInterface {
     func pushLiquorView(liquorName: String)
-    func moveToLiquorTab(with keyword: Keyword)
+    func pushLiquorList(with keyword: Keyword)
 }
 
 public protocol AppBreweryCoordinatorInterface {

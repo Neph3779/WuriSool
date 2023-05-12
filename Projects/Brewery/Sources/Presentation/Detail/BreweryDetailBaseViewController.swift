@@ -179,7 +179,7 @@ public final class BreweryDetailBaseViewController: UIViewController {
     private func bind() {
         tabBarCollectionView.contentSizeDidChanged
             .asSignal()
-            .emit { [weak self] size in
+            .emit { [weak self] (size: CGSize) in
                 if size.height > 0 {
                     self?.tabBarCollectionView.snp.remakeConstraints {
                         $0.height.equalTo(size.height)

@@ -14,7 +14,7 @@ import RxCocoa
 
 public final class LiquorListViewController: UIViewController {
 
-    var coordinator: (any LiquorCoordinatorInterface)?
+    public var coordinator: (any LiquorCoordinatorInterface)?
     private let viewModel: LiquorListViewModel
     private var disposeBag = DisposeBag()
 
@@ -138,6 +138,7 @@ public final class LiquorListViewController: UIViewController {
 
     public override func viewWillAppear(_ animated: Bool) {
         if case .keyword(let keyword) = viewModel.mode {
+            setUpNavigationBar()
             navigationItem.title = "#\(keyword.name)"
         } else {
             navigationController?.navigationBar.isHidden = true
@@ -147,8 +148,6 @@ public final class LiquorListViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        navigationItem.backButtonDisplayMode = .minimal
-        navigationController?.navigationBar.tintColor = .black
         setUpCollectionViews()
         bind()
         layout()
@@ -160,6 +159,18 @@ public final class LiquorListViewController: UIViewController {
 
     public override func viewWillDisappear(_ animated: Bool) {
         navigationController?.navigationBar.isHidden = false
+    }
+
+    private func setUpNavigationBar() {
+        let standardAppearance = UINavigationBarAppearance()
+        standardAppearance.configureWithTransparentBackground()
+        standardAppearance.backgroundColor = .white
+        standardAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        navigationController?.navigationBar.standardAppearance = standardAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = standardAppearance
+        navigationController?.navigationBar.tintColor = .black
+        navigationItem.backButtonDisplayMode = .minimal
+        navigationController?.navigationBar.tintColor = .black
     }
 
     private func setUpCollectionViews() {

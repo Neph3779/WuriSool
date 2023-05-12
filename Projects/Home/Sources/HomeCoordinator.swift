@@ -32,6 +32,6 @@ public final class HomeCoordinator: Coordinator, HomeCoordinatorInterface {
     }
 
     public func keywordTapped(keyword: Keyword) {
-        appCoordinator?.moveToLiquorTab(with: keyword)
+        appCoordinator?.pushLiquorList(with: keyword)
     }
 }
