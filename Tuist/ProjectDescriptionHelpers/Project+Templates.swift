@@ -48,7 +48,8 @@ extension Project {
                 .external(name: "SnapKit"),
                 .external(name: "Kingfisher"),
                 .external(name: "RxSwift"),
-                .external(name: "RxCocoa")
+                .external(name: "RxCocoa"),
+                .external(name: "Toast")
             ]
         )
 
