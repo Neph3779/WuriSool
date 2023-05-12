@@ -37,7 +37,6 @@ final class LiquorCell: UICollectionViewCell {
         let label = UILabel()
         label.applyFont(font: .bodySmall)
         label.textColor = DesignAsset.Colors.gray4.color
-
         return label
     }()
     private lazy var labelStackView: UIStackView = {
@@ -64,7 +63,7 @@ final class LiquorCell: UICollectionViewCell {
         titleLabel.text = liquor.name
         infoLabel.text = "\(liquor.dosage) | \(liquor.alcoholPercentage)"
         keywordLabel.text = liquor.keywords.map { return "#\($0.name)" }.joined(separator: " ")
-        keywordLabel.lineBreakMode = .byTruncatingTail
+        [titleLabel, infoLabel, keywordLabel].forEach { $0.lineBreakMode = .byTruncatingTail }
     }
 
     private func layout() {
