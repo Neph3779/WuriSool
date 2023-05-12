@@ -7,10 +7,12 @@
 //
 
 import UIKit
+import BreweryDomain
 import RxSwift
 import RxCocoa
 
 class BreweryContainerViewController: UIViewController {
+    var coordinator: BreweryCoordinatorInterface?
     var sizableView = SizableView()
 
     override func viewDidLoad() {

@@ -126,3 +126,12 @@ extension AppCoordinatorImpl: AppCoordinatorInterface {
         homeNavigationController.pushViewController(liquorDetailViewController, animated: true)
     }
 }
+
+extension AppCoordinatorImpl: AppBreweryCoordinatorInterface {
+
+    func pushLiquorViewToBreweryTab(liquorName: String) {
+        let liquorDIContainer = LiquorDIContainer()
+        let liquorViewController = liquorDIContainer.makeLiquorDetailViewController(liquorName: liquorName)
+        breweryNavigationController.pushViewController(liquorViewController, animated: true)
+    }
+}

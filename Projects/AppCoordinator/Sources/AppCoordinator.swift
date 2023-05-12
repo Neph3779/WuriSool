@@ -13,3 +13,7 @@ public protocol AppCoordinatorInterface {
     func pushLiquorView(liquorName: String)
     func moveToLiquorTab(with keyword: Keyword)
 }
+
+public protocol AppBreweryCoordinatorInterface {
+    func pushLiquorViewToBreweryTab(liquorName: String)
+}

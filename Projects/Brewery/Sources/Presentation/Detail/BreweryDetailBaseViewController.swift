@@ -14,6 +14,7 @@ import BreweryDomain
 
 public final class BreweryDetailBaseViewController: UIViewController {
 
+    var coordinator: BreweryCoordinatorInterface?
     private let viewModel: BreweryDetailViewModel
     private let disposeBag = DisposeBag()
     private let scrollView = UIScrollView()
@@ -133,6 +134,7 @@ public final class BreweryDetailBaseViewController: UIViewController {
         scrollEdgeAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
         navigationController?.navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
         navigationController?.navigationBar.tintColor = .white
+        navigationItem.backButtonDisplayMode = .minimal
     }
 
     private func setUpTabBarCollectionView() {
@@ -237,7 +239,10 @@ public final class BreweryDetailBaseViewController: UIViewController {
     }
 
     private func setUpChildViewControllers() {
-        [productViewController, programViewController, operationInfoViewController].forEach { addChild($0) }
+        [productViewController, programViewController, operationInfoViewController].forEach {
+            addChild($0)
+            $0.coordinator = coordinator
+        }
     }
 }
 

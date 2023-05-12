@@ -11,4 +11,6 @@ import Foundation
 public protocol BreweryCoordinatorInterface {
     func start()
     func listCellSelected(breweryName: String)
+    func visitGuideTapped(breweryId: Int)
+    func liquorTapped(liquorName: String)
 }

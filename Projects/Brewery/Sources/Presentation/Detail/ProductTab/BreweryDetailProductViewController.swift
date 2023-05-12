@@ -108,6 +108,15 @@ final class BreweryDetailProductViewController: BreweryContainerViewController {
                 self?.applyDataSource(section: .product(products))
             }
             .disposed(by: disposeBag)
+
+        productCollectionView.rx.itemSelected
+            .asSignal()
+            .emit { [weak self] indexPath in
+                if let item = self?.productDataSource.itemIdentifier(for: indexPath) {
+                    self?.coordinator?.liquorTapped(liquorName: item.name)
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 
