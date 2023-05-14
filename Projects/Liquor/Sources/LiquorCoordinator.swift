@@ -12,7 +12,7 @@ import AppCoordinator
 
 public final class LiquorCoordinator: Coordinator, LiquorCoordinatorInterface {
 
-    public var appCoordinator: AppCoordinatorInterface?
+    public var appCoordinator: AppLiquorCoordinatorInterface?
     public let DIContainer: LiquorDIContainer
     private let navigationController: UINavigationController
 
@@ -40,7 +40,7 @@ public final class LiquorCoordinator: Coordinator, LiquorCoordinatorInterface {
     }
 
     public func breweryTapped(breweryName: String) {
-
+        appCoordinator?.pushBreweryViewToLiquorTab(breweryName: breweryName)
     }
 
     public func keywordTapped(keyword: Keyword) {

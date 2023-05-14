@@ -63,7 +63,7 @@ final class ProductCell: UICollectionViewCell {
         productImageView.kf.setImage(with: URL(string: liquor.imagePath))
         productNameLabel.text = liquor.name
         productInfoLabel.text = "\(liquor.alcoholPercentage) | \(liquor.dosage)"
-        categoryLabel.text = "임시"
+        categoryLabel.text = liquor.liquorType.name
     }
 
     private func layout() {

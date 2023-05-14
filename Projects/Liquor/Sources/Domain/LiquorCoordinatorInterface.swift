@@ -9,6 +9,7 @@
 import Foundation
 import BaseDomain
 
-public protocol LiquorCoordinatorInterface: Coordinator {
+public protocol LiquorCoordinatorInterface {
     func liquorItemSelected(itemName: String)
+    func breweryTapped(breweryName: String)
 }

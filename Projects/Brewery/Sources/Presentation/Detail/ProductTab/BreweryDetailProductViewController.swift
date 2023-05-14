@@ -62,7 +62,6 @@ final class BreweryDetailProductViewController: BreweryContainerViewController {
         setUpCollectionViews()
         layout()
         bind()
-        applyDataSource(section: .category([.fruitWine, .rawRiceWine, .refinedRiceWine]))
     }
 
     private func setUpCollectionViews() {
@@ -105,7 +104,9 @@ final class BreweryDetailProductViewController: BreweryContainerViewController {
         viewModel.brewery.asDriver()
             .map { $0.products }
             .drive { [weak self] products in
-                self?.applyDataSource(section: .product(products))
+                guard let self = self else { return }
+                self.applyDataSource(section: .product(products))
+                self.applyDataSource(section: .category(self.viewModel.productCategories))
             }
             .disposed(by: disposeBag)
 
@@ -115,6 +116,19 @@ final class BreweryDetailProductViewController: BreweryContainerViewController {
                 if let item = self?.productDataSource.itemIdentifier(for: indexPath) {
                     self?.coordinator?.liquorTapped(liquorName: item.name)
                 }
+            }
+            .disposed(by: disposeBag)
+
+        categoryCollectionView.rx.itemSelected
+            .asSignal()
+            .emit { [weak self] indexPath in
+                guard let self = self,
+                      let selectedType = self.categoryDataSource.itemIdentifier(for: indexPath) else { return }
+                self.applyDataSource(
+                    section: .product(
+                        self.viewModel.brewery.value.products.filter { $0.liquorType == selectedType }
+                    )
+                )
             }
             .disposed(by: disposeBag)
     }

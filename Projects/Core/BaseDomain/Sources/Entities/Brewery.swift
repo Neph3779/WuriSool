@@ -68,6 +68,7 @@ public struct LiquorOverview: Hashable {
     public let imagePath: String
     public let dosage: String
     public let alcoholPercentage: String
+    public let liquorType: LiquorType
 
     public init(data: [String: Any]) {
         liquorId = data["liquorId"] as? Int ?? -1
@@ -75,6 +76,7 @@ public struct LiquorOverview: Hashable {
         imagePath = data["liquorImagePath"] as? String ?? "imagePath"
         dosage = data["liquorDosage"] as? String ?? "dosage"
         alcoholPercentage = data["alcoholPercentage"] as? String ?? "alcoholPercentage"
+        liquorType = LiquorType(rawValue: (data["liquorType"] as? Int ?? 5)) ?? .others
     }
 }
 

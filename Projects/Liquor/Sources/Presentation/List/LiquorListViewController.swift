@@ -137,8 +137,8 @@ public final class LiquorListViewController: UIViewController {
     }
 
     public override func viewWillAppear(_ animated: Bool) {
+        setUpNavigationBar()
         if case .keyword(let keyword) = viewModel.mode {
-            setUpNavigationBar()
             navigationItem.title = "#\(keyword.name)"
         } else {
             navigationController?.navigationBar.isHidden = true

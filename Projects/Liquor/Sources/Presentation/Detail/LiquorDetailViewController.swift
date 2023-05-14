@@ -13,7 +13,7 @@ import LiquorDomain
 
 public final class LiquorDetailViewController: UIViewController {
 
-    var coordinator: (any LiquorCoordinatorInterface)?
+    var coordinator: LiquorCoordinatorInterface?
     private let viewModel: LiquorDetailViewModel
     private let disposeBag = DisposeBag()
 
@@ -39,22 +39,29 @@ public final class LiquorDetailViewController: UIViewController {
 
     private let liquorTitleLabel = UILabel(title: "text", font: .titleLarge2, textColor: DesignAsset.Colors.gray7.color)
     private let breweryTitleLabel = UILabel(title: "text", font: .bodySmall, textColor: DesignAsset.Colors.gray5.color)
+    private let breweryTitleButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.applyFont(font: .bodySmall)
+        button.titleLabel?.textAlignment = .left
+        button.setTitleColor(DesignAsset.Colors.gray5.color, for: .normal)
+        return button
+    }()
     private let keywordLabel = UILabel(title: "text", font: .buttonMedium, textColor: .systemBlue)
     private lazy var titleView: UIView = {
         let titleView = UIView()
-        [liquorTitleLabel, breweryTitleLabel, keywordLabel].forEach {
+        [liquorTitleLabel, breweryTitleButton, keywordLabel].forEach {
             titleView.addSubview($0)
         }
         liquorTitleLabel.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
             $0.top.equalToSuperview().inset(15)
         }
-        breweryTitleLabel.snp.makeConstraints {
+        breweryTitleButton.snp.makeConstraints {
             $0.top.equalTo(liquorTitleLabel.snp.bottom).offset(5)
-            $0.leading.trailing.equalToSuperview().inset(13)
+            $0.leading.equalToSuperview().inset(13)
         }
         keywordLabel.snp.makeConstraints {
-            $0.top.equalTo(breweryTitleLabel.snp.bottom).offset(5)
+            $0.top.equalTo(breweryTitleButton.snp.bottom).offset(5)
             $0.leading.trailing.equalToSuperview().inset(13)
             $0.bottom.equalToSuperview().inset(15)
         }
@@ -250,10 +257,13 @@ public final class LiquorDetailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    public override func viewWillAppear(_ animated: Bool) {
+        setUpNavigationBar()
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        setUpNavigationBar()
         bind()
         layout()
     }
@@ -271,104 +281,40 @@ public final class LiquorDetailViewController: UIViewController {
         scrollEdgeAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         navigationController?.navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
         navigationController?.navigationBar.tintColor = .black
+        navigationItem.backButtonDisplayMode = .minimal
     }
 
     private func bind() {
+
         viewModel.liquor
             .asDriver()
-            .map { $0.name }
-            .drive(navigationItem.rx.title)
-            .disposed(by: disposeBag)
-        viewModel.liquor
-            .share()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] liquor in
+            .drive { [weak self] (liquor: Liquor) in
+                self?.navigationItem.title = liquor.name
                 self?.liquorImageView.kf.setImage(with: URL(string: liquor.imagePath))
-            })
+                self?.liquorTitleLabel.text = liquor.name
+                self?.breweryTitleLabel.text = liquor.brewery.name
+                self?.breweryTitleButton.setTitle(liquor.brewery.name, for: .normal)
+                self?.keywordLabel.text = liquor.keywords.map { "#\($0.name)" }.joined(separator: " ")
+                self?.liquorTypeInfoView.descriptionLabel.text = liquor.type.name
+                self?.dosageInfoView.descriptionLabel.text = liquor.dosage
+                self?.alcoholPercentageInfoView.descriptionLabel.text = liquor.alcoholPercentage
+                self?.awardInfoView.descriptionLabel.text = liquor.award
+                self?.ingredientInfoView.descriptionLabel.text = liquor.ingredients
+                self?.descriptionInfoView.descriptionLabel.text = liquor.description
+                self?.foodInfoView.descriptionLabel.text = liquor.foods
+                self?.breweryNameInfoView.descriptionLabel.text = liquor.brewery.name
+                self?.breweryAddressInfoView.descriptionLabel.text = liquor.brewery.address
+                self?.breweryHomePageInfoView.descriptionLabel.text = liquor.brewery.homePage
+                self?.breweryPhoneNumberInfoView.descriptionLabel.text = liquor.brewery.phoneNumber
+            }
             .disposed(by: disposeBag)
 
-        viewModel.liquor
-            .asDriver()
-            .map { $0.name }
-            .drive(liquorTitleLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.brewery.name }
-            .drive(breweryTitleLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.keywords.map { "#\($0.name)" }.joined(separator: " ") }
-            .drive(keywordLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.type.name }
-            .drive(liquorTypeInfoView.descriptionLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.dosage }
-            .drive(dosageInfoView.descriptionLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.alcoholPercentage }
-            .drive(alcoholPercentageInfoView.descriptionLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.award }
-            .drive(awardInfoView.descriptionLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.ingredients }
-            .drive(ingredientInfoView.descriptionLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.description }
-            .drive(descriptionInfoView.descriptionLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.foods }
-            .drive(foodInfoView.descriptionLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.brewery.name }
-            .drive(breweryNameInfoView.descriptionLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.brewery.address }
-            .drive(breweryAddressInfoView.descriptionLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.brewery.homePage }
-            .drive(breweryHomePageInfoView.descriptionLabel.rx.text)
-            .disposed(by: disposeBag)
-
-        viewModel.liquor
-            .asDriver()
-            .map { $0.brewery.phoneNumber }
-            .drive(breweryPhoneNumberInfoView.descriptionLabel.rx.text)
+        breweryTitleButton.rx.tap
+            .asSignal()
+            .emit { [weak self] _ in
+                guard let self = self else { return }
+                self.coordinator?.breweryTapped(breweryName: self.viewModel.liquor.value.brewery.name)
+            }
             .disposed(by: disposeBag)
     }
 

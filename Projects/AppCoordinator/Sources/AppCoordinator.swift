@@ -17,3 +17,7 @@ public protocol AppCoordinatorInterface {
 public protocol AppBreweryCoordinatorInterface {
     func pushLiquorViewToBreweryTab(liquorName: String)
 }
+
+public protocol AppLiquorCoordinatorInterface {
+    func pushBreweryViewToLiquorTab(breweryName: String)
+}

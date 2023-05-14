@@ -15,6 +15,18 @@ public final class BreweryDetailViewModel {
     private let repository: BreweryRepositoryInterface
     let selectedTab = PublishRelay<BreweryDetailBaseViewController.TabBarCategory>()
     let brewery = BehaviorRelay<Brewery>(value: Brewery(data: [:]))
+    var productCategories: [LiquorType] {
+        let categories = Array(Set(brewery.value.products.map { $0.liquorType })).sorted {
+            if $0.name == "기타" {
+                return false
+            } else if $1.name == "기타" {
+                return true
+            } else {
+                return $0.name < $1.name
+            }
+        }
+        return categories
+    }
 
     init(name: String, brewery: Brewery? = nil, repository: BreweryRepositoryInterface) {
         self.repository = repository

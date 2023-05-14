@@ -137,3 +137,12 @@ extension AppCoordinatorImpl: AppBreweryCoordinatorInterface {
         breweryNavigationController.pushViewController(liquorViewController, animated: true)
     }
 }
+
+extension AppCoordinatorImpl: AppLiquorCoordinatorInterface {
+
+    func pushBreweryViewToLiquorTab(breweryName: String) {
+        let breweryDIContainer = BreweryDIContainer()
+        let breweryViewController = breweryDIContainer.makeBreweryDetailViewController(name: breweryName)
+        liquorNavigationController.pushViewController(breweryViewController, animated: true)
+    }
+}
