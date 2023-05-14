@@ -42,11 +42,13 @@ public final class BreweryDetailBaseViewController: UIViewController {
         return label
     }()
 
-    private let breweryGuideLabel: UILabel = {
+    private lazy var breweryGuideLabel: UILabel = {
         let label = UILabel()
         label.applyFont(font: .bodyMedium)
         label.text = "방문 가이드 확인하기 >"
         label.textColor = DesignAsset.Colors.gray5.color
+        label.isUserInteractionEnabled = true
+        label.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(seeVisitGuideTapped(_:))))
         return label
     }()
 
@@ -242,6 +244,12 @@ public final class BreweryDetailBaseViewController: UIViewController {
             addChild($0)
             $0.coordinator = coordinator
         }
+    }
+
+    @objc
+    private func seeVisitGuideTapped(_ sender: UITapGestureRecognizer) {
+        let vc = VisitGuideViewController(breweryId: viewModel.brewery.value.id)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
