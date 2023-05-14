@@ -46,7 +46,7 @@ final class BreweryDetailOperationInfoViewController: BreweryContainerViewContro
         sizableView.addSubview(stackView)
         stackView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.top.equalToSuperview()
+            $0.top.bottom.equalToSuperview()
         }
     }
 

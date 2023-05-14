@@ -158,7 +158,6 @@ public final class BreweryDetailBaseViewController: UIViewController {
         outerStackView.snp.makeConstraints {
             $0.leading.trailing.equalTo(view)
             $0.top.bottom.equalToSuperview()
-            $0.height.greaterThanOrEqualTo(view.frame.height)
         }
         [breweryImageView, breweryInfoView, tabBarCollectionView, tabBarContainerView].forEach {
             outerStackView.addArrangedSubview($0)
