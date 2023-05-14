@@ -107,10 +107,13 @@ public final class BreweryDetailBaseViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    public override func viewWillAppear(_ animated: Bool) {
+        setUpNavigationBar()
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        setUpNavigationBar()
         setUpChildViewControllers()
         applyDataSource(tabBars: [
             .products(viewController: productViewController),
