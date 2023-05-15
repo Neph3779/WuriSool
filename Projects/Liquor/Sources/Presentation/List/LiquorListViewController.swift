@@ -103,9 +103,10 @@ public final class LiquorListViewController: UIViewController {
 
     private lazy var categoryTableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
+        tableView.register(LiquorCategoryCell.self, forCellReuseIdentifier: LiquorCategoryCell.reuseIdentifier)
         tableView.dataSource = self
         tableView.layer.cornerRadius = 10
+        tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.layer.borderColor = DesignAsset.Colors.gray1.color.cgColor
         tableView.layer.borderWidth = 1
         return tableView
@@ -117,7 +118,7 @@ public final class LiquorListViewController: UIViewController {
         categoryView.addSubview(categoryTableView)
         categoryTableView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(300)
+            $0.height.equalTo(200)
         }
         categoryView.isHidden = true
         categoryView.isUserInteractionEnabled = true
@@ -413,11 +414,8 @@ extension LiquorListViewController: UITableViewDataSource {
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        var content = cell.defaultContentConfiguration()
-        content.text = LiquorType.allCases[indexPath.row].name
-        cell.contentConfiguration = content
-        cell.selectionStyle = .none
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: LiquorCategoryCell.reuseIdentifier, for: indexPath) as? LiquorCategoryCell else { return UITableViewCell() }
+        cell.setUpContents(title: LiquorType.allCases[indexPath.row].name)
         return cell
     }
 }
