@@ -29,9 +29,22 @@ public final class LiquorDetailViewModel {
             do {
                 let data = try await repository.fetchLiquor(name: name)
                 liquor.accept(data)
+                updateRecentViewedLiquors(id: data.id)
+                try await repository.updateLiquorAssociation(liquorId: data.id)
             } catch {
 
             }
+        }
+    }
+
+    private func updateRecentViewedLiquors(id: Int) {
+        guard var recentViewedLiquors =  UserDefaults.standard.value(forKey: "recentViewedLiquors") as? [Int] else {
+            UserDefaults.standard.set([id], forKey: "recentViewedLiquors")
+            return
+        }
+        if recentViewedLiquors.count >= 10 {
+            recentViewedLiquors.removeFirst()
+            recentViewedLiquors.append(id)
         }
     }
 }

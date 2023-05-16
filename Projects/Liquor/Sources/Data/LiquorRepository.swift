@@ -56,4 +56,8 @@ final class LiquorRepository: LiquorRepositoryInterface {
     func resetPagination() {
         firebaseRepository.resetPagination()
     }
+
+    func updateLiquorAssociation(liquorId: Int) async throws {
+        try await firebaseRepository.updateLiquorAssociation(liquorId: liquorId)
+    }
 }

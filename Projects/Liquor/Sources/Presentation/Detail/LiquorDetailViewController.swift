@@ -268,6 +268,7 @@ public final class LiquorDetailViewController: UIViewController {
         layout()
     }
 
+
     private func setUpNavigationBar() {
         let standardAppearance = UINavigationBarAppearance()
         standardAppearance.configureWithDefaultBackground()

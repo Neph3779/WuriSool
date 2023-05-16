@@ -18,6 +18,7 @@ public protocol FirebaseRepositoryInterface {
     func fetchLiquorCount(query: FirebaseQuery) async throws -> Int
     func fetchKeywords() async throws -> [[String: Any]]
     func resetPagination()
+    func updateLiquorAssociation(liquorId: Int) async throws
 }
 
 public struct FirebaseQuery: Hashable {
@@ -44,6 +45,7 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
     private lazy var liquorReference = database.collection("Liquor")
     private lazy var breweryReference = database.collection("Brewery")
     private lazy var keywordReference = database.collection("Keyword")
+    private lazy var liquorAssociationReference = database.collection("LiquorAssociation")
     private var snapShotCache: [FirebaseQuery: QueryDocumentSnapshot?] = [:] // for support pagination
 
     // TODO: singleton pattern 사용하므로 init private으로 바꾸기
@@ -189,6 +191,26 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
                 }
             }
             finalQuery.getDocuments(completion: handler)
+        }
+    }
+
+    public func updateLiquorAssociation(liquorId: Int) async throws {
+        guard let recentViewedLiquors = UserDefaults.standard.value(forKey: "recentViewedLiquors") as? [Int] else {
+            UserDefaults.standard.set([liquorId], forKey: "recentViewedLiquors")
+            return
+        }
+
+        try await withThrowingTaskGroup(of: Void.self) { taskGroup in
+            for id in recentViewedLiquors where id != liquorId {
+                taskGroup.addTask {
+                    guard let data = try await self.liquorAssociationReference.document("\(id)").getDocument().data(),
+                          var association = data["association"] as? [Int] else { return }
+                    association[liquorId] += 1
+                    try await self.liquorAssociationReference.document("\(id)").updateData(["association": association])
+                }
+            }
+            try await taskGroup.waitForAll()
+            logger.log("✅ Liquor association update completed")
         }
     }
 }
