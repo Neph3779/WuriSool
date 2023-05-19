@@ -40,7 +40,7 @@ final class ProductCell: UICollectionViewCell {
 
     private let productInfoLabel: UILabel = {
         let label = UILabel()
-        label.applyFont(font: .buttonLarge)
+        label.applyFont(font: .buttonMedium)
         return label
     }()
 
@@ -63,6 +63,7 @@ final class ProductCell: UICollectionViewCell {
         productImageView.kf.setImage(with: URL(string: liquor.imagePath))
         productNameLabel.text = liquor.name
         productInfoLabel.text = "\(liquor.alcoholPercentage) | \(liquor.dosage)"
+        productInfoLabel.changeColor(targetString: "|", color: DesignAsset.Colors.gray3.color)
         categoryLabel.text = liquor.liquorType.name
     }
 
@@ -98,5 +99,15 @@ final class ProductCell: UICollectionViewCell {
             $0.leading.equalTo(productImageView.snp.trailing).offset(12)
             $0.top.equalTo(productNameLabel.snp.bottom).offset(8)
         }
+    }
+}
+
+fileprivate extension UILabel {
+    func changeColor(targetString: String, color: UIColor) {
+        let fullText = text ?? ""
+        let attributedString = NSMutableAttributedString(string: fullText)
+        let range = (fullText as NSString).range(of: targetString)
+        attributedString.addAttribute(.foregroundColor, value: color, range: range)
+        attributedText = attributedString
     }
 }

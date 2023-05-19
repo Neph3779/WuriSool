@@ -46,7 +46,7 @@ public final class LiquorDetailViewController: UIViewController {
         button.setTitleColor(DesignAsset.Colors.gray5.color, for: .normal)
         return button
     }()
-    private let keywordLabel = UILabel(title: "text", font: .buttonMedium, textColor: .systemBlue)
+    private let keywordLabel = UILabel(title: "text", font: .captionLarge, textColor: DesignAsset.Colors.gray7.color)
     private lazy var titleView: UIView = {
         let titleView = UIView()
         [liquorTitleLabel, breweryTitleButton, keywordLabel].forEach {
@@ -57,18 +57,18 @@ public final class LiquorDetailViewController: UIViewController {
             $0.top.equalToSuperview().inset(15)
         }
         breweryTitleButton.snp.makeConstraints {
-            $0.top.equalTo(liquorTitleLabel.snp.bottom).offset(5)
+            $0.top.equalTo(liquorTitleLabel.snp.bottom)
             $0.leading.equalToSuperview().inset(13)
         }
         keywordLabel.snp.makeConstraints {
-            $0.top.equalTo(breweryTitleButton.snp.bottom).offset(5)
+            $0.top.equalTo(breweryTitleButton.snp.bottom)
             $0.leading.trailing.equalToSuperview().inset(13)
             $0.bottom.equalToSuperview().inset(15)
         }
         return titleView
     }()
 
-    private let wooriSoolInfoLabel = UILabel(title: "우리술 정보", font: .captionLarge, textColor: DesignAsset.Colors.gray5.color)
+    private let wooriSoolInfoLabel = UILabel(title: "우리술 정보", font: .buttonMedium, textColor: DesignAsset.Colors.gray6.color)
     private let liquorTypeInfoView = LiquorDetailInfoView(title: "주종", description: "text")
     private let dosageInfoView = LiquorDetailInfoView(title: "용량", description: "text")
     private let alcoholPercentageInfoView = LiquorDetailInfoView(title: "도수", description: "text")
@@ -82,67 +82,67 @@ public final class LiquorDetailViewController: UIViewController {
         }
         wooriSoolInfoLabel.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalToSuperview().inset(15)
+            $0.top.equalToSuperview().inset(10)
         }
         liquorTypeInfoView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalTo(wooriSoolInfoLabel.snp.bottom).offset(8)
+            $0.top.equalTo(wooriSoolInfoLabel.snp.bottom).offset(10)
         }
         dosageInfoView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalTo(liquorTypeInfoView.snp.bottom).offset(8)
+            $0.top.equalTo(liquorTypeInfoView.snp.bottom).offset(4)
         }
         alcoholPercentageInfoView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalTo(dosageInfoView.snp.bottom).offset(8)
+            $0.top.equalTo(dosageInfoView.snp.bottom).offset(4)
         }
         awardInfoView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalTo(alcoholPercentageInfoView.snp.bottom).offset(8)
+            $0.top.equalTo(alcoholPercentageInfoView.snp.bottom).offset(4)
         }
         ingredientInfoView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalTo(awardInfoView.snp.bottom).offset(8)
+            $0.top.equalTo(awardInfoView.snp.bottom).offset(4)
             $0.bottom.equalToSuperview().inset(15)
         }
         return liquorInfoView
     }()
 
-    private let wooriSoolDescriptionLabel = UILabel(title: "우리술 소개", font: .captionLarge, textColor: DesignAsset.Colors.gray5.color)
+    private let wooriSoolDescriptionLabel = UILabel(title: "우리술 소개", font: .buttonMedium, textColor: DesignAsset.Colors.gray6.color)
     private let descriptionInfoView = LiquorDetailInfoView(title: nil, description: "소개내용")
     private lazy var liquorDescriptionView: UIView = {
         let liquorDescriptionView = UIView()
         [wooriSoolDescriptionLabel, descriptionInfoView].forEach { liquorDescriptionView.addSubview($0) }
         wooriSoolDescriptionLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(15)
+            $0.top.equalToSuperview().inset(10)
             $0.leading.trailing.equalToSuperview().inset(13)
         }
         descriptionInfoView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalTo(wooriSoolDescriptionLabel.snp.bottom).offset(8)
+            $0.top.equalTo(wooriSoolDescriptionLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview().inset(15)
         }
         return liquorDescriptionView
     }()
 
-    private let foodLabel = UILabel(title: "어울리는 음식", font: .captionLarge, textColor: DesignAsset.Colors.gray5.color)
+    private let foodLabel = UILabel(title: "어울리는 음식", font: .buttonMedium, textColor: DesignAsset.Colors.gray6.color)
     private let foodInfoView = LiquorDetailInfoView(title: nil, description: "text")
     private lazy var foodView: UIView = {
         let foodView = UIView()
         [foodLabel, foodInfoView].forEach { foodView.addSubview($0) }
         foodLabel.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalToSuperview().inset(15)
+            $0.top.equalToSuperview().inset(10)
         }
         foodInfoView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalTo(foodLabel.snp.bottom).offset(8)
+            $0.top.equalTo(foodLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview().inset(15)
         }
         return foodView
     }()
 
-    private let breweryInfoLabel = UILabel(title: "양조장 정보", font: .captionLarge, textColor: DesignAsset.Colors.gray5.color)
+    private let breweryInfoLabel = UILabel(title: "양조장 정보", font: .buttonMedium, textColor: DesignAsset.Colors.gray6.color)
     private let breweryNameInfoView = LiquorDetailInfoView(title: "양조장명", description: "text")
     private let breweryAddressInfoView = LiquorDetailInfoView(title: "주소", description: "text")
     private let breweryHomePageInfoView = LiquorDetailInfoView(title: "홈페이지", description: "text")
@@ -153,23 +153,23 @@ public final class LiquorDetailViewController: UIViewController {
          breweryHomePageInfoView, breweryPhoneNumberInfoView].forEach { breweryView.addSubview($0) }
         breweryInfoLabel.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalToSuperview().inset(15)
+            $0.top.equalToSuperview().inset(10)
         }
         breweryNameInfoView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalTo(breweryInfoLabel.snp.bottom).offset(8)
+            $0.top.equalTo(breweryInfoLabel.snp.bottom).offset(10)
         }
         breweryAddressInfoView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalTo(breweryNameInfoView.snp.bottom).offset(8)
+            $0.top.equalTo(breweryNameInfoView.snp.bottom).offset(4)
         }
         breweryHomePageInfoView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalTo(breweryAddressInfoView.snp.bottom).offset(8)
+            $0.top.equalTo(breweryAddressInfoView.snp.bottom).offset(4)
         }
         breweryPhoneNumberInfoView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(13)
-            $0.top.equalTo(breweryHomePageInfoView.snp.bottom).offset(8)
+            $0.top.equalTo(breweryHomePageInfoView.snp.bottom).offset(4)
             $0.bottom.equalToSuperview().inset(15)
         }
         return breweryView
@@ -228,7 +228,7 @@ public final class LiquorDetailViewController: UIViewController {
             shoppingView.addSubview($0)
             $0.layer.cornerRadius = 10
             $0.contentEdgeInsets = .init(top: 10, left: 10, bottom: 10, right: 10)
-            $0.imageEdgeInsets = .init(top: 0, left: -10, bottom: 0, right: 0)
+            $0.imageEdgeInsets = .init(top: 0, left: -60, bottom: 0, right: 0)
             $0.titleLabel?.applyFont(font: .buttonLarge)
             $0.adjustsImageWhenHighlighted = false
         }
@@ -267,7 +267,6 @@ public final class LiquorDetailViewController: UIViewController {
         bind()
         layout()
     }
-
 
     private func setUpNavigationBar() {
         let standardAppearance = UINavigationBarAppearance()
@@ -325,7 +324,7 @@ public final class LiquorDetailViewController: UIViewController {
         }
         shoppingButtonView.snp.makeConstraints {
             $0.bottom.leading.trailing.equalTo(view)
-            $0.height.equalTo(100)
+            $0.height.equalTo(90)
         }
         scrollView.addSubview(outerStackView)
         scrollView.snp.makeConstraints {

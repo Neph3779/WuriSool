@@ -18,7 +18,7 @@ final class InfoView: UIView {
     }()
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.applyFont(font: .bodySmall)
+        label.applyFont(font: .bodySmallOverTwoLine)
         label.textColor = DesignAsset.Colors.gray6.color
         label.numberOfLines = 0
         label.lineBreakMode = .byTruncatingTail

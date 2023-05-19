@@ -45,7 +45,7 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
     private lazy var liquorReference = database.collection("Liquor")
     private lazy var breweryReference = database.collection("Brewery")
     private lazy var keywordReference = database.collection("Keyword")
-    private lazy var liquorAssociationReference = database.collection("LiquorAssociation")
+    private lazy var liquorAssociationReference = database.collection("Association")
     private var snapShotCache: [FirebaseQuery: QueryDocumentSnapshot?] = [:] // for support pagination
 
     // TODO: singleton pattern 사용하므로 init private으로 바꾸기

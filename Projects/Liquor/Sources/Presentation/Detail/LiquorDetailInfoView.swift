@@ -18,7 +18,7 @@ final class LiquorDetailInfoView: UIView {
 
     let descriptionLabel: UILabel = {
         let label = UILabel()
-        label.applyFont(font: .bodyMediumOverTwoLine)
+        label.applyFont(font: .bodySmallOverTwoLine)
         label.numberOfLines = 0
         label.textColor = DesignAsset.Colors.gray6.color
         return label
