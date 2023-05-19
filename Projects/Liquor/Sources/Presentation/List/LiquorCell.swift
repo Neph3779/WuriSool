@@ -48,6 +48,7 @@ final class LiquorCell: UICollectionViewCell {
         stackView.distribution = .equalSpacing
         return stackView
     }()
+    private var imageLoadTask: DownloadTask?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -58,8 +59,12 @@ final class LiquorCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        imageLoadTask?.cancel()
+    }
+
     func setUpContents(liquor: Liquor) {
-        liquorImageView.kf.setImage(with: URL(string: liquor.imagePath))
+        imageLoadTask = liquorImageView.kf.setImage(with: URL(string: liquor.imagePath))
         titleLabel.text = liquor.name
         infoLabel.text = "\(liquor.dosage) | \(liquor.alcoholPercentage)"
         keywordLabel.text = liquor.keywords.map { return "#\($0.name)" }.joined(separator: " ")
