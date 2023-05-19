@@ -42,7 +42,12 @@ public final class LiquorListViewController: UIViewController {
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
         searchBar.backgroundColor = .white
-        searchBar.placeholder = "주류를 검색해보세요"
+        searchBar.placeholder = "키워드, 주류명 등"
+        searchBar.setImage(UIImage(), for: .search, state: .normal)
+        searchBar.setValue("취소", forKey: "cancelButtonText")
+        searchBar.tintColor = .black
+        searchBar.searchTextField.tintColor = .black
+        searchBar.searchTextField.font = .preferredFont(forTextStyle: .footnote)
         return searchBar
     }()
 
@@ -421,7 +426,14 @@ extension LiquorListViewController: UITableViewDataSource {
 }
 
 extension LiquorListViewController: UISearchBarDelegate {
-
+    public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.setShowsCancelButton(true, animated: true)
+    }
+    public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchBar.setShowsCancelButton(false, animated: true)
+        searchBar.resignFirstResponder()
+    }
 }
 
 public extension Reactive where Base: UIScrollView {

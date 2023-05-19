@@ -76,7 +76,7 @@ final class KeywordCell: UICollectionViewCell {
         }
         keywordImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview().offset(-3)
-            $0.top.equalToSuperview().inset(15)
+            $0.top.equalToSuperview().inset(5)
             $0.width.height.equalTo(50)
         }
         keywordLabel.snp.makeConstraints {
