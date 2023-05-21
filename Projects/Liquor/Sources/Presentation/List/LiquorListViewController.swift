@@ -51,6 +51,12 @@ public final class LiquorListViewController: UIViewController {
         return searchBar
     }()
 
+    private lazy var searchTableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "searchTableViewCell")
+        return tableView
+    }()
+
     private lazy var keywordCollectionView: LiquorListCollectionView = {
         let collectionView = LiquorListCollectionView(frame: .zero, collectionViewLayout: keywordCollectionViewLayout())
         collectionView.register(KeywordCell.self, forCellWithReuseIdentifier: KeywordCell.reuseIdentifier)
@@ -414,6 +420,11 @@ extension LiquorListViewController {
 // MARK: - CategoryTableView DataSource & Delegate
 
 extension LiquorListViewController: UITableViewDataSource {
+
+    public func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return LiquorType.allCases.count
     }

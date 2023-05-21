@@ -50,6 +50,12 @@ public final class HomeViewController: UIViewController {
     private lazy var viewTop10LiquorCollectionView = UICollectionView(frame: .zero,
                                                                       collectionViewLayout: liquorCollectionViewLayout())
 
+    private let recommendImageView: UIImageView = {
+        let imageView = UIImageView(image: DesignAsset.Images.recommendImage.image)
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+
     private lazy var keywordListDataSource = makeKeywordDataSource()
     private let keywordListTitleBar = TitleBar(title: "Keyword", subTitle: "주류별 키워드")
     private lazy var keywordCollectionView = UICollectionView(frame: .zero,
@@ -96,6 +102,19 @@ public final class HomeViewController: UIViewController {
                 self?.applyDataSource(section: section)
             }
         }
+        cardNewsCollectionView.rx.itemSelected
+            .asSignal()
+            .emit { [weak self] (indexPath: IndexPath) in
+                guard let self = self,
+                      let cardNews = self.cardNewsDataSource.itemIdentifier(for: indexPath) else {
+                    return
+                }
+                if let url = URL(string: cardNews.link),
+                          UIApplication.shared.canOpenURL(url) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            .disposed(by: disposeBag)
         viewTop10LiquorCollectionView.rx.itemSelected
             .asSignal()
             .emit { [weak self] (indexPath: IndexPath) in
@@ -144,10 +163,13 @@ public final class HomeViewController: UIViewController {
             $0.top.bottom.equalToSuperview()
         }
         cardNewsCollectionView.snp.makeConstraints {
-            $0.height.equalTo(300)
+            $0.height.equalTo(cardNewsCollectionView.snp.width)
         }
         viewTop10LiquorCollectionView.snp.makeConstraints {
             $0.height.equalTo(310)
+        }
+        recommendImageView.snp.makeConstraints {
+            $0.height.equalTo(recommendImageView.snp.width)
         }
         keywordCollectionView.snp.makeConstraints {
             $0.height.equalTo(180)
@@ -161,6 +183,7 @@ public final class HomeViewController: UIViewController {
             cardNewsCollectionView,
             keywordListTitleBar, keywordCollectionView,
             viewTop10LiquorTitleBar, viewTop10LiquorCollectionView,
+            recommendImageView,
             buyTop10LiquorTitleBar, buyTop10LiquorCollectionView
         ].forEach {
             contentVerticalStackView.addArrangedSubview($0)
@@ -174,9 +197,18 @@ public final class HomeViewController: UIViewController {
     private func applyDataSource(section: HomeSection) {
         switch section {
         case .cardNews:
-            var cardNewsSnapShot = NSDiffableDataSourceSnapshot<CardNewsSection, String>()
+            var cardNewsSnapShot = NSDiffableDataSourceSnapshot<CardNewsSection, CardNews>()
             cardNewsSnapShot.appendSections([.main])
-            cardNewsSnapShot.appendItems(["https://thesool.com/common/imageView.do?targetId=D000010000", "https://thesool.com/common/imageView.do?targetId=D000009959"])
+            cardNewsSnapShot.appendItems([
+                .init(data: [
+                    "id": 2763,
+                    "imagePath": "https://thesool.com/ckeditor/imageUpload/[AT]-%EB%8D%94%EC%88%A0%EB%8B%B7%EC%BB%B4-%EC%9D%B8%EC%8A%A4%ED%83%80%EA%B7%B8%EB%9E%A8-%EC%B9%B4%EB%93%9C%EB%89%B4%EC%8A%A4-%EB%94%94%EC%9E%90%EC%9D%B81_20230516_1684306080018.jpg"
+                ]),
+                .init(data: [
+                    "id": 2759,
+                    "imagePath": "https://thesool.com/ckeditor/imageUpload/%EC%9D%B8%EC%8A%A4%ED%83%80%EA%B7%B8%EB%9E%A8-%EC%B9%B4%EB%93%9C%EB%89%B4%EC%8A%A4-%ED%95%98%EB%8B%A8%EC%82%BD%EC%9E%851_20230503_1683094785172.jpg"
+                ])
+            ])
             cardNewsDataSource.apply(cardNewsSnapShot)
         case .viewTop10(let liquors):
             var viewTop10SnapShot = NSDiffableDataSourceSnapshot<ViewTop10Section, Liquor>()
@@ -213,10 +245,10 @@ extension HomeViewController {
         case main
     }
 
-    private func makeCardNewsDataSource() -> UICollectionViewDiffableDataSource<CardNewsSection, String> {
+    private func makeCardNewsDataSource() -> UICollectionViewDiffableDataSource<CardNewsSection, CardNews> {
         return .init(collectionView: cardNewsCollectionView) { collectionView, indexPath, itemIdentifier in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CardNewsCell.reuseIdentifier, for: indexPath) as? CardNewsCell else { return UICollectionViewCell() }
-            cell.setUpImage(imagePath: itemIdentifier)
+            cell.setUpImage(imagePath: itemIdentifier.imagePath)
             return cell
         }
     }
@@ -260,7 +292,7 @@ extension HomeViewController {
     private func cardNewsCollectionViewLayout() -> UICollectionViewCompositionalLayout {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(300))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .paging

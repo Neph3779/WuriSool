@@ -56,6 +56,6 @@ private extension HomeViewModel {
     }
 
     private func fetchViewTop10Keywords() {
-        applyDataSource?(.keyword(Keyword.allCases.shuffled().prefix(10).map { $0 }))
+        applyDataSource?(.keyword(Keyword.allCases.shuffled().prefix(12).map { $0 }))
     }
 }

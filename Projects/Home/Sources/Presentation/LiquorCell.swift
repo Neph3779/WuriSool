@@ -38,6 +38,8 @@ final class LiquorCell: UICollectionViewCell {
         return label
     }()
 
+    private var imageLoadTask: DownloadTask?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         layout()
@@ -47,10 +49,15 @@ final class LiquorCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        imageLoadTask?.cancel()
+    }
+
     func setUpContents(liquor: Liquor) {
-        liquorImageView.kf.setImage(with: URL(string: liquor.imagePath))
+        imageLoadTask = liquorImageView.kf.setImage(with: URL(string: liquor.imagePath))
         titleLabel.text = liquor.name
         subTitleLabel.text = "\(liquor.dosage) | \(liquor.alcoholPercentage)"
+        [titleLabel, subTitleLabel].forEach { $0.lineBreakMode = .byTruncatingTail }
     }
 
     private func layout() {
