@@ -24,6 +24,8 @@ public final class LiquorListViewModel {
     var rxLiquorCount = BehaviorSubject<Int>(value: 0)
     var isUpdating = BehaviorRelay<Bool>(value: false)
     var liquorFetchTask: Task<(), Never>?
+    var searchKeywords = [String]()
+    var searchLiquors = [String]()
 
     private let disposeBag = DisposeBag()
     private let repository: LiquorRepositoryInterface
@@ -36,6 +38,27 @@ public final class LiquorListViewModel {
         if case .keyword(let keyword) = mode {
             rxSelectedKeyword.accept(keyword)
         }
+    }
+
+    func updateSearchKeywords(searchText: String) {
+        let text = searchText.trimmingCharacters(in: .whitespaces)
+        let isChosungCheck = isChosung(word: text)
+        let filteredKeywords = Keyword.allCases.map { $0.name }.filter {
+            if isChosungCheck {
+                return ($0.contains(text) || chosungCheck(word: $0).contains(text))
+            } else {
+                return $0.contains(text)
+            }
+        }
+        let filteredLiquors = rxLiquors.value.map { $0.name }.filter {
+            if isChosungCheck {
+                return ($0.contains(text) || chosungCheck(word: $0).contains(text))
+            } else {
+                return $0.contains(text)
+            }
+        }
+        searchKeywords = filteredKeywords
+        searchLiquors = filteredLiquors
     }
 
     func fetchLiquors() {
@@ -92,5 +115,40 @@ extension LiquorListViewModel {
                 self?.fetchLiquors()
             })
             .disposed(by: disposeBag)
+    }
+}
+
+extension LiquorListViewModel {
+    private var hangeul: [String] {
+        return ["ㄱ", "ㄲ", "ㄴ", "ㄷ",
+                "ㄸ", "ㄹ", "ㅁ", "ㅂ",
+                "ㅃ", "ㅅ", "ㅆ", "ㅇ",
+                "ㅈ", "ㅉ", "ㅊ", "ㅋ",
+                "ㅌ", "ㅍ", "ㅎ"]
+    }
+    func chosungCheck(word: String) -> String {
+        var result = ""
+
+        for char in word {
+            let octal = char.unicodeScalars[char.unicodeScalars.startIndex].value
+            if 44032...55203 ~= octal {
+                let index = (octal - 0xac00) / 28 / 21
+                result = result + hangeul[Int(index)]
+            }
+        }
+        return result
+    }
+
+    func isChosung(word: String) -> Bool {
+        var isChosung = false
+        for char in word {
+            if 0 < hangeul.filter({ $0.contains(char)}).count {
+                isChosung = true
+            } else {
+                isChosung = false
+                break
+            }
+        }
+        return isChosung
     }
 }

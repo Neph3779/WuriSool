@@ -54,6 +54,9 @@ public final class LiquorListViewController: UIViewController {
     private lazy var searchTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "searchTableViewCell")
+        tableView.isHidden = true
+        tableView.dataSource = self
+        tableView.alpha = 0
         return tableView
     }()
 
@@ -146,7 +149,7 @@ public final class LiquorListViewController: UIViewController {
             navigationItem.title = "#\(keyword.name)"
             hidesBottomBarWhenPushed = true
         } else {
-            navigationController?.navigationBar.isHidden = true
+            navigationController?.setNavigationBarHidden(true, animated: true)
         }
     }
 
@@ -156,6 +159,12 @@ public final class LiquorListViewController: UIViewController {
 
     public override func viewWillAppear(_ animated: Bool) {
         setUpNavigationBar()
+        if case .keyword(let keyword) = viewModel.mode {
+            navigationItem.title = "#\(keyword.name)"
+            hidesBottomBarWhenPushed = true
+        } else {
+            navigationController?.navigationBar.isHidden = true
+        }
     }
 
     public override func viewDidLoad() {
@@ -296,10 +305,14 @@ public final class LiquorListViewController: UIViewController {
     }
 
     private func layout() {
-        [scrollView, categoryModalView, loadingIndicator].forEach { view.addSubview($0) }
+        [scrollView, categoryModalView, searchTableView, loadingIndicator].forEach { view.addSubview($0) }
 
         categoryModalView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+        searchTableView.snp.makeConstraints {
+            $0.top.equalTo(view).inset(100)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
@@ -418,33 +431,74 @@ extension LiquorListViewController {
     }
 }
 
-// MARK: - CategoryTableView DataSource & Delegate
+// MARK: - TableView DataSource & Delegate
 
 extension LiquorListViewController: UITableViewDataSource {
 
     public func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return tableView == searchTableView ? 2 : 1
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return LiquorType.allCases.count
+        if tableView == searchTableView {
+            if section == 0 {
+                return viewModel.searchKeywords.count
+            } else {
+                return viewModel.searchLiquors.count
+            }
+        } else {
+            return LiquorType.allCases.count
+        }
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: LiquorCategoryCell.reuseIdentifier, for: indexPath) as? LiquorCategoryCell else { return UITableViewCell() }
-        cell.setUpContents(title: LiquorType.allCases[indexPath.row].name)
-        return cell
+        if tableView == searchTableView {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "searchTableViewCell", for: indexPath)
+            if indexPath.section == 0 {
+                var content = cell.defaultContentConfiguration()
+                content.secondaryText = viewModel.searchKeywords[indexPath.row]
+                cell.contentConfiguration = content
+            } else {
+                var content = cell.defaultContentConfiguration()
+                content.secondaryText = viewModel.searchLiquors[indexPath.row]
+                cell.contentConfiguration = content
+            }
+            return cell
+        } else {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: LiquorCategoryCell.reuseIdentifier, for: indexPath) as? LiquorCategoryCell else { return UITableViewCell() }
+            cell.setUpContents(title: LiquorType.allCases[indexPath.row].name)
+            return cell
+        }
+    }
+    public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if tableView == searchTableView {
+            return section == 0 ? "키워드명" : "주류명"
+        }
+        return nil
     }
 }
 
 extension LiquorListViewController: UISearchBarDelegate {
+    public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        viewModel.updateSearchKeywords(searchText: searchText)
+        searchTableView.reloadData()
+    }
     public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.setShowsCancelButton(true, animated: true)
+        UIView.animate(withDuration: 0.5, delay: 0, animations: {
+            self.searchTableView.isHidden = false
+            self.searchTableView.alpha = 1
+        })
     }
     public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
         searchBar.setShowsCancelButton(false, animated: true)
         searchBar.resignFirstResponder()
+        UIView.animate(withDuration: 0.5, delay: 0, animations: {
+            self.searchTableView.alpha = 0
+        }) { complete in
+            self.searchTableView.isHidden = true
+        }
     }
 }
 
