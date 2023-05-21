@@ -142,6 +142,12 @@ public final class LiquorListViewController: UIViewController {
     init(viewModel: LiquorListViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        if case .keyword(let keyword) = viewModel.mode {
+            navigationItem.title = "#\(keyword.name)"
+            hidesBottomBarWhenPushed = true
+        } else {
+            navigationController?.navigationBar.isHidden = true
+        }
     }
 
     required init?(coder: NSCoder) {
@@ -150,11 +156,6 @@ public final class LiquorListViewController: UIViewController {
 
     public override func viewWillAppear(_ animated: Bool) {
         setUpNavigationBar()
-        if case .keyword(let keyword) = viewModel.mode {
-            navigationItem.title = "#\(keyword.name)"
-        } else {
-            navigationController?.navigationBar.isHidden = true
-        }
     }
 
     public override func viewDidLoad() {
