@@ -53,7 +53,7 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
     public init() {
         let filePath = NetworkResources.bundle.path(forResource: "GoogleService-Info-Network", ofType: "plist")
         guard let fileOptions = FirebaseOptions(contentsOfFile: filePath!) else {
-            assert(false, "Couldn't load config file")
+            fatalError()
         }
         FirebaseApp.configure(options: fileOptions)
         database = Firestore.firestore()

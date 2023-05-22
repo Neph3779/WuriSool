@@ -9,6 +9,6 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 private let projectName = "Home"
-private let iOSTargetVersion = "14.0"
+private let iOSTargetVersion = "15.0"
 
 let project = Project.cleanArchitectureModule(name: projectName, iOSTargetVersion: iOSTargetVersion)

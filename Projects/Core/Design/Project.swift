@@ -9,12 +9,16 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 private let projectName = "Design"
-private let iOSTargetVersion = "14.0"
+private let iOSTargetVersion = "15.0"
 
 let project = Project.framework(
     name: projectName,
     platform: .iOS,
     iOSTargetVersion: iOSTargetVersion,
+    dependencies: [
+        .external(name: "RxSwift"),
+        .external(name: "RxCocoa")
+    ],
     shouldIncludeTest: false,
     shouldIncludeResources: true
 )

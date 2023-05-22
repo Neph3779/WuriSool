@@ -9,7 +9,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 private let projectName = "Network"
-private let iOSTargetVersion = "14.0"
+private let iOSTargetVersion = "15.0"
 
 let project = Project.framework(
     name: projectName,
