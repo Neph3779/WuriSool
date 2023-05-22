@@ -34,4 +34,9 @@ public final class HomeCoordinator: Coordinator, HomeCoordinatorInterface {
     public func keywordTapped(keyword: Keyword) {
         appCoordinator?.pushLiquorList(with: keyword)
     }
+
+    public func recommendImageViewTapped() {
+        let recommendViewController = DIContainer.makeRecommendViewController()
+        navigationController.pushViewController(recommendViewController, animated: true)
+    }
 }

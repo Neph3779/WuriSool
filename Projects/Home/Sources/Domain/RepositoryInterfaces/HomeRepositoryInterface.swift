@@ -12,4 +12,5 @@ import BaseDomain
 public protocol HomeRepositoryInterface {
     func fetchViewTop10Liquors() async throws -> [Liquor]
     func fetchBuyTop10Liquors() async throws -> [Liquor]
+    func fetchRecommendLists() async throws -> [Liquor]
 }

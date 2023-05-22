@@ -19,6 +19,7 @@ public protocol FirebaseRepositoryInterface {
     func fetchKeywords() async throws -> [[String: Any]]
     func resetPagination()
     func updateLiquorAssociation(liquorId: Int) async throws
+    func fetchRecommendLiquors() async throws -> [[String: Any]]
 }
 
 public struct FirebaseQuery: Hashable {
@@ -212,6 +213,72 @@ public final class FirebaseRepository: FirebaseRepositoryInterface {
             try await taskGroup.waitForAll()
             logger.log("✅ Liquor association update completed")
         }
+    }
+
+    public func fetchRecommendLiquors() async throws -> [[String: Any]] {
+        guard let recentViewedLiquors = UserDefaults.standard.value(forKey: "recentViewedLiquors") as? [Int] else {
+            throw FirebaseError.noData
+        }
+
+        let associationSum = try await withThrowingTaskGroup(of: [Int].self) { taskGroup -> [Int] in
+
+            for id in recentViewedLiquors {
+                taskGroup.addTask {
+                    guard let data = try await self.liquorAssociationReference.document("\(id)").getDocument().data(),
+                          let association = data["association"] as? [Int] else { return [] }
+                    return association
+                }
+            }
+
+            var associations = [[Int]]()
+
+            for try await value in taskGroup {
+                associations.append(value)
+            }
+            let associationSum: [Int] = associations.reduce(into: []) { partialResult, association in
+                if partialResult.isEmpty {
+                    partialResult += association
+                } else {
+                    for i in 0..<partialResult.count {
+                        guard association.count > i else { continue }
+                        partialResult[i] += association[i]
+                    }
+                }
+            }
+            logger.log("✅ Liquor association fetch completed")
+            return associationSum
+        }
+
+        let recommends = associationSum.enumerated()
+            .sorted {
+                if $0.element == $1.element {
+                   return $0.offset < $1.offset
+                } else {
+                    return $0.element > $1.element
+                }
+            }.map {
+                $0.offset
+            }
+            .prefix(10)
+
+        let recommendData = try await withThrowingTaskGroup(of: [String: Any].self) { taskGroup -> [[String: Any]] in
+
+            for id in recommends {
+                taskGroup.addTask {
+                    guard let data = try await self.liquorReference.document("\(id)").getDocument().data() else { return [:] }
+                    return data
+                }
+            }
+
+            var recommendData = [[String : Any]]()
+
+            for try await value in taskGroup {
+                recommendData.append(value)
+            }
+            return recommendData
+        }
+
+        return recommendData
     }
 }
 

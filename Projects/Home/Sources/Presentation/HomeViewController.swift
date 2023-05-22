@@ -50,9 +50,11 @@ public final class HomeViewController: UIViewController {
     private lazy var viewTop10LiquorCollectionView = UICollectionView(frame: .zero,
                                                                       collectionViewLayout: liquorCollectionViewLayout())
 
-    private let recommendImageView: UIImageView = {
+    private lazy var recommendImageView: UIImageView = {
         let imageView = UIImageView(image: DesignAsset.Images.recommendImage.image)
         imageView.contentMode = .scaleAspectFill
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(recommendImageViewTapped(_:))))
         return imageView
     }()
 
@@ -235,6 +237,11 @@ public final class HomeViewController: UIViewController {
         case viewTop10([Liquor])
         case keyword([Keyword])
         case buyTop10([Liquor])
+    }
+
+    @objc
+    private func recommendImageViewTapped(_ sender: UIGestureRecognizer) {
+        coordinator?.recommendImageViewTapped()
     }
 }
 

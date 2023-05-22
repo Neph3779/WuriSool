@@ -44,7 +44,8 @@ public final class LiquorDetailViewModel {
         }
         if recentViewedLiquors.count >= 10 {
             recentViewedLiquors.removeFirst()
-            recentViewedLiquors.append(id)
         }
+        recentViewedLiquors.append(id)
+        UserDefaults.standard.setValue(recentViewedLiquors, forKey: "recentViewedLiquors")
     }
 }

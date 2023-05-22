@@ -38,4 +38,8 @@ final class HomeRepository: HomeRepositoryInterface {
     func fetchViewTop10Keywords() async throws -> [Keyword] {
         return []
     }
+
+    func fetchRecommendLists() async throws -> [Liquor] {
+        return try await firebaseRepository.fetchRecommendLiquors().map { Liquor(data: $0) }
+    }
 }

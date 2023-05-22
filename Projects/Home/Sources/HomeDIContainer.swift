@@ -26,4 +26,12 @@ public final class HomeDIContainer: DIContainer {
     public func makeHomeViewModel() -> HomeViewModel {
         return HomeViewModel(repository: HomeRepository())
     }
+
+    public func makeRecommendViewController() -> RecommendViewController {
+        return RecommendViewController(viewModel: makeRecommendViewModel())
+    }
+
+    public func makeRecommendViewModel() -> RecommendViewModel {
+        return RecommendViewModel(repository: HomeRepository())
+    }
 }
