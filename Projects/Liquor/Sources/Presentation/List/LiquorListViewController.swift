@@ -234,6 +234,7 @@ public final class LiquorListViewController: UIViewController {
                    selectedKeyword == currentSelectedKewyord  {
                     return
                 }
+                self?.keywordCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                 self?.viewModel.rxSelectedKeyword.accept(self?.viewModel.rxKeywords.value[indexPath.row])
             }
             .disposed(by: disposeBag)
@@ -299,6 +300,26 @@ public final class LiquorListViewController: UIViewController {
                    selectedCount == 0 {
                     let indexPathToSelect = self?.keywordDataSource.indexPath(for: keyword ?? .others)
                     self?.keywordCollectionView.selectItem(at: indexPathToSelect, animated: true, scrollPosition: .centeredHorizontally)
+                }
+            }
+            .disposed(by: disposeBag)
+
+        searchTableView.rx.itemSelected
+            .asSignal()
+            .emit { [weak self] indexPath in
+                switch indexPath.section {
+                case 0:
+                    let keywordString = self?.viewModel.searchKeywords[indexPath.row]
+                    if let keyword = self?.viewModel.rxKeywords.value.first(where: { $0.name == keywordString }) {
+                        self?.coordinator?.searchKeywordTapped(keyword: keyword)
+                    }
+                case 1:
+                    let liquorString = self?.viewModel.searchLiquors[indexPath.row]
+                    if let liquor = self?.viewModel.rxLiquors.value.first(where: { $0.name == liquorString }) {
+                        self?.coordinator?.liquorItemSelected(itemName: liquor.name)
+                    }
+                default:
+                    break
                 }
             }
             .disposed(by: disposeBag)

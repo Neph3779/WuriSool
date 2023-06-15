@@ -285,7 +285,6 @@ public final class LiquorDetailViewController: UIViewController {
     }
 
     private func bind() {
-
         viewModel.liquor
             .asDriver()
             .drive { [weak self] (liquor: Liquor) in
@@ -314,6 +313,26 @@ public final class LiquorDetailViewController: UIViewController {
             .emit { [weak self] _ in
                 guard let self = self else { return }
                 self.coordinator?.breweryTapped(breweryName: self.viewModel.liquor.value.brewery.name)
+            }
+            .disposed(by: disposeBag)
+
+        naverShoppingButton.rx.tap
+            .asSignal()
+            .emit { [weak self] _ in
+                if let url = URL(string: "https://msearch.shopping.naver.com/search/all?query=\(self?.viewModel.liquor.value.name ?? "")".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""),
+                          UIApplication.shared.canOpenURL(url) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            .disposed(by: disposeBag)
+
+        kakaoShoppingButton.rx.tap
+            .asSignal()
+            .emit { [weak self] _ in
+                if let url = URL(string: "https://store.kakao.com/search/result/product?q=\(self?.viewModel.liquor.value.name ?? "")".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""),
+                          UIApplication.shared.canOpenURL(url) {
+                    UIApplication.shared.open(url)
+                }
             }
             .disposed(by: disposeBag)
     }

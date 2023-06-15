@@ -12,9 +12,11 @@ import RxCocoa
 import Design
 import BaseDomain
 import Kingfisher
+import HomeDomain
 
 public final class RecommendViewController: UIViewController {
 
+    var coordinator: HomeCoordinatorInterface?
     private let disposeBag = DisposeBag()
     private let viewModel: RecommendViewModel
 
@@ -75,8 +77,15 @@ public final class RecommendViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
         }
+        recommendView.isUserInteractionEnabled = true
+        recommendView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(recommendViewTapped(_:))))
         return recommendView
     }()
+
+    @objc
+    private func recommendViewTapped(_ sender: UIGestureRecognizer) {
+        coordinator?.liquorTapped(liquorName: viewModel.rxLiquors.value.first?.name ?? "")
+    }
 
     private lazy var otherRecommendDataSource = makeOtherRecommendDataSource()
     private let otherRecommendTitleBar = TitleBar(title: "Other Recommends", subTitle: "당신이 관심있을 법한 다른 상품들")
@@ -127,6 +136,13 @@ public final class RecommendViewController: UIViewController {
         viewModel.rxLiquors.asDriver()
             .drive { [weak self] liquors in
                 self?.applyDataSource(liquors: liquors)
+            }
+            .disposed(by: disposeBag)
+
+        otherRecommendCollectionView.rx.itemSelected
+            .asSignal()
+            .emit { [weak self] indexPath in
+                self?.coordinator?.liquorTapped(liquorName: self?.viewModel.rxLiquors.value[indexPath.row + 1].name ?? "")
             }
             .disposed(by: disposeBag)
     }

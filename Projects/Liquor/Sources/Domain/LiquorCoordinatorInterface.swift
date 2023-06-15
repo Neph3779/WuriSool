@@ -12,4 +12,5 @@ import BaseDomain
 public protocol LiquorCoordinatorInterface {
     func liquorItemSelected(itemName: String)
     func breweryTapped(breweryName: String)
+    func searchKeywordTapped(keyword: Keyword)
 }

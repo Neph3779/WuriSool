@@ -17,7 +17,7 @@ let project = Project.app(
     iOSTargetVersion: iOSTargetVersion,
     infoPlist: [
         "CFBundleShortVersionString": "1.0.0", // 앱의 출시 버전
-        "CFBundleVersion": "1",
+        "CFBundleVersion": "2",
         "CFBundleDisplayName": "우리술",
         "UILaunchStoryboardName": "LaunchScreen",
         "UIInterfaceOrientation": ["UIInterfaceOrientationPortrait"],

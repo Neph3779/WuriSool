@@ -37,6 +37,7 @@ public final class HomeCoordinator: Coordinator, HomeCoordinatorInterface {
 
     public func recommendImageViewTapped() {
         let recommendViewController = DIContainer.makeRecommendViewController()
+        recommendViewController.coordinator = self
         navigationController.pushViewController(recommendViewController, animated: true)
     }
 }

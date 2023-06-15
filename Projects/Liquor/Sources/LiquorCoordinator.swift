@@ -46,4 +46,10 @@ public final class LiquorCoordinator: Coordinator, LiquorCoordinatorInterface {
     public func keywordTapped(keyword: Keyword) {
 
     }
+
+    public func searchKeywordTapped(keyword: Keyword) {
+        let liquorViewController = DIContainer.makeLiquorViewController(mode: .keyword(keyword))
+        liquorViewController.coordinator = self
+        navigationController.pushViewController(liquorViewController, animated: true)
+    }
 }

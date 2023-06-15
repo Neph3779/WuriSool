@@ -203,6 +203,22 @@ public final class HomeViewController: UIViewController {
             cardNewsSnapShot.appendSections([.main])
             cardNewsSnapShot.appendItems([
                 .init(data: [
+                    "id": 2780,
+                    "imagePath": "https://thesool.com/ckeditor/imageUpload/[AT]-%EB%8D%94%EC%88%A0%EB%8B%B7%EC%BB%B4-%EC%9D%B8%EC%8A%A4%ED%83%80%EA%B7%B8%EB%9E%A8-%EC%B9%B4%EB%93%9C%EB%89%B4%EC%8A%A4-%EB%94%94%EC%9E%90%EC%9D%B81_20230606_1686705111791.jpg"
+                ]),
+                .init(data: [
+                    "id": 2776,
+                    "imagePath": "https://thesool.com/ckeditor/imageUpload/[AT]-%EB%8D%94%EC%88%A0%EB%8B%B7%EC%BB%B4-%EC%9D%B8%EC%8A%A4%ED%83%80%EA%B7%B8%EB%9E%A8-%EC%B9%B4%EB%93%9C%EB%89%B4%EC%8A%A4-%EB%94%94%EC%9E%90%EC%9D%B81_20230531_1686716949154.jpg"
+                ]),
+                .init(data: [
+                    "id": 2773,
+                    "imagePath": "https://thesool.com/ckeditor/imageUpload/[at]-%EB%8D%94%EC%88%A0%EB%8B%B7%EC%BB%B4-5%EC%9B%94-4_1686717164110.jpg"
+                ]),
+                .init(data: [
+                    "id": 2766,
+                    "imagePath": "https://thesool.com/ckeditor/imageUpload/[at]-5%EC%9B%94-4%EC%A3%BC%EC%B0%A8-%EC%BD%98%ED%85%90%EC%B8%A0(1)-%EB%94%94%EC%9E%90%EC%9D%B8_20230516_1686717376233.jpg"
+                ]),
+                .init(data: [
                     "id": 2763,
                     "imagePath": "https://thesool.com/ckeditor/imageUpload/[AT]-%EB%8D%94%EC%88%A0%EB%8B%B7%EC%BB%B4-%EC%9D%B8%EC%8A%A4%ED%83%80%EA%B7%B8%EB%9E%A8-%EC%B9%B4%EB%93%9C%EB%89%B4%EC%8A%A4-%EB%94%94%EC%9E%90%EC%9D%B81_20230516_1684306080018.jpg"
                 ]),
