@@ -8,7 +8,7 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-private let projectName = "Network"
+private let projectName = "WSNetwork"
 private let iOSTargetVersion = "15.0"
 
 let project = Project.framework(

@@ -18,8 +18,6 @@ import UIKit
     ) -> Bool {
         let coordinator = AppCoordinatorImpl()
         window = UIWindow(frame: UIScreen.main.bounds)
-        let viewController = ViewController()
-        window?.rootViewController = viewController
         coordinator.start()
         window?.makeKeyAndVisible()
         return true
